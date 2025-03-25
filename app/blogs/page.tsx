@@ -1,7 +1,8 @@
 import CardBlog from "@/components/blog/CardBlog";
+import Categories from "@/components/blog/Categories";
 import TrendingBlogs from "@/components/blog/TrendingBlogs";
 import React from "react";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaSearch } from "react-icons/fa";
 
 const page = () => {
   return (
@@ -15,6 +16,23 @@ const page = () => {
           <span>أضف مقال</span>
         </button>
       </div>
+      <div className="mb-8 space-y-6">
+        {/* البحث عن مقالات */}
+        <div className="relative max-w-md">
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3 rtl:left-0 rtl:right-auto rtl:pl-3">
+            <FaSearch className="h-4 w-4 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            placeholder="ابحث عن مقال"
+            className="w-full rounded-lg border border-gray-300 bg-white py-3 pr-10 text-gray-700 shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 "
+          />
+        </div>
+
+        {/* مجموعة تصنيفات المقالات */}
+        <Categories />
+      </div>
+
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
         {/* مجموعة المقالات  */}
         <div className="space-y-6 lg:col-span-2">
