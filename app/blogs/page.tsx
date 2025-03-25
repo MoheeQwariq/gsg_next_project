@@ -1,5 +1,6 @@
 import CardBlog from "@/components/blog/CardBlog";
 import Categories from "@/components/blog/Categories";
+import TopPuplishers from "@/components/blog/TopPuplishers";
 import TrendingBlogs from "@/components/blog/TrendingBlogs";
 import React from "react";
 import { FaPlus, FaSearch } from "react-icons/fa";
@@ -50,6 +51,7 @@ const page = () => {
         {/* المقالات الرائجة */}
         <div className="lg:sticky lg:top-24 lg:self-start">
           <TrendingBlogs />
+          <TopPuplishers />
         </div>
       </div>
     </div>

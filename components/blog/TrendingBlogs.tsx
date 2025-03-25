@@ -10,7 +10,6 @@ const TrendingBlogs = () => {
         <TrendingBlog />
         <TrendingBlog />
         <TrendingBlog />
-        <TrendingBlog />
       </div>
     </div>
   );
