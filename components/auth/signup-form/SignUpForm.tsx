@@ -3,8 +3,11 @@
 import type React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Eye, EyeOff, Upload, User, Mail, Lock } from "lucide-react";
+import FormInput from "@/components/auth/ui/FormInput";
+import PhotoUpload from "@/components/auth/ui/PhotoUpload";
+import { validateForm } from "@/utils/validation";
 import { useState } from "react";
+import { Eye, EyeOff, User, Mail, Lock } from "lucide-react";
 
 const initialFormData = {
   name: "",
@@ -22,49 +25,44 @@ const SignUpForm = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, files } = e.target;
-    if (name === "photo" && files && files.length > 0) {
-      setFormData({ ...formData, photo: files[0] });
-      setPreviewUrl(URL.createObjectURL(files[0]));
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+ const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { name, value, files } = e.target;
+  if (error) {
     setError("");
+  }
+  if (name === "photo" && files && files.length > 0) {
+    setFormData({ ...formData, photo: files[0] });
+    setPreviewUrl(URL.createObjectURL(files[0]));
+  } else {
+    setFormData({ ...formData, [name]: value });
+  }
+};
 
-    if (
-      !formData.name ||
-      !formData.email ||
-      !formData.password ||
-      !formData.birthday
-    ) {
-      setError(".جميع الحقول مطلوبة");
-      return;
-    }
+const handleSubmit = (e: React.FormEvent) => {
+  e.preventDefault();
+  setError("");
+  const result = validateForm(formData);
 
-    if (formData.password !== formData.confirmPassword) {
-      setError(".كلمات المرور غير متطابقة");
-      return;
-    }
+  if (!result.isValid) {
+    const errorMessages = Object.values(result.errors).join(" - ");
+    setError(errorMessages || "حدث خطأ غير متوقع");
+    return;
+  }
 
-    console.log("Success", formData);
-    setFormData(initialFormData);
-    setPreviewUrl(null);
-    const inputs = document.querySelectorAll("input");
-    inputs.forEach((input) => (input.value = ""));
-  };
+  console.log("تم التسجيل بنجاح", formData);
+  setFormData(initialFormData);
+  setPreviewUrl(null);
+  const inputs = document.querySelectorAll("input");
+  inputs.forEach((input) => (input.value = ""));
+};
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 to-teal-100 p-4 rtl">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4 rtl">
       <div className="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
         <div className="w-full md:w-1/2 p-8 md:p-12 bg-white">
           <div className="text-center mb-8">
             <div className="inline-block mb-4">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-r from-emerald-500 to-teal-600 flex items-center justify-center">
+              <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-8 w-8 text-white"
@@ -94,202 +92,98 @@ const SignUpForm = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="space-y-2 text-right">
-              <label htmlFor="name" className="block text-gray-700 font-medium">
-                الاسم الكامل
-              </label>
-              <div className="relative">
-                <input
-                  id="name"
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  placeholder="أدخل اسمك الرباعي"
-                  className="w-full px-4 py-3 pl-12 rounded-xl border border-gray-200 text-right focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
-                  onChange={handleChange}
-                />
-                <User
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
-                  size={20}
-                />
-              </div>
-            </div>
+            <FormInput
+              id="name"
+              name="name"
+              type="text"
+              value={formData.name}
+              placeholder="أدخل اسمك الرباعي"
+              label="الاسم الكامل"
+              icon={<User size={20} />}
+              onChange={handleChange}
+            />
 
-            <div className="space-y-2 text-right">
-              <label
-                htmlFor="email"
-                className="block text-gray-700 font-medium"
-              >
-                البريد الإلكتروني
-              </label>
-              <div className="relative">
-                <input
-                  id="email"
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  placeholder="example@email.com"
-                  className="w-full px-4 py-3 pl-12 rounded-xl border border-gray-200 text-right focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all"
-                  onChange={handleChange}
-                />
-                <Mail
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
-                  size={20}
-                />
-              </div>
-            </div>
+            <FormInput
+              id="email"
+              name="email"
+              type="email"
+              value={formData.email}
+              placeholder="example@email.com"
+              label="البريد الإلكتروني"
+              icon={<Mail size={20} />}
+              onChange={handleChange}
+            />
 
-            <div className="space-y-2 text-right">
-              <label
-                htmlFor="password"
-                className="block text-gray-700 font-medium"
-              >
-                كلمة المرور
-              </label>
-              <div className="relative">
-                <input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={formData.password}
-                  placeholder="********"
-                  className="w-full px-4 py-3 pl-12 rounded-xl border border-gray-200 text-right  focus:outline-none focus:ring-2 focus:ring-emerald-500 transition-all pr-10"
-                  onChange={handleChange}
-                />
-                <Lock
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
-                  size={20}
-                />
-                <button
-                  type="button"
-                  className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-            </div>
+            <FormInput
+              id="password"
+              name="password"
+              type={showPassword ? "text" : "password"}
+              value={formData.password}
+              placeholder="********"
+              label="كلمة المرور"
+              icon={<Lock size={20} />}
+              rightIcon={
+                showPassword ? <EyeOff size={18} /> : <Eye size={18} />
+              }
+              onChange={handleChange}
+              onRightIcon={() => setShowPassword(!showPassword)}
+            />
 
-            <div className="space-y-2 text-right">
-              <label
-                htmlFor="confirmPassword"
-                className="block text-gray-700 font-medium"
-              >
-                تأكيد كلمة المرور
-              </label>
-              <div className="relative">
-                <input
-                  id="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
-                  name="confirmPassword"
-                  placeholder="********"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-right pr-10"
-                  onChange={handleChange}
-                />
+            <FormInput
+              id="confirmPassword"
+              name="confirmPassword"
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder="********"
+              label="تأكيد كلمة المرور"
+              icon={<Lock size={20} />}
+              rightIcon={
+                showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />
+              }
+              onChange={handleChange}
+              onRightIcon={() => setShowConfirmPassword(!showConfirmPassword)}
+            />
 
-                <Lock
-                  className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400"
-                  size={20}
-                />
-                <button
-                  type="button"
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                >
-                  {showConfirmPassword ? (
-                    <EyeOff size={18} />
-                  ) : (
-                    <Eye size={18} />
-                  )}
-                </button>
-              </div>
-            </div>
+            <FormInput
+              id="birthday"
+              name="birthday"
+              type="date"
+              label="تاريخ الميلاد"
+              onChange={handleChange}
+            />
 
-            <div className="space-y-2 text-right">
-              <label
-                htmlFor="birthday"
-                className="block text-gray-700 font-medium"
-              >
-                تاريخ الميلاد
-              </label>
-              <div className="relative">
-                <input
-                  id="birthday"
-                  type="date"
-                  name="birthday"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all text-right pr-3"
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-            <div className="space-y-2 text-right">
-              <label
-                htmlFor="photo"
-                className="block text-gray-700 font-medium"
-              >
-                الصورة الشخصية
-              </label>
-              <div className="flex items-center gap-4 flex-row-reverse">
-                <div className="relative h-20 w-20 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border-2 border-emerald-200">
-                  {previewUrl ? (
-                    <Image
-                      src={previewUrl || "/placeholder.svg"}
-                      alt="صورة المستخدم"
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
-                    <User className="h-10 w-10 text-gray-400" />
-                  )}
-                </div>
-                <div className="flex-1">
-                  <label
-                    htmlFor="photo-upload"
-                    className="cursor-pointer flex items-center justify-center gap-2 p-4 border-2 border-dashed border-emerald-200 rounded-xl hover:bg-emerald-50 transition-colors"
-                  >
-                    <Upload className="h-5 w-5 text-emerald-500" />
-                    <span className="text-emerald-600 font-medium">
-                      اختر صورة
-                    </span>
-                  </label>
-                  <input
-                    id="photo-upload"
-                    type="file"
-                    name="photo"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-            </div>
+            <PhotoUpload
+              previewUrl={previewUrl}
+              onChange={handleChange}
+              label="الصورة الشخصية"
+            />
 
             <button
               type="submit"
-              className="w-full py-4 mt-6 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white rounded-xl transition-all duration-300 font-semibold text-lg shadow-lg hover:shadow-xl"
+              className="w-full py-4 mt-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl transition-all duration-300 font-semibold text-lg shadow-lg hover:shadow-xl"
             >
               إنشاء الحساب
             </button>
           </form>
 
           <p className="text-center text-gray-500 mt-6">
-             لديك حساب بالفعل؟
+            لديك حساب بالفعل؟
             <Link
               href="/auth/login"
-              className="text-emerald-600 hover:text-emerald-800 font-medium mr-1"
+              className="text-blue-600 hover:text-blue-800 font-medium mr-1"
             >
               تسجيل الدخول
             </Link>
           </p>
         </div>
 
-        <div className="w-1/2 hidden md:block">
+        <div className="w-1/2 hidden md:block relative">
           <Image
             src="/blog-image.jpg"
             alt="Blog"
             width={600}
-            height={600}
-            className="h-full w-full object-fit rounded-r-lg"
+            height={800}
+            className="h-full w-full object-cover"
+            priority
           />
         </div>
       </div>
