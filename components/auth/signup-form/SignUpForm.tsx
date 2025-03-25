@@ -3,8 +3,8 @@
 import type React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import FormInput from "@/components/auth/ui/FormInput";
-import PhotoUpload from "@/components/auth/ui/PhotoUpload";
+import FormInput from "@/components/auth/input-field/FormInput";
+import PhotoUpload from "@/components/auth/input-field/PhotoUpload";
 import { validateForm } from "@/utils/validation";
 import { useState } from "react";
 import { Eye, EyeOff, User, Mail, Lock } from "lucide-react";
