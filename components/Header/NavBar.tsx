@@ -8,7 +8,7 @@ import { CiLogout } from "react-icons/ci";
 
 const NavBar = () => {
   return (
-    <header className="sticky top-0 z-10 bg-white/95 backdrop-blur-sm">
+    <header className="sticky top-0 z-10  backdrop-blur-sm bg-[#EFEFEF]">
       <div className="container mx-auto flex items-center justify-between border-b border-gray-200 px-4 py-4">
         {/* عنوان الموقع */}
         <h1 className="text-2xl font-bold">

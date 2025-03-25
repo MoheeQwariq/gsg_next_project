@@ -1,41 +1,45 @@
 import Image from "next/image";
 import React from "react";
 import myPhoto from "@/public/myPhoto.jpg";
+import Link from "next/link";
 const TrendingBlog = () => {
   return (
-    <div className="flex  ">
-      <div className=" h-28 w-24 relative">
+    <Link
+      href="#"
+      className="group flex gap-3 rounded-lg p-2 transition hover:bg-gray-50"
+    >
+      {/* Blog thumbnail */}
+      <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg">
         <Image
           src={myPhoto}
           alt="عنوان المقالة"
-          layout="fill"
-          objectFit="cover"
-          className="rounded-lg"
+          fill
+          className="object-cover transition-transform group-hover:scale-105"
         />
       </div>
-      <div>
-        <p>
-          {" "}
-          نص المقالة يذهب هنا. يمكنك وضع نبذة مختصرة عن المقال لجذب القراء...
-        </p>
-        <div className="flex">
-          <div className="flex items-center mt-4">
-            <Image
-              src={myPhoto}
-              alt="فيصل أبو زكري"
-              width={40}
-              height={40}
-              className="w-10 h-10 rounded-full border border-gray-300 object-cover"
-            />
-            <span className="ml-2 text-gray-900 font-medium">
-              فيصل أبو زكري
-            </span>
+
+      {/* Blog content */}
+      <div className="flex flex-col">
+        <h4 className="line-clamp-2 text-sm font-medium text-gray-900 group-hover:text-blue-600">
+          عنوان المقالة الرائجة هنا يمكن أن يكون طويلاً
+        </h4>
+
+        <div className="mt-auto flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="relative h-6 w-6 overflow-hidden rounded-full">
+              <Image
+                src={myPhoto}
+                alt="فيصل أبو زكري"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <span className="text-xs text-gray-600">فيصل أبو زكري</span>
           </div>
-          <span className="px-1 py-1 bg-gray-100 text-gray-700 ">الصنف</span>
-          <span className="text-sm text-gray-500">قبل 12 ساعة</span>
+          <span className="text-xs text-gray-500">قبل 3 أيام</span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

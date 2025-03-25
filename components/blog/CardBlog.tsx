@@ -3,67 +3,73 @@ import React from "react";
 import { CiHeart } from "react-icons/ci";
 import { PiChatDots } from "react-icons/pi";
 import photo from "../../public/myPhoto.jpg";
+import Link from "next/link";
 const CardBlog = () => {
   return (
-    <div className="bg-white rounded-2xl shadow-md overflow-hidden border border-gray-200 p-4 w-full max-w-md">
-      {/* صورة المقالة*/}
-      <div className="w-full h-48 relative">
-        <Image
-          src={photo}
-          alt="عنوان المقالة"
-          layout="fill"
-          objectFit="cover"
-          className="rounded-lg"
-        />
-      </div>
-
-      {/* محتوى المقالة */}
-      <div className="mt-4">
-        {/* العنوان و وقت النشر */}
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold text-gray-900">عنوان المقالة</h2>
-          <span className="text-sm text-gray-500">قبل 12 ساعة</span>
-        </div>
-
-        {/* نبذة قصيرة عن المقالة */}
-        <p className="text-gray-700 mt-2 text-sm leading-relaxed">
-          نص المقالة يذهب هنا. يمكنك وضع نبذة مختصرة عن المقال لجذب القراء...
-        </p>
-
-        {/* صاحب المقالة */}
-        <div className="flex items-center mt-4">
+    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md">
+      <div className="grid grid-cols-1 md:grid-cols-3">
+        {/* عنوان المقالة */}
+        <div className="relative h-60 w-full md:h-full">
           <Image
             src={photo}
-            alt="فيصل أبو زكري"
-            width={40}
-            height={40}
-            className="w-10 h-10 rounded-full border border-gray-300 object-cover"
+            alt="عنوان المقالة"
+            fill
+            className="object-cover"
           />
-          <span className="ml-2 text-gray-900 font-medium">فيصل أبو زكري</span>
         </div>
 
-        {/* تصنيف المقالة و التفاعل معها */}
-        <div className="mt-4 flex justify-between items-center text-gray-600 text-sm">
-          <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-lg">
-            الصنف
-          </span>
-          <div className="flex gap-4">
-            <div className="flex items-center gap-1 cursor-pointer">
-              <span>1</span>
+        {/* محتوى المقالة  */}
+        <div className="flex flex-col p-5 md:col-span-2">
+          <div className="mb-2 flex items-center justify-between">
+            <span className="rounded-lg bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">
+              الصنف
+            </span>
+            <span className="text-xs text-gray-500">قبل 12 ساعة</span>
+          </div>
 
-              <CiHeart className="text-red-500" size={20} />
+          <h2 className="mb-2 text-xl font-bold text-gray-900">
+            عنوان المقالة
+          </h2>
+
+          <p className="mb-4 text-gray-600">
+            نص المقالة يذهب هنا. يمكنك وضع نبذة مختصرة عن المقال لجذب القراء.
+            هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة...
+          </p>
+
+          {/* تفاصيل المقالة */}
+          <div className="mt-auto">
+            <div className="flex items-center justify-between border-t border-gray-100 pt-4">
+              <div className="flex items-center space-x-3 rtl:space-x-reverse">
+                <Image
+                  src={photo}
+                  alt="فيصل أبو زكري"
+                  width={40}
+                  height={40}
+                  className="h-10 w-10 rounded-full border border-gray-200 object-cover"
+                />
+                <span className="font-medium text-gray-900">فيصل أبو زكري</span>
+              </div>
+
+              <div className="flex items-center gap-4 text-sm text-gray-500">
+                <div className="flex items-center gap-1 transition-colors hover:text-red-600">
+                  <CiHeart className="text-red-500" size={20} />
+                  <span>1</span>
+                </div>
+                <div className="flex items-center gap-1 transition-colors hover:text-blue-600">
+                  <PiChatDots className="text-blue-500" size={20} />
+                  <span>1</span>
+                </div>
+              </div>
             </div>
-            <div className="flex items-center gap-1 cursor-pointer">
-              <span>1</span>
-              <PiChatDots className="text-blue-500" size={20} />
-            </div>
+
+            <Link
+              href="#"
+              className="mt-4 block rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-center text-sm font-medium text-white transition hover:from-blue-700 hover:to-indigo-700"
+            >
+              اقرأ المزيد
+            </Link>
           </div>
         </div>
-
-        {/* اقرأ المزيد */}
-        <button className="mt-4 w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition cursor-pointer">
-          اقرأ المزيد
-        </button>
       </div>
     </div>
   );
