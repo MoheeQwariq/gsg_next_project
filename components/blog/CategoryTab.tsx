@@ -1,10 +1,5 @@
+import { CategoryTabProps } from "@/types/type";
 import React from "react";
-
-interface CategoryTabProps {
-  children: React.ReactNode;
-  active?: boolean;
-  onClick: () => void;
-}
 
 const CategoryTab = ({
   children,

@@ -1,13 +1,7 @@
 "use client";
 import React from "react";
 import CategoryTab from "./CategoryTab";
-const categories = [
-  "قصص شخصية",
-  "قصص شهداء ومفقودين",
-  "قصص النزوح واللجوء",
-  "التعليم وسط الحرب",
-  "قصص الحياة اليومية الي تحت الحصار",
-];
+import { categories } from "./../../constant/constant";
 
 const Categories = () => {
   const [activeCategory, setActiveCategory] = React.useState(categories[0]);
