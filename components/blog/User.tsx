@@ -1,8 +1,8 @@
 import React from "react";
 import myPhoto from "@/public/myPhoto.jpg";
 import Image from "next/image";
-import { SlUserFollow } from "react-icons/sl";
 import { FaStar } from "react-icons/fa";
+import Follow from "./Follow";
 const User = () => {
   return (
     <div className="flex items-center gap-4">
@@ -18,10 +18,7 @@ const User = () => {
       <span>
         <FaStar color="#f5d300" size={20} />
       </span>
-      <button className="flex items-center gap-2 rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-md transition duration-300 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg cursor-pointer">
-        <SlUserFollow className="w-4 h-4" />
-        <span> متابعة</span>
-      </button>
+      <Follow />
     </div>
   );
 };

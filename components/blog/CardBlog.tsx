@@ -61,7 +61,7 @@ const CardBlog = () => {
               </div>
 
               <Link
-                href="#"
+                href="/blogs/1"
                 className="mt-4 block rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-center text-sm font-medium text-white transition hover:from-blue-700 hover:to-indigo-700"
               >
                 اقرأ المزيد
