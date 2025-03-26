@@ -19,7 +19,7 @@ const fakePosts = [
     image: "https://example.com/typescript-guide.jpg",
     author: "Jane Smith",
     authorEmail: "janesmith@example.com",
-    type: "inspirational",
+    type: "success",
     createdAt: "2025-03-27",
   },
   {
