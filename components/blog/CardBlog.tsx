@@ -6,7 +6,7 @@ import photo from "../../public/myPhoto.jpg";
 import Link from "next/link";
 const CardBlog = () => {
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md">
+    <div className="cursor-pointer overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md">
       <div className="grid grid-cols-1 md:grid-cols-3">
         {/* عنوان المقالة */}
         <div className="relative h-60 w-full md:h-full">
