@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "name": "gsg_next_project",
   "version": "0.1.0",
   "private": true,
@@ -12,7 +13,8 @@
     "better-sqlite3": "^11.9.1",
     "next": "15.2.3",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "slugify": "^1.6.6"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

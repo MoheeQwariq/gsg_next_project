@@ -1,4 +1,5 @@
-const sqlite3 = require("better-sqlite3")
+import sqlite3 from "better-sqlite3";
+
 const db = sqlite3("stories.db");
 
 const fakePosts = [
@@ -8,8 +9,9 @@ const fakePosts = [
     content: "Web development is evolving with new frameworks and technologies...",
     image: "https://example.com/future-web.jpg",
     author: "John Doe",
-    author_email: "johndoe@example.com",
-    is_deleted: false,
+    authorEmail: "johndoe@example.com",
+    type: "inspirational",
+    createdAt: "2025-03-26",
   },
   {
     id: 2,
@@ -17,8 +19,9 @@ const fakePosts = [
     content: "TypeScript enhances JavaScript by adding static types...",
     image: "https://example.com/typescript-guide.jpg",
     author: "Jane Smith",
-    author_email: "janesmith@example.com",
-    is_deleted: false,
+    authorEmail: "janesmith@example.com",
+    type: "inspirational",
+    createdAt: "2025-03-27",
   },
   {
     id: 3,
@@ -26,8 +29,9 @@ const fakePosts = [
     content: "Both Next.js and React offer powerful capabilities, but the choice depends on...",
     image: "https://example.com/next-vs-react.jpg",
     author: "Ali Ahmed",
-    author_email: "aliahmed@example.com",
-    is_deleted: false,
+    authorEmail: "aliahmed@example.com",
+    type: "success",
+    createdAt: "2025-03-28",
   },
   {
     id: 4,
@@ -35,8 +39,9 @@ const fakePosts = [
     content: "Ensuring API security involves authentication, authorization, and encryption...",
     image: "https://example.com/api-security.jpg",
     author: "Sara Khan",
-    author_email: "sarakhan@example.com",
-    is_deleted: false,
+    authorEmail: "sarakhan@example.com",
+    type: "sad",
+    createdAt: "2025-03-29",
   },
 ];
 
@@ -47,27 +52,27 @@ db.prepare(`
     content TEXT NOT NULL,
     image TEXT NOT NULL,
     author TEXT NOT NULL,
-    author_email TEXT NOT NULL,
-    is_deleted BOOLEAN DEFAULT 0
+    authorEmail TEXT NOT NULL,
+    type TEXT NOT NULL,
+    createdAt TEXT NOT NULL
   );
 `).run();
 
-
-
 const insertData = () => {
   const insertCommand = db.prepare(`
-    INSERT INTO posts (title, content, image, author, author_email, is_deleted) 
-    VALUES (@title, @content, @image, @author, @author_email, @is_deleted)
+    INSERT INTO posts (title, content, image, author, authorEmail, type, createdAt)
+    VALUES (@title, @content, @image, @author, @authorEmail, @type, @createdAt)
   `);
 
-  for (const post of fakePosts) {
+  for (const post of fakePoالقصةsts) {
     insertCommand.run({
       title: String(post.title),
       content: String(post.content),
       image: post.image ? String(post.image) : "default.jpg",
       author: String(post.author),
-      author_email: String(post.author_email),
-      is_deleted: post.is_deleted ? 1 : 0
+      authorEmail: String(post.authorEmail),
+      type: String(post.type),
+      createdAt: String(post.createdAt),
     });
   }
 };
