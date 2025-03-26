@@ -1,7 +1,6 @@
 import sqlite3 from "better-sqlite3";
 
 const db = sqlite3("stories.db");
-
 const fakePosts = [
   {
     id: 1,
@@ -64,7 +63,7 @@ const insertData = () => {
     VALUES (@title, @content, @image, @author, @authorEmail, @type, @createdAt)
   `);
 
-  for (const post of fakePoالقصةsts) {
+  for (const post of fakePosts) {
     insertCommand.run({
       title: String(post.title),
       content: String(post.content),
