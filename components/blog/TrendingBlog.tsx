@@ -5,10 +5,9 @@ import Link from "next/link";
 const TrendingBlog = () => {
   return (
     <Link
-      href="#"
+      href="/blogs/1"
       className="group flex gap-3 rounded-lg p-2 transition hover:bg-gray-50"
     >
-      {/* Blog thumbnail */}
       <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg">
         <Image
           src={myPhoto}
@@ -17,8 +16,6 @@ const TrendingBlog = () => {
           className="object-cover transition-transform group-hover:scale-105"
         />
       </div>
-
-      {/* Blog content */}
       <div className="flex flex-col">
         <h4 className="line-clamp-2 text-sm font-medium text-gray-900 group-hover:text-blue-600">
           عنوان المقالة الرائجة هنا يمكن أن يكون طويلاً

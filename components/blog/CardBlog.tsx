@@ -9,7 +9,6 @@ const CardBlog = () => {
     <Link href={"blogs/1"} className="block">
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md">
         <div className="grid grid-cols-1 md:grid-cols-3">
-          {/* عنوان المقالة */}
           <div className="relative h-60 w-full md:h-full">
             <Image
               src={photo}
@@ -18,8 +17,6 @@ const CardBlog = () => {
               className="object-cover"
             />
           </div>
-
-          {/* محتوى المقالة  */}
           <div className="flex flex-col p-5 md:col-span-2">
             <div className="mb-2 flex items-center justify-between">
               <span className="rounded-lg bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">
@@ -36,8 +33,6 @@ const CardBlog = () => {
               نص المقالة يذهب هنا. يمكنك وضع نبذة مختصرة عن المقال لجذب القراء.
               هذا النص هو مثال لنص يمكن أن يستبدل في نفس المساحة...
             </p>
-
-            {/* تفاصيل المقالة */}
             <div className="mt-auto">
               <div className="flex items-center justify-between border-t border-gray-100 pt-4">
                 <div className="flex items-center space-x-3 rtl:space-x-reverse">

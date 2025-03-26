@@ -1,6 +1,6 @@
 import Image from "next/image";
 import React from "react";
-import { FaHeart, FaRegClock, FaReply } from "react-icons/fa";
+import { FaHeart, FaRegClock } from "react-icons/fa";
 import myPhoto from "@/public/myPhoto.jpg";
 const Comment = () => {
   return (
