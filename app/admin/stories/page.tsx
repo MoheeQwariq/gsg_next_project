@@ -9,7 +9,9 @@ const StoriesPage = () => {
   const router = useRouter();
   const selectedType = searchParams.get("type") || "";
   const [posts, setPosts] = useState<Stories.Post[]>([]);
+  const [filteredPosts, setFilteredPosts] = useState<Stories.Post[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -21,11 +23,22 @@ const StoriesPage = () => {
       const res = await fetch(url);
       const data = await res.json();
       setPosts(data);
+      setFilteredPosts(data);
       setLoading(false);
     };
 
     fetchPosts();
   }, [selectedType]);
+
+  useEffect(() => {
+    if (searchQuery.trim() === "") {
+      setFilteredPosts(posts);
+    } else {
+      setFilteredPosts(posts.filter((post) =>
+        post.content.toLowerCase().includes(searchQuery.toLowerCase())
+      ));
+    }
+  }, [searchQuery, posts]);
 
   const handleDelete = async (id: number) => {
     const res = await fetch("/api/posts", {
@@ -51,6 +64,12 @@ const StoriesPage = () => {
   return (
     <div>
       <h1>All Posts</h1>
+      <input
+        type="text"
+        placeholder="Search by content..."
+        value={searchQuery}
+        onChange={(e) => setSearchQuery(e.target.value)}
+      />
 
       <select onChange={handleFilterChange} value={selectedType}>
         <option value="all">All</option>
@@ -60,12 +79,13 @@ const StoriesPage = () => {
       </select>
 
       <div>
-        {posts.map((post) => (
+        {filteredPosts.map((post) => (
           <div key={post.id}>
             <Image src={post.image} alt={post.title} width={500} height={300} />
             <h2>{post.title}</h2>
             <PostContent content={post.content} postId={post.id} />
             <p>{post.author} ({post.authorEmail})</p>
+            <p>Type: {post.type}</p>
             <p>Created At: {post.createdAt}</p>
             <button onClick={() => handleDelete(post.id)}>Delete</button>
           </div>

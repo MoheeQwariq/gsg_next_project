@@ -3,11 +3,12 @@ import { getAllPosts, deletePost } from "@/services/stories.service";
 
 export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
-  const type = params.get("type"); 
+  const type = params.get("type");  
   let posts = getAllPosts();
   if (type) {
     posts = posts.filter((post) => post.type === type);
   }
+
   return NextResponse.json(posts, { status: 200 });
 }
 
