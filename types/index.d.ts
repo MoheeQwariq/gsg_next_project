@@ -9,4 +9,9 @@ declare namespace Stories {
     type: 'success' | 'sad' | 'inspirational';
     createdAt: string;
   }
+  export interface User {
+    id: number;
+    name: string;
+    email: string;
+  }
 }

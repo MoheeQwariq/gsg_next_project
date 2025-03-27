@@ -3,7 +3,7 @@ import { getAllPosts, deletePost } from "@/services/stories.service";
 
 export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
-  const type = params.get("type");  
+  const type = params.get("type");
   let posts = getAllPosts();
   if (type) {
     posts = posts.filter((post) => post.type === type);
@@ -15,7 +15,6 @@ export async function GET(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   const { id } = await request.json();
   const isDeleted = deletePost(id);
-
   if (isDeleted) {
     return NextResponse.json({ message: "Post deleted successfully" });
   } else {

@@ -1,6 +1,15 @@
 import sqlite3 from "better-sqlite3";
-
 const db = sqlite3("stories.db");
+
+
+
+
+const fakeUsers = [
+  { name: "Admin User", email: "admin@example.com", role: "admin" },
+  { name: "John Doe", email: "johndoe@example.com", role: "user" },
+  { name: "Jane Smith", email: "janesmith@example.com", role: "user" },
+];
+
 const fakePosts = [
   {
     id: 1,
@@ -43,6 +52,15 @@ const fakePosts = [
     createdAt: "2025-03-29",
   },
 ];
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    role TEXT NOT NULL CHECK(role IN ('admin', 'user'))
+  );
+`).run();
+
 
 db.prepare(`
   CREATE TABLE IF NOT EXISTS posts (
@@ -75,5 +93,14 @@ const insertData = () => {
     });
   }
 };
-
 insertData();
+
+const insertUser = db.prepare(`
+  INSERT INTO users (name, email, role) VALUES (@name, @email, @role)
+`);
+
+for (const user of fakeUsers) {
+  insertUser.run(user);
+}
+
+
