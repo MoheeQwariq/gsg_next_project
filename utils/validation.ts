@@ -1,16 +1,10 @@
-export interface IFormData {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-  birthday: string;
-  photo: File | null;
+import { IFormData} from "@/types/auth";
+
+ interface IValidationResult {
+  isValid: boolean;
+  errors: Record<string, string>;
 }
 
-export interface IValidationResult {
-  isValid: boolean;
-  errors: Record<string, string>; 
-}
 
 export const validateForm = (data: IFormData): IValidationResult => {
   const errors: Record<string, string> = {};
