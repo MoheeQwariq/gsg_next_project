@@ -7,3 +7,4 @@ export interface IFormData {
   photo: File | null;
 }
 
+
