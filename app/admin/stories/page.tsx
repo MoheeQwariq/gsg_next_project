@@ -3,27 +3,7 @@ import type React from "react"
 import { useEffect, useState } from "react"
 import { useSearchParams, useRouter } from "next/navigation"
 import Image from "next/image"
-
-const PostContent: React.FC<{ content: string; postId: number }> = ({ content, postId }) => {
-  const [expandedPost, setExpandedPost] = useState<number | null>(null)
-
-  const handleToggleContent = (postId: number) => {
-    setExpandedPost(expandedPost === postId ? null : postId)
-  }
-  return (
-    <div>
-      <p className="text-gray-700 text-lg leading-relaxed">
-        {expandedPost === postId ? content : `${content.slice(0, 100)}...`}
-      </p>
-      <button
-        onClick={() => handleToggleContent(postId)}
-        className="mt-2 text-sm text-blue-500 hover:underline"
-      >
-        {expandedPost === postId ? "Show Less" : "Read More"}
-      </button>
-    </div>
-  )
-}
+import PostContent from "@/components/PostContent"
 
 export default function StoriesPage() {
   const searchParams = useSearchParams()
@@ -68,20 +48,6 @@ export default function StoriesPage() {
     const newType = e.target.value
     router.push(newType === "all" ? "/admin/stories" : `/admin/stories?type=${newType}`)
   }
-
-  const getTypeColor = (type: string) => {
-    switch (type) {
-      case "success":
-        return "from-green-500 to-emerald-500 text-white"
-      case "sad":
-        return "from-blue-500 to-indigo-500 text-white"
-      case "inspirational":
-        return "from-purple-500 to-pink-500 text-white"
-      default:
-        return "from-gray-500 to-slate-500 text-white"
-    }
-  }
-
   return (
     <div className="max-w-7xl mx-auto px-4 py-6">
       <div className="flex items-center mb-8">
@@ -142,11 +108,6 @@ export default function StoriesPage() {
                 </div>
               )}
               <div className="p-5">
-                <div className="flex items-center mb-3">
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${getTypeColor(post.type)} shadow-sm`}>
-                    {post.type}
-                  </span>
-                </div>
                 <h3 className="font-semibold text-2xl mb-2 text-purple-900">{post.title}</h3>
                 <PostContent content={post.content} postId={post.id} />
                 <div className="flex items-center text-lg text-purple-600 border-t border-purple-100 pt-3">
