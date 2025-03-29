@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import FormInput from "@/components/auth/input-field/FormInput";
 import PhotoUpload from "@/components/auth/input-field/PhotoUpload";
-import { validateForm } from "@/utils/validation";
+import { validateRegisterForm } from "@/utils/validation";
 import { useState } from "react";
 import { Eye, EyeOff, User, Mail, Lock } from "lucide-react";
 
@@ -41,7 +41,7 @@ const SignUpForm = () => {
 const handleSubmit = (e: React.FormEvent) => {
   e.preventDefault();
   setError("");
-  const result = validateForm(formData);
+  const result = validateRegisterForm(formData);
 
   if (!result.isValid) {
     const errorMessages = Object.values(result.errors).join(" - ");
