@@ -9,12 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-<<<<<<< HEAD
-    "next": "^15.2.3",
-=======
     "lucide-react": "^0.483.0",
     "next": "15.2.3",
->>>>>>> 8c676f440b1f38fceee37d9a5826f264a54cf869
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0"
