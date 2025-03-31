@@ -2,7 +2,13 @@ import Image from "next/image";
 import React from "react";
 import myPhoto from "@/public/myPhoto.jpg";
 import Link from "next/link";
+<<<<<<< HEAD
+import { FaCalendarAlt } from "react-icons/fa";
 const TrendingBlog = () => {
+  
+=======
+const TrendingBlog = () => {
+>>>>>>> 8c676f440b1f38fceee37d9a5826f264a54cf869
   return (
     <Link
       href="/blogs/1"
@@ -33,7 +39,14 @@ const TrendingBlog = () => {
             </div>
             <span className="text-xs text-gray-600">فيصل أبو زكري</span>
           </div>
+<<<<<<< HEAD
+          <span className="flex items-center gap-1 text-sm text-gray-500">
+            <FaCalendarAlt className="h-4 w-4 text-gray-400" />
+            قبل 3 أيام
+          </span>
+=======
           <span className="text-xs text-gray-500">قبل 3 أيام</span>
+>>>>>>> 8c676f440b1f38fceee37d9a5826f264a54cf869
         </div>
       </div>
     </Link>
