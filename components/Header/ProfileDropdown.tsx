@@ -22,7 +22,7 @@ const ProfileDropdown = () => {
     >
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="flex items-center gap-x-3 focus:outline-none"
+        className="group flex items-center gap-x-3 focus:outline-none cursor-pointer"
       >
         <div className="relative h-10 w-10 overflow-hidden rounded-full">
           <Image
@@ -33,7 +33,10 @@ const ProfileDropdown = () => {
             className="h-full w-full object-cover"
           />
         </div>
-        <span className="hidden text-gray-800 font-medium md:inline-block">
+        <span
+          className="hidden text-gray-800 font-medium md:inline-block
+          group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#3652E1] group-hover:to-[#8057F5]"
+        >
           فيصل أبو زكري
         </span>
       </button>
@@ -43,7 +46,8 @@ const ProfileDropdown = () => {
             <li>
               <Link
                 href="/profile"
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                className="block px-4 py-2 text-gray-700
+                           hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-[#3652E1] hover:to-[#8057F5]"
               >
                 الملف الشخصي
               </Link>
@@ -51,7 +55,8 @@ const ProfileDropdown = () => {
             <li>
               <Link
                 href="/settings"
-                className="block px-4 py-2 text-gray-700 hover:bg-gray-100"
+                className="block px-4 py-2 text-gray-700
+                           hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-[#3652E1] hover:to-[#8057F5]"
               >
                 الإعدادات
               </Link>
@@ -59,7 +64,7 @@ const ProfileDropdown = () => {
             <li>
               <Link
                 href="/logout"
-                className="flex items-center gap-x-1.5 block px-4 py-2 text-red-600 hover:bg-red-100"
+                className="flex items-center gap-x-1.5 block px-4 py-2 text-red-600 hover:text-red-800"
               >
                 <CiLogout className="h-4 w-4" />
                 <span>تسجيل الخروج</span>
