@@ -5,7 +5,9 @@ import BlogModal from "./BlogModal";
 
 const IsOpenModal = () => {
   const { isOpen } = useModal();
-  return <div>{isOpen && <BlogModal />}</div>;
+  return (
+    <div className="bg-gray-600 bg-opacity-100">{isOpen && <BlogModal />}</div>
+  );
 };
 
 export default IsOpenModal;
