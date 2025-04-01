@@ -46,6 +46,7 @@ const ProfileDropdown = () => {
             <li>
               <Link
                 href="/profile"
+                onClick={() => setOpen(false)}
                 className="block px-4 py-2 text-gray-700
                            hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-[#3652E1] hover:to-[#8057F5]"
               >
@@ -55,6 +56,7 @@ const ProfileDropdown = () => {
             <li>
               <Link
                 href="/settings"
+                onClick={() => setOpen(false)}
                 className="block px-4 py-2 text-gray-700
                            hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-[#3652E1] hover:to-[#8057F5]"
               >
@@ -64,6 +66,7 @@ const ProfileDropdown = () => {
             <li>
               <Link
                 href="/logout"
+                onClick={() => setOpen(false)}
                 className="flex items-center gap-x-1.5 block px-4 py-2 text-red-600 hover:text-red-800"
               >
                 <CiLogout className="h-4 w-4" />
