@@ -6,15 +6,14 @@ export async function GET(request: NextRequest) {
   const type = params.get("type");
   let posts = getAllPosts();
   if (type) {
-    posts = posts.filter((post) => post.type === type);
+    posts = posts.filter((post) => post.category === type);
   }
 
   return NextResponse.json(posts, { status: 200 });
 }
-
 export async function DELETE(request: NextRequest) {
   const { id } = await request.json();
-  const isDeleted = deletePost(id);
+  const isDeleted = await deletePost(id);
   if (isDeleted) {
     return NextResponse.json({ message: "Post deleted successfully" });
   } else {

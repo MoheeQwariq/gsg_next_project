@@ -1,12 +1,12 @@
 declare namespace Stories {
   export interface Post {
-    id: number;
+    id: string;
     title: string;
     content: string;
     author: string;
     authorEmail: string;
     image?: string | null;
-    type: 'success' | 'sad' | 'inspirational';
+    category: ' قصص شخصية' | 'قصص شهداء ومفقودين' | 'قصص النزوح واللجوء' |'قصص النزوح واللجوء' |'التعليم وسط الحرب' |'قصص الحياة اليومية الي تحت الحصار';
     createdAt: string;
     userId: number; 
   }

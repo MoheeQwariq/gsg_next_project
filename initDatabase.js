@@ -20,25 +20,26 @@ db.prepare(`
     image TEXT,
     author TEXT NOT NULL,
     authorEmail TEXT NOT NULL,
-    type TEXT NOT NULL CHECK(type IN ('success', 'sad', 'inspirational')),
+    category TEXT NOT NULL CHECK(category IN ('قصص شخصية', 'قصص شهداء ومفقودين', 'قصص النزوح واللجوء', 'التعليم وسط الحرب', 'قصص الحياة اليومية الي تحت الحصار')),
     createdAt TEXT NOT NULL,
     FOREIGN KEY(authorEmail) REFERENCES users(email)
   );
 `).run();
 
 const fakeUsers = [
-  { name: "Admin User", email: "admin@example.com", role: "admin" },
-  { name: "John Doe", email: "johndoe@example.com", role: "user" },
-  { name: "Jane Smith", email: "janesmith@example.com", role: "user" },
-  { name: "seel", email: "seel@example.com", role: "user" },
-  { name: "محمد عبد الله", email: "mohammed@example.com", role: "user" },
-  { name: "أحمد سالم", email: "ahmeds@example.com", role: "user" },
-  { name: "سارة محمود", email: "sarah@example.com", role: "user" },
-  { name: "فاطمة علي", email: "fatima@example.com", role: "user" }
+  { name: "Aseel", email: "aseel@gmail.com", role: "admin", avatar: "/images.jpg" },
+  { name: "Mohee", email: "mohee@example.com", role: "user", avatar: "/images.jpg" },
+  { name: "Lama", email: "lama@example.com", role: "user", avatar: "/images.jpg" },
+  { name: "Faisal", email: "faisal@example.com", role: "user", avatar: "/images.jpg" },
+  { name: "Abd Alsalam", email: "abdalsalam@example.com", role: "user", avatar: null },
+  { name: "أحمد سالم", email: "ahmeds@example.com", role: "user", avatar: null },
+  { name: "سارة محمود", email: "sarah@example.com", role: "user", avatar: null },
+  { name: "فاطمة علي", email: "fatima@example.com", role: "user", avatar: null }
 ];
 
 const insertUser = db.prepare(`
-  INSERT OR IGNORE INTO users (name, email, role) VALUES (@name, @email, @role)
+  INSERT OR IGNORE INTO users (name, email, role, avatar) 
+  VALUES (@name, @email, @role, @avatar)
 `);
 
 for (const user of fakeUsers) {
@@ -49,42 +50,50 @@ const getUserByEmail = db.prepare(`SELECT name FROM users WHERE email = ?`).pluc
 
 const fakePosts = [
   {
-    title: "قصص نجاح في قطاع غزة: تجاوز التحديات الاقتصادية",
-    content: "رغم الظروف الاقتصادية الصعبة في غزة، تمكن عدد من رواد الأعمال من تأسيس شركات مبتكرة ...",
-    image: "https://example.com/gaza-success-story.jpg",
-    authorEmail: "mohammed@example.com",
-    type: "success",
+    title: "رحلتي في البحث عن جذوري",
+    content: "لطالما سمعت قصصًا عن أجدادي الذين فقدوا أرضهم خلال النكبة، لكنني لم أدرك عمق المأساة حتى بدأت البحث بنفسي...",
+    image: "/download (1).jpg",
+    authorEmail: "mohee@example.com",
+    category: "قصص شخصية",
     createdAt: "2025-03-26"
   },
   {
-    title: "التحديات التي يواجهها المطورون في غزة",
-    content: "يواجه المطورون في غزة العديد من التحديات، مثل نقص المعدات التقنية...",
-    image: "https://example.com/challenges-in-gaza.jpg",
+    title: "استشهاد صديقي في الحرب",
+    content: "في أحد الأيام، كنا نلعب في الحي كما نفعل دائمًا، ولكن تلك الليلة كانت الأخيرة لصديقي خالد...",
+    image: "/download (1).jpg",
     authorEmail: "ahmeds@example.com",
-    type: "success",
+    category: "قصص شهداء ومفقودين",
     createdAt: "2025-03-27"
   },
   {
-    title: "مبادرات شبابية من غزة لتطوير البرمجة",
-    content: "بدأت العديد من المبادرات الشبابية في غزة بتقديم ورش عمل ودورات تعليمية...",
-    image: null,
+    title: "نزوح قسري تحت القصف",
+    content: "في منتصف الليل، اضطررنا لحزم أمتعتنا والهروب من منزلنا بعد أن أصبح هدفًا للصواريخ...",
+    image: "/download (1).jpg",
     authorEmail: "sarah@example.com",
-    type: "success",
+    category: "قصص النزوح واللجوء",
     createdAt: "2025-03-28"
   },
   {
-    title: "أهمية الأمن الإلكتروني في غزة",
-    content: "في غزة، يعد الأمن الإلكتروني أمرًا بالغ الأهمية، حيث تكافح المؤسسات المحلية...",
-    image: "https://example.com/cybersecurity-gaza.jpg",
+    title: "التعليم في ظل الحرب: تحديات بلا حدود",
+    content: "بينما كنت أحاول إنهاء دراستي الجامعية، أصبح الوصول إلى الإنترنت والكهرباء معركة يومية...",
+    image: "/download (1).jpg",
     authorEmail: "fatima@example.com",
-    type: "sad",
+    category: "التعليم وسط الحرب",
     createdAt: "2025-03-29"
+  },
+  {
+    title: "الحياة اليومية تحت الحصار",
+    content: "شراء الطعام، الحصول على الماء، وحتى الذهاب إلى المستشفى أصبحت مهام محفوفة بالمخاطر...",
+    image: null,
+    authorEmail: "abdalsalam@example.com",
+    category: "قصص الحياة اليومية الي تحت الحصار",
+    createdAt: "2025-03-30"
   }
 ];
 
 const insertPost = db.prepare(`
-  INSERT INTO posts (title, content, image, author, authorEmail, type, createdAt)
-  VALUES (@title, @content, @image, @author, @authorEmail, @type, @createdAt)
+  INSERT INTO posts (title, content, image, author, authorEmail, category, createdAt)
+  VALUES (@title, @content, @image, @author, @authorEmail, @category, @createdAt)
 `);
 
 for (const post of fakePosts) {
@@ -92,5 +101,7 @@ for (const post of fakePosts) {
   if (authorName) {
     post.author = authorName; 
     insertPost.run(post);
-  } 
+  }
 }
+
+

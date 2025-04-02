@@ -1,28 +1,26 @@
-'use client';
-import { useState } from "react";
+"use client"
 
-interface PostContentProps {
-    content: string;
-    postId: number;
+import { useState } from "react"
+
+export default function PostContent({ content, postId }: { content: string; postId: string }) {
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  const maxLength = 150
+  const shouldTruncate = content.length > maxLength
+  const truncatedContent = shouldTruncate && !isExpanded ? content.substring(0, maxLength) + "..." : content
+
+  return (
+    <div className="mb-4">
+      <p className="text-gray-600">{truncatedContent}</p>
+      {shouldTruncate && (
+        <button
+          onClick={() => setIsExpanded(!isExpanded)}
+          className="text-purple-500 hover:text-purple-700 text-sm mt-1 focus:outline-none"
+        >
+          {isExpanded ? "عرض أقل" : "قراءة المزيد"}
+        </button>
+      )}
+    </div>
+  )
 }
 
-const PostContent: React.FC<PostContentProps> = ({ content, postId }) => {
-    const [expandedPost, setExpandedPost] = useState<number | null>(null);
-
-    const handleToggleContent = (postId: number) => {
-        setExpandedPost(expandedPost === postId ? null : postId);
-    };
-
-    return (
-        <div>
-            <p>
-                {expandedPost === postId ? content : `${content.slice(0, 100)}...`}
-            </p>
-            <button onClick={() => handleToggleContent(postId)}>
-                {expandedPost === postId ? 'Show Less' : 'Read More'}
-            </button>
-        </div>
-    );
-};
-
-export default PostContent;
