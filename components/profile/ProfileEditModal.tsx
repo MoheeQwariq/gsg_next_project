@@ -6,6 +6,12 @@ import { FaTimes } from "react-icons/fa";
 export interface UserProfile {
   name: string;
   bio: string;
+  avatarUrl: string;
+  coverUrl?: string;
+  x?: string;
+  facebook?: string;
+  instagram?: string;
+  linkedin?: string;
   phone?: string;
   email?: string;
 }
@@ -27,7 +33,9 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -46,15 +54,18 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
         className="relative w-full max-w-2xl rounded-xl bg-white p-6 shadow-xl max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="mb-6 flex items-center justify-between border-b pb-4">
-          <h2 className="text-2xl font-bold">تعديل الملف الشخصي</h2>
-          <button onClick={onClose} className="rounded-full p-2">
+        <div className="mb-6 flex items-center justify-between border-b border-gray-200 pb-4">
+          <h2 className="text-2xl font-bold text-gray-900">تعديل الملف الشخصي</h2>
+          <button
+            onClick={onClose}
+            className="rounded-full p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+          >
             <FaTimes className="h-5 w-5" />
           </button>
         </div>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label htmlFor="name" className="block text-sm font-medium">
+            <label htmlFor="name" className="mb-2 block text-sm font-medium text-gray-700">
               الاسم
             </label>
             <input
@@ -63,13 +74,14 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
               name="name"
               value={formData.name}
               onChange={handleChange}
+              placeholder="أدخل الاسم..."
               required
-              className="w-full border rounded p-2"
+              className="w-full rounded-lg border border-gray-300 p-3 text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
           <div>
-            <label htmlFor="bio" className="block text-sm font-medium">
-              النبذة
+            <label htmlFor="bio" className="mb-2 block text-sm font-medium text-gray-700">
+              النبذة التعريفية
             </label>
             <textarea
               id="bio"
@@ -77,11 +89,68 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
               rows={3}
               value={formData.bio}
               onChange={handleChange}
-              className="w-full border rounded p-2"
+              placeholder="اكتب نبذة قصيرة عنك..."
+              className="w-full rounded-lg border border-gray-300 p-3 text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            ></textarea>
+          </div>
+          <div>
+            <label htmlFor="x" className="mb-2 block text-sm font-medium text-gray-700">
+              X
+            </label>
+            <input
+              type="url"
+              id="x"
+              name="x"
+              value={formData.x || ""}
+              onChange={handleChange}
+              placeholder="رابط X"
+              className="w-full rounded-lg border border-gray-300 p-3 text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
           <div>
-            <label htmlFor="phone" className="block text-sm font-medium">
+            <label htmlFor="facebook" className="mb-2 block text-sm font-medium text-gray-700">
+              فيسبوك
+            </label>
+            <input
+              type="url"
+              id="facebook"
+              name="facebook"
+              value={formData.facebook || ""}
+              onChange={handleChange}
+              placeholder="رابط فيسبوك"
+              className="w-full rounded-lg border border-gray-300 p-3 text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label htmlFor="instagram" className="mb-2 block text-sm font-medium text-gray-700">
+              انستجرام
+            </label>
+            <input
+              type="url"
+              id="instagram"
+              name="instagram"
+              value={formData.instagram || ""}
+              onChange={handleChange}
+              placeholder="رابط انستجرام"
+              className="w-full rounded-lg border border-gray-300 p-3 text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label htmlFor="linkedin" className="mb-2 block text-sm font-medium text-gray-700">
+              لينكد إن
+            </label>
+            <input
+              type="url"
+              id="linkedin"
+              name="linkedin"
+              value={formData.linkedin || ""}
+              onChange={handleChange}
+              placeholder="رابط لينكد إن"
+              className="w-full rounded-lg border border-gray-300 p-3 text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            />
+          </div>
+          <div>
+            <label htmlFor="phone" className="mb-2 block text-sm font-medium text-gray-700">
               رقم الهاتف
             </label>
             <input
@@ -90,11 +159,12 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
               name="phone"
               value={formData.phone || ""}
               onChange={handleChange}
-              className="w-full border rounded p-2"
+              placeholder="أدخل رقم الهاتف"
+              className="w-full rounded-lg border border-gray-300 p-3 text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
           <div>
-            <label htmlFor="email" className="block text-sm font-medium">
+            <label htmlFor="email" className="mb-2 block text-sm font-medium text-gray-700">
               البريد الإلكتروني
             </label>
             <input
@@ -103,14 +173,22 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
               name="email"
               value={formData.email || ""}
               onChange={handleChange}
-              className="w-full border rounded p-2"
+              placeholder="أدخل البريد الإلكتروني"
+              className="w-full rounded-lg border border-gray-300 p-3 text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             />
           </div>
-          <div className="flex justify-end gap-3">
-            <button type="button" onClick={onClose} className="border rounded px-4 py-2">
+          <div className="flex justify-end gap-3 pt-4">
+            <button
+              type="button"
+              onClick={onClose}
+              className="rounded-lg border border-gray-300 bg-white px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50"
+            >
               إلغاء
             </button>
-            <button type="submit" className="bg-blue-600 text-white rounded px-4 py-2">
+            <button
+              type="submit"
+              className="rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm hover:from-blue-700 hover:to-indigo-700"
+            >
               حفظ التغييرات
             </button>
           </div>

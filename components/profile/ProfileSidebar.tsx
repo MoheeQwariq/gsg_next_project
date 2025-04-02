@@ -39,9 +39,9 @@ const ProfileSidebar = () => {
             />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-gray-900">جين دو</h3>
+            <h3 className="text-lg font-bold text-gray-900">فيصل أبو زكري  </h3>
             <p className="text-sm text-gray-600">
-              كاتبة ومطورة شغوفة. أحب استكشاف التقنيات الجديدة.
+              كاتب ومطور شغوف. أحب استكشاف التقنيات الجديدة.
             </p>
           </div>
         </div>

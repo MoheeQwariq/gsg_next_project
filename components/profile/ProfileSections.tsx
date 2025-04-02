@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
+import { FaPen } from "react-icons/fa";
 import AddSectionModal from "./AddSectionModal";
+import EditSectionModal from "./EditSectionModal";
 
 type SectionAlignment = "left" | "right";
 
@@ -16,13 +19,41 @@ interface ProfileSection {
 export default function ProfileSections() {
   const [sections, setSections] = useState<ProfileSection[]>([]);
   const [modalOpen, setModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
+  const [editingSection, setEditingSection] = useState<ProfileSection | null>(null);
 
   const openModal = () => setModalOpen(true);
   const closeModal = () => setModalOpen(false);
 
+  const openEditModal = (section: ProfileSection) => {
+    setEditingSection(section);
+    setEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setEditingSection(null);
+    setEditModalOpen(false);
+  };
+
   const handleAddSection = (newSection: Omit<ProfileSection, "id">) => {
-    setSections(prev => [...prev, { id: Date.now(), ...newSection }]);
+    setSections((prev) => [...prev, { id: Date.now(), ...newSection }]);
     closeModal();
+  };
+
+  const handleUpdateSection = (updated: {
+    heading: string;
+    content: string;
+    imageUrl: string;
+    alignment: "left" | "right";
+  }) => {
+    if (editingSection) {
+      setSections((prev) =>
+        prev.map((sec) =>
+          sec.id === editingSection.id ? { ...sec, ...updated } : sec
+        )
+      );
+      closeEditModal();
+    }
   };
 
   return (
@@ -36,7 +67,7 @@ export default function ProfileSections() {
         </button>
       </div>
 
-      {sections.map(section => {
+      {sections.map((section) => {
         const isImageLeft = section.alignment === "left";
         return (
           <div
@@ -45,25 +76,38 @@ export default function ProfileSections() {
           >
             {isImageLeft && (
               <div className="relative h-64 w-full">
-                <img
+                <Image
                   src={section.imageUrl}
                   alt={section.heading}
-                  className="h-full w-full object-cover"
+                  fill
+                  className="object-cover"
                 />
               </div>
             )}
+
             <div className="p-6 text-right flex flex-col justify-center">
-              <h2 className="mb-2 text-xl font-bold text-gray-900 text-right">
-                {section.heading}
-              </h2>
+              <div className="flex flex-row-reverse items-center justify-end gap-2">
+                <button
+                  onClick={() => openEditModal(section)}
+                  className="text-gray-500 hover:text-gray-700"
+                  title="تعديل القسم"
+                >
+                  <FaPen className="w-5 h-5" />
+                </button>
+                <h2 className="mb-2 text-xl font-bold text-gray-900 text-right">
+                  {section.heading}
+                </h2>
+              </div>
               <p className="text-gray-600 text-right">{section.content}</p>
             </div>
+
             {!isImageLeft && (
               <div className="relative h-64 w-full order-first md:order-none">
-                <img
+                <Image
                   src={section.imageUrl}
                   alt={section.heading}
-                  className="h-full w-full object-cover"
+                  fill
+                  className="object-cover"
                 />
               </div>
             )}
@@ -76,6 +120,20 @@ export default function ProfileSections() {
         onClose={closeModal}
         onAddSection={handleAddSection}
       />
+
+      {editingSection && (
+        <EditSectionModal
+          isOpen={editModalOpen}
+          onClose={closeEditModal}
+          onSave={handleUpdateSection}
+          currentData={{
+            heading: editingSection.heading,
+            content: editingSection.content,
+            imageUrl: editingSection.imageUrl,
+            alignment: editingSection.alignment,
+          }}
+        />
+      )}
     </div>
   );
 }
