@@ -2,6 +2,7 @@
 import { useModal } from "@/context/ModalContext";
 import { FaTimes } from "react-icons/fa";
 import { MdOutlineCloudUpload } from "react-icons/md";
+import { categories } from "@/constant/constant";
 
 const BlogModal = () => {
   const { isOpen, handleModal } = useModal();
@@ -53,12 +54,13 @@ const BlogModal = () => {
               id="category"
               className="w-full rounded-lg border border-gray-300 p-3 text-gray-700 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
             >
-              <option value="">اختر تصنيف...</option>
-              <option value="personal">قصص شخصية</option>
-              <option value="martyrs">قصص شهداء ومفقودين</option>
-              <option value="displacement">قصص النزوح واللجوء</option>
-              <option value="education">التعليم وسط الحرب</option>
-              <option value="media">قصص من الاعلام والصحافة</option>
+              {categories.map((category: string) => {
+                return (
+                  <option value={category} key={category}>
+                    {category}
+                  </option>
+                );
+              })}
             </select>
           </div>
           <div>
