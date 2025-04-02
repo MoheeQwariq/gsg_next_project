@@ -1,14 +1,10 @@
-import Image from "next/image";
-import Link from "next/link";
 import React from "react";
-import myPhoto from "../../public/myPhoto.jpg";
 import NavLink from "./NavLink";
-
-import { CiLogout } from "react-icons/ci";
+import ProfileDropdown from "./ProfileDropdown"; 
 
 const NavBar = () => {
   return (
-    <header className="sticky top-0 z-10  backdrop-blur-sm bg-[#EFEFEF] ">
+    <header className="sticky top-0 z-10 backdrop-blur-sm bg-[#EFEFEF]">
       <div className="container mx-auto flex items-center justify-between border-b border-gray-200 px-4 py-4 border-b-gray-900">
         {/* عنوان الموقع */}
         <h1 className="text-2xl font-bold">
@@ -23,30 +19,8 @@ const NavBar = () => {
           <NavLink href="/blogs">المقالات</NavLink>
         </nav>
 
-        {/* تسجيل الخروج و الصورة الشخصية */}
-        <div className="flex items-center gap-x-4">
-          <div className="flex items-center gap-x-3">
-            <div className="relative h-10 w-10 overflow-hidden rounded-full ">
-              <Image
-                src={myPhoto}
-                alt="فيصل أبو زكري"
-                width={40}
-                height={40}
-                className="h-full w-full object-cover"
-              />
-            </div>
-            <span className="hidden text-gray-800 font-medium md:inline-block">
-              فيصل أبو زكري
-            </span>
-          </div>
-          <Link
-            href="/"
-            className="flex items-center gap-x-1.5 rounded-full bg-red-50 px-3 py-1.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-100"
-          >
-            <span>تسجيل الخروج</span>
-            <CiLogout className="h-4 w-4" />
-          </Link>
-        </div>
+        {/* استخدم القائمة المنسدلة للملف الشخصي */}
+        <ProfileDropdown />
       </div>
     </header>
   );
