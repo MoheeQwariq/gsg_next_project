@@ -203,15 +203,15 @@ export default function UsersPage() {
                 ))}
               </div>
 
-              {/* Pagination Controls */}
+
               {totalPages > 1 && (
                 <div className="mt-8 flex justify-center items-center gap-2 select-none">
                   <button
                     onClick={goToPreviousPage}
                     disabled={currentPage === 1}
                     className={`w-10 h-10 rounded-full flex items-center justify-center ${currentPage === 1
-                        ? "text-gray-400 cursor-not-allowed"
-                        : "bg-blue-100 text-blue-600 hover:bg-blue-200"
+                      ? "text-gray-400 cursor-not-allowed"
+                      : "bg-blue-100 text-blue-600 hover:bg-blue-200"
                       }`}
                   >
                     <FaChevronRight className="text-sm" />
@@ -223,10 +223,10 @@ export default function UsersPage() {
                         key={index}
                         onClick={() => (typeof page === "number" ? goToPage(page) : null)}
                         className={`w-10 h-10 rounded-full flex items-center justify-center ${page === currentPage
-                            ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-medium"
-                            : page === "..."
-                              ? "text-blue-600"
-                              : "bg-blue-50 text-blue-600 hover:bg-blue-100"
+                          ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-medium"
+                          : page === "..."
+                            ? "text-blue-600"
+                            : "bg-blue-50 text-blue-600 hover:bg-blue-100"
                           }`}
                         disabled={page === "..."}
                       >
@@ -239,8 +239,8 @@ export default function UsersPage() {
                     onClick={goToNextPage}
                     disabled={currentPage === totalPages}
                     className={`w-10 h-10 rounded-full flex items-center justify-center ${currentPage === totalPages
-                        ? "text-gray-400 cursor-not-allowed"
-                        : "bg-blue-100 text-blue-600 hover:bg-blue-200"
+                      ? "text-gray-400 cursor-not-allowed"
+                      : "bg-blue-100 text-blue-600 hover:bg-blue-200"
                       }`}
                   >
                     <FaChevronLeft className="text-sm" />
@@ -248,7 +248,6 @@ export default function UsersPage() {
                 </div>
               )}
 
-              {/* Pagination Info */}
               <div className="mt-4 text-center text-sm text-blue-600">
                 عرض {indexOfFirstItem + 1} - {Math.min(indexOfLastItem, filteredUsers.length)} من {filteredUsers.length}{" "}
                 مستخدم
