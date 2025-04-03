@@ -83,7 +83,7 @@ export default function AdminDashboard() {
             </div>
           </div>
           <div className="text-4xl font-bold text-indigo-800 mb-2">{loading ? "..." : totalUsers}</div>
-          <Link href="/admin/users" className="text-indigo-500 hover:text-indigo-700 text-sm flex items-center">
+          <Link href="/admin/Users" className="text-indigo-500 hover:text-indigo-700 text-sm flex items-center">
             عرض المستخدمين
             <FaArrowRight className="h-4 w-4 mr-1" />
           </Link>
