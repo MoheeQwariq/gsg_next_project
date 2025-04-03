@@ -13,15 +13,10 @@ export default function AdminLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ar" dir="rtl">
-      <body>
-        <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 to-indigo-50">
-          <Navbar />
-          <main className="flex-1">
-         {children}</main>
-        </div>
-      </body>
-    </html>
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 to-indigo-50">
+      <Navbar />
+      <main className="flex-1">{children}</main>
+    </div>
   )
 }
 
