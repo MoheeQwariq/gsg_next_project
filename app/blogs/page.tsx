@@ -1,9 +1,9 @@
 import AddBlogButton from "@/components/blog/AddBlogButton";
-import CardBlog from "@/components/blog/CardBlog";
 import Categories from "@/components/blog/Categories";
 import IsOpenModal from "@/components/blog/IsOpenModal";
 import SearchBlogs from "@/components/blog/SearchBlogs";
 import React from "react";
+import BlogsList from "@/components/blog/BlogsList";
 
 const page = () => {
   return (
@@ -20,15 +20,7 @@ const page = () => {
         <Categories />
       </div>
       <div className="space-y-6 ">
-        <CardBlog />
-        <CardBlog />
-        <CardBlog />
-        <CardBlog />
-        <CardBlog />
-        <CardBlog />
-        <CardBlog />
-        <CardBlog />
-        <CardBlog />
+        <BlogsList />
       </div>
 
       <IsOpenModal />
