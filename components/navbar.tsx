@@ -17,7 +17,7 @@ export default function Navbar() {
     },
     {
       name: "المستخدمون",
-      href: "/admin/users",
+      href: "/admin/Users",
       icon: <FaUsers className="text-blue-400" />,
     },
     {
