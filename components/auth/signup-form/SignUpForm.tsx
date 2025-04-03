@@ -25,36 +25,36 @@ const SignUpForm = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
- const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const { name, value, files } = e.target;
-  if (error) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, files } = e.target;
+    if (error) {
+      setError("");
+    }
+    if (name === "photo" && files && files.length > 0) {
+      setFormData({ ...formData, photo: files[0] });
+      setPreviewUrl(URL.createObjectURL(files[0]));
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     setError("");
-  }
-  if (name === "photo" && files && files.length > 0) {
-    setFormData({ ...formData, photo: files[0] });
-    setPreviewUrl(URL.createObjectURL(files[0]));
-  } else {
-    setFormData({ ...formData, [name]: value });
-  }
-};
+    const result = validateRegisterForm(formData);
 
-const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault();
-  setError("");
-  const result = validateRegisterForm(formData);
+    if (!result.isValid) {
+      const errorMessages = Object.values(result.errors).join(" - ");
+      setError(errorMessages || "حدث خطأ غير متوقع");
+      return;
+    }
 
-  if (!result.isValid) {
-    const errorMessages = Object.values(result.errors).join(" - ");
-    setError(errorMessages || "حدث خطأ غير متوقع");
-    return;
-  }
-
-  console.log("تم التسجيل بنجاح", formData);
-  setFormData(initialFormData);
-  setPreviewUrl(null);
-  const inputs = document.querySelectorAll("input");
-  inputs.forEach((input) => (input.value = ""));
-};
+    console.log("تم التسجيل بنجاح", formData);
+    setFormData(initialFormData);
+    setPreviewUrl(null);
+    const inputs = document.querySelectorAll("input");
+    inputs.forEach((input) => (input.value = ""));
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4 rtl">

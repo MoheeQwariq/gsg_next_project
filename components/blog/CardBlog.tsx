@@ -9,14 +9,17 @@ const CardBlog = () => {
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md">
       <div className="grid grid-cols-1 md:grid-cols-3">
-        <div className="relative h-60 w-full md:h-full">
-          <Image
-            src={photo}
-            alt="عنوان المقالة"
-            fill
-            className="object-cover"
-          />
-        </div>
+        <Link href="/blogs/1" className="block">
+          <div className="relative h-60 w-full md:h-full">
+            <Image
+              src={photo}
+              alt="عنوان المقالة"
+              fill
+              className="object-cover"
+            />
+          </div>
+        </Link>
+
         <div className="flex flex-col p-5 md:col-span-2">
           <div className="mb-2 flex items-center justify-between">
             <span className="rounded-lg bg-blue-50 px-3 py-1 text-xs font-medium text-blue-700">
@@ -49,13 +52,19 @@ const CardBlog = () => {
 
               <div className="flex items-center gap-4 text-sm text-gray-500">
                 <div className="flex items-center gap-1 transition-colors hover:text-red-600">
-                  <CiHeart className="text-red-500" size={20} />
+                  <CiHeart className="text-red-500 cursor-pointer" size={20} />
                   <span>1</span>
                 </div>
-                <div className="flex items-center gap-1 transition-colors hover:text-blue-600">
-                  <PiChatDots className="text-blue-500" size={20} />
-                  <span>1</span>
-                </div>
+
+                <Link href="/blogs/1">
+                  <div className="flex items-center gap-1 transition-colors hover:text-blue-600">
+                    <PiChatDots
+                      className="text-blue-500 cursor-pointer"
+                      size={20}
+                    />
+                    <span>1</span>
+                  </div>
+                </Link>
               </div>
             </div>
 
