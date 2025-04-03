@@ -27,8 +27,7 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "components/Header/navBar.jsx",
-    "initDatabase.js"
+    "components/Header/navBar.jsx"
   ],
   "exclude": ["node_modules"]
 }
