@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import NavBar from "../components/Header/NavBar";
+import { AuthProvider } from "@/context/AuthContext";
+import { ModalWrapper } from "@/context/ModalContext";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -13,12 +16,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl">
-      <body
-
-      >
-
-        {children}
-
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#EFEFEF]`}>
+        <AuthProvider>
+          <NavBar />
+          <ModalWrapper>{children}</ModalWrapper>
+        </AuthProvider>
       </body>
     </html>
   );
