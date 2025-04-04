@@ -2,166 +2,117 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import {
-  FaPen,
-  FaFacebook,
-  FaInstagram,
-  FaLinkedin,
-  FaPhone,
-  FaEnvelope,
-} from "react-icons/fa";
-import ProfileEditModal, { UserProfile } from "./ProfileEditModal";
+import { FaPen, FaFacebook, FaLinkedin, FaPhone, FaEnvelope } from "react-icons/fa";
+import ProfileEditModal from "./ProfileHeaderEditModal";
+import type { UserProfile } from "@/types/profile";
+import profileHeaderStyles from "@/styles/profileHeader";
 
-type User = {
-  id: number;
-  name: string;
-  bio: string;
-  avatarUrl: string;
-  coverUrl?: string;
-  x?: string;
-  facebook?: string;
-  instagram?: string;
-  linkedin?: string;
-  phone?: string;
-  email?: string;
-};
-
-interface ProfileHeaderProps {
-  user: User;
-  isOwner?: boolean;
+interface IProps {
+  profile: UserProfile;
+  isOwner: boolean;
 }
 
-export default function ProfileHeader({
-  user,
-  isOwner = false,
-}: ProfileHeaderProps) {
+export default function ProfileHeader({ profile, isOwner = false }: IProps) {
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [userData, setUserData] = useState<UserProfile>({
-    name: user.name,
-    bio: user.bio,
-    avatarUrl: user.avatarUrl,
-    coverUrl: user.coverUrl,
-    x: user.x,
-    facebook: user.facebook,
-    instagram: user.instagram,
-    linkedin: user.linkedin,
-    phone: user.phone,
-    email: user.email,
-  });
+  const [profileData, setProfileData] = useState<UserProfile>(profile);
 
   const openEditModal = () => setEditModalOpen(true);
   const closeEditModal = () => setEditModalOpen(false);
 
   const handleSave = (updatedData: UserProfile) => {
-    setUserData(updatedData);
+    setProfileData(updatedData);
     setEditModalOpen(false);
   };
 
   return (
-    <div
-      className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
-      dir="rtl"
-    >
-      {userData.coverUrl && (
-        <div className="relative h-48 w-full">
-          <Image
-            src={userData.coverUrl}
-            alt="صورة الغلاف"
-            fill
-            className="object-cover"
-          />
-        </div>
-      )}
-      <div className="relative p-6">
-        <div className="absolute -top-12 right-6">
-          <div className="relative h-24 w-24 overflow-hidden rounded-full border-4 border-white shadow-md">
+    <div className={profileHeaderStyles.container} dir="rtl">
+      <div className={profileHeaderStyles.cover}>
+        <Image
+          src={profileData.coverUrl || "/blog-image.jpg"}
+          alt="صورة الغلاف"
+          fill
+          className={profileHeaderStyles.coverImage}
+        />
+      </div>
+      
+      <div className={profileHeaderStyles.content}>
+        <div className={profileHeaderStyles.avatarWrapper}>
+          <div className={profileHeaderStyles.avatarContainer}>
             <Image
-              src={userData.avatarUrl}
-              alt={userData.name}
+              src={profileData.avatarUrl || "user.svg"}
+              alt={profileData.user.name}
               fill
-              className="object-cover"
+              className={profileHeaderStyles.avatarImage}
             />
           </div>
         </div>
-        <div className="mt-12 text-right">
-          <div className="flex flex-row-reverse items-center justify-end gap-2">
+        <div className={profileHeaderStyles.infoContainer}>
+          <div className={profileHeaderStyles.headerRow}>
             {isOwner && (
               <button
                 onClick={openEditModal}
-                className="text-gray-500 hover:text-gray-700"
+                className={profileHeaderStyles.editButton}
                 title="تحرير الملف الشخصي"
               >
                 <FaPen />
               </button>
             )}
-            <h2 className="text-2xl font-bold text-gray-900">
-              {userData.name}
+            <h2 className={profileHeaderStyles.name}>
+              {profileData.user.name}
             </h2>
           </div>
 
-          <p className="mt-2 text-gray-600 text-right">{userData.bio}</p>
+          <p className={profileHeaderStyles.bio}>{profileData.bio}</p>
 
-          {(userData.phone || userData.email) && (
-            <div className="mt-4 flex flex-col  justify-end gap-4 text-sm text-gray-500">
-              {userData.phone && (
-                <div className="flex   justify-first  items-center gap-1">
+          {(profileData.phoneNumber || profileData.user.email) && (
+            <div className={profileHeaderStyles.contactContainer}>
+              {profileData.phoneNumber && (
+                <div className={profileHeaderStyles.contactRow}>
                   <FaPhone className="text-blue-500" />
-                  <span>{userData.phone}</span>
+                  <span>{profileData.phoneNumber}</span>
                 </div>
               )}
-              {userData.email && (
-                <div className="flex items-center gap-1">
+              {profileData.user.email && (
+                <div className={profileHeaderStyles.contactRow}>
                   <FaEnvelope className="text-green-500" />
-                  <span>{userData.email}</span>
+                  <span>{profileData.user.email}</span>
                 </div>
               )}
             </div>
           )}
 
-          {(userData.x ||
-            userData.facebook ||
-            userData.instagram ||
-            userData.linkedin) && (
-            <div className="mt-4 flex flex-row-reverse items-center justify-start gap-4 text-xl text-gray-400">
-              {userData.x && (
+          {(profileData.XUrl ||
+            profileData.facebookUrl ||
+            profileData.linkedinUrl) && (
+            <div className={profileHeaderStyles.socialContainer}>
+              {profileData.XUrl && (
                 <a
-                  href={userData.x}
+                  href={profileData.XUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-blue-400"
+                  className={profileHeaderStyles.socialLinkX}
                   aria-label="X"
                 >
                   <span className="font-bold">X</span>
                 </a>
               )}
-              {userData.facebook && (
+              {profileData.facebookUrl && (
                 <a
-                  href={userData.facebook}
+                  href={profileData.facebookUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-blue-600"
+                  className={profileHeaderStyles.socialLinkFacebook}
                   aria-label="Facebook"
                 >
                   <FaFacebook />
                 </a>
               )}
-              {userData.instagram && (
+              {profileData.linkedinUrl && (
                 <a
-                  href={userData.instagram}
+                  href={profileData.linkedinUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-pink-500"
-                  aria-label="Instagram"
-                >
-                  <FaInstagram />
-                </a>
-              )}
-              {userData.linkedin && (
-                <a
-                  href={userData.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-blue-500"
+                  className={profileHeaderStyles.socialLinkLinkedin}
                   aria-label="LinkedIn"
                 >
                   <FaLinkedin />
@@ -176,7 +127,7 @@ export default function ProfileHeader({
         isOpen={editModalOpen}
         onClose={closeEditModal}
         onSave={handleSave}
-        currentData={userData}
+        currentData={profileData}
       />
     </div>
   );
