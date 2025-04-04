@@ -8,7 +8,7 @@ import React from "react";
 const page = () => {
   return (
     <>
-      <div className="mb-6 flex flex-col justify-between gap-4 border-b border-gray-200 pb-4 sm:flex-row sm:items-center">
+      <div className="mb-6 flex flex-col justify-between gap-4 border-b border-gray-200 pb-4 sm:flex-row sm:items-center">z
         <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-[#3652E1] to-[#8057F5]">
           المقالات
         </h1>
@@ -20,7 +20,7 @@ const page = () => {
         <Categories />
       </div>
       <div className="space-y-6 ">
-        <CardBlog />
+        <CardBlog  />
         <CardBlog />
         <CardBlog />
         <CardBlog />
