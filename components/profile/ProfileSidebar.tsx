@@ -7,6 +7,7 @@ import ProfileStats from "./ProfileStats";
 import ProfileInteractions from "./ProfileInteractions";
 import { useProfile } from "@/context/ProfileContext";
 import { useAuth } from "@/context/AuthContext";
+import Link from "next/link";
 
 const ProfileSidebar = () => {
   const { profile } = useProfile();
@@ -62,14 +63,14 @@ const ProfileSidebar = () => {
         <h3 className="mb-2 text-lg font-bold text-gray-900">روابط سريعة</h3>
         <ul className="space-y-2">
           <li>
-            <a href="/profile" className="block text-blue-600 hover:underline">
+            <Link href="/profile" className="block text-blue-600 hover:underline">
               الملف الشخصي
-            </a>
+            </Link>
           </li>
           <li>
-            <a href="/settings" className="block text-blue-600 hover:underline">
+            <Link href="/settings" className="block text-blue-600 hover:underline">
               الإعدادات
-            </a>
+            </Link>
           </li>
           <li>
             <button onClick={logout} className="block text-red-600 hover:underline">
