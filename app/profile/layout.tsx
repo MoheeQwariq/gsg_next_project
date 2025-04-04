@@ -1,5 +1,8 @@
-import React from "react";
+import React, { Suspense } from "react";
 import ProfileSidebar from "@/components/profile/ProfileSidebar";
+import ProfileSkeleton from "@/components/profile/ProfileSkeleton";
+import SideBarPageSkeleton from "@/components/profile/SideBarSkeleton";
+import profileLayoutStyles from "@/styles/profileLayout";
 
 export default function ProfileLayout({
   children,
@@ -7,11 +10,17 @@ export default function ProfileLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="container mx-auto px-4 py-8" dir="rtl">
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
-        <div className="order-1 lg:col-span-3">{children}</div>
-        <div className="order-2 lg:sticky lg:top-24 lg:self-start">
-          <ProfileSidebar />
+    <div className={profileLayoutStyles.container} dir={profileLayoutStyles.dir}>
+      <div className={profileLayoutStyles.grid}>
+        <div className={profileLayoutStyles.main}>
+          <Suspense fallback={<ProfileSkeleton />}>
+            {children}
+          </Suspense>
+        </div>
+        <div className={profileLayoutStyles.sidebar}>
+          <Suspense fallback={<SideBarPageSkeleton />}>
+            <ProfileSidebar />
+          </Suspense>
         </div>
       </div>
     </div>
