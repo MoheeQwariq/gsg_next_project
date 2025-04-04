@@ -25,16 +25,13 @@ export default function EditSectionModal({
   onSave,
   currentData,
 }: EditSectionModalProps) {
-  // Group text fields in one state.
   const [formState, setFormState] = useState<SectionFormState>({
     title: currentData.title,
     content: currentData.content,
     imageDirection: currentData.imageDirection || "left",
   });
-  // Local state for file upload.
   const [file, setFile] = useState<File | null>(null);
 
-  // Helper to convert file to base64.
   const fileToBase64 = (file: File): Promise<string> =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -49,7 +46,6 @@ export default function EditSectionModal({
       reader.readAsDataURL(file);
     });
 
-  // Update form state.
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
@@ -57,14 +53,12 @@ export default function EditSectionModal({
     setFormState((prev) => ({ ...prev, [name]: value }));
   };
 
-  // File change handler.
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
     }
   };
 
-  // Submit form.
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     let base64Image = currentData.imageUrl;
@@ -77,7 +71,6 @@ export default function EditSectionModal({
       imageUrl: base64Image || "",
       imageDirection: formState.imageDirection,
     };
-    // Call service to update the section.
     const updatedSection = await updateProfileSection(
       currentData.id,
       updatedSectionData
@@ -162,7 +155,7 @@ export default function EditSectionModal({
   );
 }
 
-// Reusable InputField component.
+
 interface InputFieldProps {
   label: string;
   name: string;
@@ -228,7 +221,7 @@ const InputField: React.FC<InputFieldProps> = ({
   );
 };
 
-// Reusable FileUploadField component.
+
 interface FileUploadFieldProps {
   label: string;
   file: File | null;

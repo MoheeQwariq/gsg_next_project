@@ -39,7 +39,7 @@ export default function ProfileHeader({ profile, isOwner = false }: IProps) {
         <div className={profileHeaderStyles.avatarWrapper}>
           <div className={profileHeaderStyles.avatarContainer}>
             <Image
-              src={profileData.avatarUrl || "user.svg"}
+              src={profileData.avatarUrl || "/user.svg"}
               alt={profileData.user.name}
               fill
               className={profileHeaderStyles.avatarImage}

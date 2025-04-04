@@ -1,24 +1,27 @@
-// components/profile/ProfileSidebar.tsx
 "use client";
+
 import React, { useState } from "react";
 import Image from "next/image";
 import myPhoto from "../../public/myPhoto.jpg";
 import ProfileStats from "./ProfileStats";
 import ProfileInteractions from "./ProfileInteractions";
+import { useProfile } from "@/context/ProfileContext";
+import { useAuth } from "@/context/AuthContext";
 
 const ProfileSidebar = () => {
-  const stats = {
-    totalArticles: 2,
-    totalLikes: 72,
-    totalComments: 15,
+  const { profile } = useProfile();
+  const { logout } = useAuth();
+
+  const dynamicStats = {
+    totalArticles: profile.articlesCount || 0,
+    totalLikes: profile.starsCount || 0,
+    totalComments: profile.commentsCount || 0,
   };
 
-  const interactions = [
-    { id: 1, type: "comment", content: "تعليق رائع", articleId: 1 },
-    { id: 2, type: "like", articleId: 2 },
-  ];
+  const dynamicInteractions: { id: number; type: string; content?: string; articleId: number; }[] = [];
 
   const isOwner = true;
+
   const [statsPublic, setStatsPublic] = useState(true);
   const [interactionsPublic, setInteractionsPublic] = useState(true);
 
@@ -31,7 +34,7 @@ const ProfileSidebar = () => {
         <div className="flex items-center gap-x-4">
           <div className="relative h-12 w-12 overflow-hidden rounded-full">
             <Image
-              src={myPhoto}
+              src={profile.avatarUrl || myPhoto}
               alt="الصورة الشخصية"
               width={48}
               height={48}
@@ -39,16 +42,21 @@ const ProfileSidebar = () => {
             />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-gray-900">فيصل أبو زكري  </h3>
+            <h3 className="text-lg font-bold text-gray-900">
+              {profile.user.name || "مستخدم غير معروف"}
+            </h3>
             <p className="text-sm text-gray-600">
-              كاتب ومطور شغوف. أحب استكشاف التقنيات الجديدة.
+              {profile.user.email || "بدون بريد إلكتروني"}
             </p>
           </div>
         </div>
       </div>
 
-      {statsPublic && <ProfileStats stats={stats} />}
-      {interactionsPublic && <ProfileInteractions interactions={interactions} />}
+      {statsPublic && <ProfileStats stats={dynamicStats} />}
+
+      {interactionsPublic && (
+        <ProfileInteractions interactions={dynamicInteractions} />
+      )}
 
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm p-4">
         <h3 className="mb-2 text-lg font-bold text-gray-900">روابط سريعة</h3>
@@ -64,9 +72,9 @@ const ProfileSidebar = () => {
             </a>
           </li>
           <li>
-            <a href="/logout" className="block text-red-600 hover:underline">
+            <button onClick={logout} className="block text-red-600 hover:underline">
               تسجيل الخروج
-            </a>
+            </button>
           </li>
         </ul>
       </div>
