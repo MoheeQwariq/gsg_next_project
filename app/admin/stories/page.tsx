@@ -2,7 +2,7 @@
 import type React from "react"
 import { useState, useEffect } from "react"
 import { FaBook, FaTrash, FaSearch, FaExclamationTriangle } from "react-icons/fa"
-import PostContent from "@/components/PostContent"
+import PostContent from "@/components/admin/PostContent"
 import Image from "next/image"
 
 const StoriesPage: React.FC = () => {
