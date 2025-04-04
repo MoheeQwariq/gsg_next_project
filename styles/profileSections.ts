@@ -1,4 +1,3 @@
-// styles/profileSections.ts
 
 const profileSectionsStyles = {
     container: "space-y-6",

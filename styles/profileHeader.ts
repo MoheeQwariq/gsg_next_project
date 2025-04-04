@@ -1,4 +1,3 @@
-// styles/profileHeader.ts
 
 const profileHeaderStyles = {
     container: "overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm",

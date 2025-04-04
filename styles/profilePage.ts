@@ -1,4 +1,3 @@
-// styles/profilePage.ts
 
 const profilePageStyles = {
     headerContainer:
