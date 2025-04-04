@@ -112,7 +112,6 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
           </button>
         </div>
         <form onSubmit={handleSubmit} className={profileHeaderEditModalStyles.form}>
-          {/* Name */}
           <div>
             <label htmlFor="name" className={profileHeaderEditModalStyles.label}>
               الاسم
@@ -128,7 +127,6 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
               className={profileHeaderEditModalStyles.input}
             />
           </div>
-          {/* Bio */}
           <div>
             <label htmlFor="bio" className={profileHeaderEditModalStyles.label}>
               النبذة التعريفية
@@ -143,7 +141,6 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
               className={profileHeaderEditModalStyles.input}
             ></textarea>
           </div>
-          {/* X */}
           <div>
             <label htmlFor="XUrl" className={profileHeaderEditModalStyles.label}>
               X
@@ -158,7 +155,6 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
               className={profileHeaderEditModalStyles.input}
             />
           </div>
-          {/* Facebook */}
           <div>
             <label htmlFor="facebookUrl" className={profileHeaderEditModalStyles.label}>
               فيسبوك
@@ -173,7 +169,6 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
               className={profileHeaderEditModalStyles.input}
             />
           </div>
-          {/* LinkedIn */}
           <div>
             <label htmlFor="linkedinUrl" className={profileHeaderEditModalStyles.label}>
               لينكد إن
@@ -188,7 +183,6 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
               className={profileHeaderEditModalStyles.input}
             />
           </div>
-          {/* Phone */}
           <div>
             <label htmlFor="phoneNumber" className={profileHeaderEditModalStyles.label}>
               رقم الهاتف
@@ -203,7 +197,6 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
               className={profileHeaderEditModalStyles.input}
             />
           </div>
-          {/* Email */}
           <div>
             <label htmlFor="email" className={profileHeaderEditModalStyles.label}>
               البريد الإلكتروني
@@ -219,7 +212,6 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
               className={profileHeaderEditModalStyles.input}
             />
           </div>
-          {/* Avatar Upload */}
           <div>
             <label htmlFor="avatarUpload" className={profileHeaderEditModalStyles.label}>
               صورة الملف الشخصي
@@ -248,7 +240,6 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
               </label>
             </div>
           </div>
-          {/* Cover Upload */}
           <div>
             <label htmlFor="coverUpload" className={profileHeaderEditModalStyles.label}>
               صورة الغلاف
@@ -277,7 +268,6 @@ const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
               </label>
             </div>
           </div>
-          {/* Form Buttons */}
           <div className={profileHeaderEditModalStyles.buttonContainer}>
             <button
               type="button"
