@@ -11,7 +11,7 @@ const ProfileDropdown = () => {
 
   return (
     <div
-      className="relative inline-block"
+      className="relative inline-block mr-2"
       tabIndex={0}
       onBlur={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget as Node)) {
