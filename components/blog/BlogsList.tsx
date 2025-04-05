@@ -23,7 +23,7 @@ const BlogsList = () => {
   return (
     <div className="space-y-6">
       {blogs.map((blog) => (
-        <CardBlog key={blog.blogId} blog={blog} />
+        <CardBlog key={blog.blogId || blog.title} blog={blog} />
       ))}
     </div>
   );
