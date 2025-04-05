@@ -6,7 +6,7 @@ import Link from "next/link";
 import { BlogDetail } from "@/types/type";
 import LikesCounter from "./LikesCounter";
 import { formatDate } from "@/services/formateDate";
-
+// import {Article} from "@/types/blog";
 const CardBlog = ({ blog }: { blog: BlogDetail }) => {
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-md">

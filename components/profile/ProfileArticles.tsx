@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import CardBlog from "@/components/blog/CardBlog";
+// import CardBlog from "@/components/blog/CardBlog";
 import type { Article } from "@/types/blog";
 import profileArticlesStyles from "@/styles/profileArticles";
 
@@ -9,7 +9,6 @@ interface ProfileArticlesProps {
   articles: Article[];
 }
 
-// Extracted Pagination subcomponent.
 interface PaginationProps {
   totalPages: number;
   currentPage: number;
@@ -80,7 +79,8 @@ export default function ProfileArticles({ articles }: ProfileArticlesProps) {
   return (
     <div className={profileArticlesStyles.container} dir="rtl">
       {currentArticles.map((article) => (
-        <CardBlog key={article.id} article={article} />
+        // <CardBlog key={article.id} article={article} />
+        <div key={article.id}> no content , just until fix the types </div>
       ))}
       {totalPages > 1 && (
         <Pagination
