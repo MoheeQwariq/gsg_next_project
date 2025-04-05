@@ -4,30 +4,21 @@ import { FaTimes } from "react-icons/fa";
 import { MdOutlineCloudUpload } from "react-icons/md";
 import { categories } from "@/constant/constant";
 import { ChangeEvent, useState } from "react";
-interface ArticleFormData {
-  id: string;
-  title: string;
-  category: string;
-  content: string;
-  tags: string;
-  imageUrl: string;
-  createdAt: string;
-  author: {
-    name: string;
-    image: string;
-  };
-}
+import { BlogDetail } from "@/types/type";
+
 const BlogModal = () => {
   const { isOpen, handleModal } = useModal();
   if (!isOpen) return null;
+
   const [formData, setFormData] = useState<
-    Omit<ArticleFormData, "id" | "createdAt" | "author">
+    Omit<BlogDetail, "blogId" | "createdAt" | "author">
   >({
     title: "",
-    category: "",
+    category: categories[0] || "",
     content: "",
     tags: "",
     imageUrl: "",
+    like: 0,
   });
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -86,9 +77,10 @@ const BlogModal = () => {
         setIsSubmitting(false);
         return;
       }
-      const newArticle: ArticleFormData = {
+
+      const newArticle: BlogDetail = {
         ...formData,
-        id: `article_${Date.now()}`,
+        blogId: `blog-${Date.now()}`,
         createdAt: new Date().toISOString(),
         author: {
           name: "فيصل أبو زكري",
@@ -100,12 +92,16 @@ const BlogModal = () => {
       );
       const updatedArticles = [newArticle, ...existingArticles];
       localStorage.setItem("articles", JSON.stringify(updatedArticles));
+
+      window.dispatchEvent(new Event("articlesUpdated"));
+
       setFormData({
         title: "",
         category: "",
         content: "",
         tags: "",
         imageUrl: "",
+        like: 0,
       });
       setImagePreview(null);
       handleModal();
@@ -115,6 +111,7 @@ const BlogModal = () => {
       setIsSubmitting(false);
     }
   };
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm p-4"
