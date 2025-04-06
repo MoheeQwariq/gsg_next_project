@@ -12,6 +12,4 @@ const sideBarPageSkeletonStyles = {
     interactionLine2: "h-3 w-1/2 bg-gray-200 rounded",
     interactionLine3: "h-3 w-2/3 bg-gray-200 rounded",
   };
-  
-  export default sideBarPageSkeletonStyles;
-  
+export default sideBarPageSkeletonStyles;
