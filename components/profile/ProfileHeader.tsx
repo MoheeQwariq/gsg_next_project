@@ -1,46 +1,42 @@
 "use client";
-
 import React, { useState } from "react";
 import Image from "next/image";
 import { FaPen, FaFacebook, FaLinkedin, FaPhone, FaEnvelope } from "react-icons/fa";
 import ProfileEditModal from "./ProfileHeaderEditModal";
-import type { UserProfile } from "@/types/profile";
 import profileHeaderStyles from "@/styles/profileHeader";
+import { useAuth } from "@/context/AuthContext";
 
 interface IProps {
-  profile: UserProfile;
   isOwner: boolean;
 }
 
-export default function ProfileHeader({ profile, isOwner = false }: IProps) {
+export default function ProfileHeader({ isOwner }: IProps) {
+  const { user, profile } = useAuth();
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const [profileData, setProfileData] = useState<UserProfile>(profile);
 
   const openEditModal = () => setEditModalOpen(true);
   const closeEditModal = () => setEditModalOpen(false);
-
-  const handleSave = (updatedData: UserProfile) => {
-    setProfileData(updatedData);
-    setEditModalOpen(false);
+  const handleSave = (updatedData: typeof profile) => {
+    closeEditModal();
   };
 
   return (
     <div className={profileHeaderStyles.container} dir="rtl">
       <div className={profileHeaderStyles.cover}>
         <Image
-          src={profileData.coverUrl || "/blog-image.jpg"}
+          src={profile.coverUrl || "/blog-image.jpg"}
           alt="صورة الغلاف"
           fill
           className={profileHeaderStyles.coverImage}
         />
       </div>
-      
+
       <div className={profileHeaderStyles.content}>
         <div className={profileHeaderStyles.avatarWrapper}>
           <div className={profileHeaderStyles.avatarContainer}>
             <Image
-              src={profileData.avatarUrl || "/user.svg"}
-              alt={profileData.user.name}
+              src={user.imageUrl || "/user.svg"}
+              alt={user.name}
               fill
               className={profileHeaderStyles.avatarImage}
             />
@@ -57,37 +53,33 @@ export default function ProfileHeader({ profile, isOwner = false }: IProps) {
                 <FaPen />
               </button>
             )}
-            <h2 className={profileHeaderStyles.name}>
-              {profileData.user.name}
-            </h2>
+            <h2 className={profileHeaderStyles.name}>{user.name}</h2>
           </div>
 
-          <p className={profileHeaderStyles.bio}>{profileData.bio}</p>
+          <p className={profileHeaderStyles.bio}>{profile.bio}</p>
 
-          {(profileData.phoneNumber || profileData.user.email) && (
+          {(profile.phoneNumber || user.email) && (
             <div className={profileHeaderStyles.contactContainer}>
-              {profileData.phoneNumber && (
+              {profile.phoneNumber && (
                 <div className={profileHeaderStyles.contactRow}>
                   <FaPhone className="text-blue-500" />
-                  <span>{profileData.phoneNumber}</span>
+                  <span>{profile.phoneNumber}</span>
                 </div>
               )}
-              {profileData.user.email && (
+              {user.email && (
                 <div className={profileHeaderStyles.contactRow}>
                   <FaEnvelope className="text-green-500" />
-                  <span>{profileData.user.email}</span>
+                  <span>{user.email}</span>
                 </div>
               )}
             </div>
           )}
 
-          {(profileData.XUrl ||
-            profileData.facebookUrl ||
-            profileData.linkedinUrl) && (
+          {(profile.facebookUrl || profile.XUrl || profile.linkedinUrl) && (
             <div className={profileHeaderStyles.socialContainer}>
-              {profileData.XUrl && (
+              {profile.XUrl && (
                 <a
-                  href={profileData.XUrl}
+                  href={profile.XUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={profileHeaderStyles.socialLinkX}
@@ -96,9 +88,9 @@ export default function ProfileHeader({ profile, isOwner = false }: IProps) {
                   <span className="font-bold">X</span>
                 </a>
               )}
-              {profileData.facebookUrl && (
+              {profile.facebookUrl && (
                 <a
-                  href={profileData.facebookUrl}
+                  href={profile.facebookUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={profileHeaderStyles.socialLinkFacebook}
@@ -107,9 +99,9 @@ export default function ProfileHeader({ profile, isOwner = false }: IProps) {
                   <FaFacebook />
                 </a>
               )}
-              {profileData.linkedinUrl && (
+              {profile.linkedinUrl && (
                 <a
-                  href={profileData.linkedinUrl}
+                  href={profile.linkedinUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className={profileHeaderStyles.socialLinkLinkedin}
@@ -127,7 +119,7 @@ export default function ProfileHeader({ profile, isOwner = false }: IProps) {
         isOpen={editModalOpen}
         onClose={closeEditModal}
         onSave={handleSave}
-        currentData={profileData}
+        currentData={profile}
       />
     </div>
   );

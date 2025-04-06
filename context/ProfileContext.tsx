@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState } from "react";
 import type { UserProfile } from "@/types/profile";
-import type { UserRole } from "@/types/user";
+import type { UserRole } from "@/types/User";
 
 const mockProfile: UserProfile = {
   id: 1,
@@ -42,7 +42,11 @@ interface IProfileContext {
 
 const ProfileContext = createContext<IProfileContext | undefined>(undefined);
 
-export const ProfileProvider = ({ children }: { children: React.ReactNode }) => {
+export const ProfileProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [profile, setProfile] = useState<UserProfile>(mockProfile);
 
   return (

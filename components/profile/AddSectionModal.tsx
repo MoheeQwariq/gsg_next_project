@@ -3,7 +3,7 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { MdOutlineCloudUpload } from "react-icons/md";
 import type { ProfileSection } from "@/types/profile";
-import { saveProfileSection } from "@/services/profile.service";
+// import { saveProfileSection } from "@/services/profile.service";
 import addSectionModalStyles from "@/styles/addSectionModalStyles";
 
 interface SectionFormState {
@@ -68,7 +68,7 @@ const AddSectionModal: React.FC<AddSectionModalProps> = ({
       imageUrl: base64Image,
       imageDirection: formState.imageDirection,
     };
-    const savedSection = await saveProfileSection(newSectionData);
+    // const savedSection = await saveProfileSection(newSectionData);
     onAddSection(savedSection);
     // Reset the form.
     setFormState({

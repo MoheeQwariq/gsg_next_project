@@ -8,13 +8,15 @@ import { FaBars, FaTimes } from "react-icons/fa";
 import { useAuth } from "@/context/AuthContext";
 import ProfileDropdown from "./ProfileDropdown";
 import generalNavItems from "@/constant/generalNavItems";
-import styles from "@/styles/generalNavbarStyles";
+import generalNavbarStyles from "@/styles/generalNavbarStyles";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function GeneralNavbar() {
   const pathname = usePathname();
   const { isLoggedIn } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+  const { theme } = useTheme();
+  const styles = generalNavbarStyles[theme];
   const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev);
 
   const getItemClasses = (href: string, isMobile = false) => {

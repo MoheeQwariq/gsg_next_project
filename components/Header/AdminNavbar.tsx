@@ -8,13 +8,15 @@ import { FaBars, FaTimes } from "react-icons/fa";
 import { useAuth } from "@/context/AuthContext";
 import ProfileDropdown from "./ProfileDropdown";
 import adminNavItems from "@/constant/adminNavItems";
-import styles from "@/styles/adminNavbarStyles";
+import adminNavbarStyles from "@/styles/adminNavbarStyles";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function AdminNavbar() {
   const pathname = usePathname();
   const { isLoggedIn } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
+  const { theme } = useTheme();
+  const styles = adminNavbarStyles[theme];
   const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev);
 
   const getDesktopItemClasses = (href: string) => {
