@@ -6,12 +6,13 @@ import { useEffect, useState, useCallback, useRef } from "react"
 import { FaUsers, FaUser, FaSearch, FaChevronRight, FaChevronLeft } from "react-icons/fa"
 import Image from "next/image"
 import { useRouter, useSearchParams } from "next/navigation"
+import { User } from "@/types/user"
 
 
 interface ApiResponse {
   total: number
   page: number
-  data: Stories.User[]
+  data: User[]
   description: string
 }
 
@@ -24,7 +25,7 @@ export default function UsersPage() {
   const initialFilter = searchParams.get("filter") || ""
   const initialPage = Number.parseInt(searchParams.get("page") || "1")
   const initialPerPage = Number.parseInt(searchParams.get("perPage") || "5")
-  const [users, setUsers] = useState<Stories.User[]>([])
+  const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState(initialSearch)
   const [searchInputValue, setSearchInputValue] = useState(initialSearch) 

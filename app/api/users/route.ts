@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import sqlite3 from "better-sqlite3";
+import { User } from '@/types/user';
 const db = sqlite3("stories.db");
 export async function GET(req: NextRequest) {
   try {
-    const users = db.prepare(`SELECT * FROM users`).all() as Stories.User[];
+    const users = db.prepare(`SELECT * FROM users`).all() as User[];
     const { searchParams } = new URL(req.url);
 
     const search = searchParams.get('search')?.toLowerCase() || '';
@@ -11,7 +12,7 @@ export async function GET(req: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1');
     const perPage = parseInt(searchParams.get('perPage') || '5');
 
-    let filteredUsers = users.filter((user: Stories.User) => {
+    let filteredUsers = users.filter((user:User) => {
       const matchSearch = user.name.toLowerCase().includes(search) ||
         (user.email.toLowerCase().includes(search) || false);
 
