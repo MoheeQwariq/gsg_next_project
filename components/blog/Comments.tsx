@@ -1,9 +1,16 @@
 "use client";
-import React from "react";
+import React, { useState, ChangeEvent, FormEvent } from "react";
 import Comment from "./Comment";
 import { useTheme } from "@/context/ThemeContext";
+import { useAuth } from "@/context/AuthContext";
+import type { Comment as CommentType, CommentData } from "@/types/comment";
 
-// Extracted styles for Comments component
+interface CommentsProps {
+  comments: CommentType[];
+  onAddComment: (commentData: CommentData) => Promise<void>;
+  onDeleteComment?: (commentId: string) => Promise<void>;
+}
+
 const commentsStyles = {
   light: {
     container:
@@ -27,30 +34,64 @@ const commentsStyles = {
   },
 };
 
-const Comments = () => {
+const Comments: React.FC<CommentsProps> = ({
+  comments,
+  onAddComment,
+  onDeleteComment,
+}) => {
   const { theme } = useTheme();
   const styles = commentsStyles[theme];
+  const { isLoggedIn, user } = useAuth();
+  const [commentText, setCommentText] = useState("");
+
+  const handleTextChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setCommentText(e.target.value);
+  };
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!commentText.trim()) return;
+    const commentData: CommentData = {
+      content: commentText.trim(),
+    };
+    try {
+      await onAddComment(commentData);
+      setCommentText("");
+    } catch (error) {
+      console.error("Error adding comment", error);
+    }
+  };
 
   return (
     <div className={styles.container}>
       <h3 className={styles.title}>التعليقات</h3>
 
-      <div className={styles.inputContainer}>
-        <div className="flex flex-col gap-4">
-          <textarea
-            placeholder="أضف تعليقك..."
-            className={styles.textarea}
-          />
-          <div className="flex justify-end">
-            <button className={styles.button}>إضافة التعليق</button>
-          </div>
+      {isLoggedIn && (
+        <div className={styles.inputContainer}>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <textarea
+              placeholder="أضف تعليقك..."
+              value={commentText}
+              onChange={handleTextChange}
+              className={styles.textarea}
+            />
+            <div className="flex justify-end">
+              <button type="submit" className={styles.button}>
+                إضافة التعليق
+              </button>
+            </div>
+          </form>
         </div>
-      </div>
+      )}
 
-      <Comment />
-      <Comment />
-      <Comment />
-      <Comment />
+      {comments.map((comment) => (
+        <Comment
+          key={comment.id}
+          comment={comment}
+          canDelete={isLoggedIn && comment.authorId === user.id}
+          onDelete={onDeleteComment}
+        />
+      ))}
     </div>
   );
 };

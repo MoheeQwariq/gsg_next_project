@@ -34,6 +34,21 @@ import { Comment, CommentData } from "@/types/comment";
     }
     return response.json();
   }
+  export async function deleteComment(
+    blogId: string,
+    commentId: string,
+  ): Promise<Comment> {
+    const response = await fetch(`/blogs/${blogId}/comments/${commentId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (!response.ok) {
+      throw new Error("Error editing comment");
+    }
+    return response.json();
+  }
   
   export async function getBlogComments(blogId: string): Promise<Comment[]> {
     const response = await fetch(`/blogs/${blogId}/comments`, {
