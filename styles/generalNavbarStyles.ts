@@ -14,6 +14,7 @@ const generalNavbarStyles = {
     inactiveItem: "bg-white text-gray-800 hover:bg-gray-100",
     loginDesktop: "px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 bg-green-50 text-green-600 hover:bg-green-100",
     loginMobile: "px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 bg-green-50 text-green-600 hover:bg-green-100 flex justify-center",
+    themeToggle: "p-2 rounded-full hover:bg-gray-200 text-gray-600 transition-colors duration-300",
   },
   dark: {
     navContainer: "sticky top-0 z-10 backdrop-blur-sm bg-[#1F1F1F] border-b border-gray-700",
@@ -30,6 +31,7 @@ const generalNavbarStyles = {
     inactiveItem: "bg-gray-900 text-gray-100 hover:bg-gray-800",
     loginDesktop: "px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 bg-green-900 text-green-400 hover:bg-green-800",
     loginMobile: "px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 bg-green-900 text-green-400 hover:bg-green-800 flex justify-center",
+    themeToggle: "p-2 rounded-full hover:bg-gray-700 text-gray-300 transition-colors duration-300",
   },
 };
 
