@@ -1,5 +1,4 @@
 "use client";
-
 import React from "react";
 import {
   Chart as ChartJS,
@@ -11,17 +10,33 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { useTheme } from "@/context/ThemeContext";
+import type { MonthStat } from "@/types/dashboardStats";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-export default function ArticleCountChart() {
+interface ArticleCountChartProps {
+  data: MonthStat[];
+}
+
+export default function ArticleCountChart({ data: statData }: ArticleCountChartProps) {
+  const { theme } = useTheme();
+  
+  // Use the articles color from your overview stat (adjust RGBA as needed)
+  const backgroundColor = theme === "dark" 
+    ? "rgba(29, 78, 216, 0.7)"  // dark: blue-900 variant example
+    : "rgba(29, 78, 216, 0.7)"; // light: blue-50 variant example
+
+  const labels = statData.map(item => item.month);
+  const counts = statData.map(item => item.count);
+
   const data = {
-    labels: ["يناير", "فبراير", "مارس", "أبريل", "مايو"],
+    labels,
     datasets: [
       {
         label: "المقالات",
-        data: [4, 6, 3, 8, 5],
-        backgroundColor: "rgba(54, 162, 235, 0.7)",
+        data: counts,
+        backgroundColor,
       },
     ],
   };
@@ -40,8 +55,10 @@ export default function ArticleCountChart() {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow" dir="rtl">
-      <h3 className="text-xl font-bold mb-4">مخطط المقالات</h3>
+    <div className={`p-6 rounded-lg shadow ${theme === "dark" ? "bg-gray-800" : "bg-white"}`} dir="rtl">
+      <h3 className={`text-xl font-bold mb-4 ${theme === "dark" ? "text-gray-100" : "text-gray-900"}`}>
+        مخطط المقالات
+      </h3>
       <div className="h-64">
         <Bar data={data} options={options} />
       </div>
