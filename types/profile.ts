@@ -1,4 +1,3 @@
-import { Identifier } from './../node_modules/@types/estree/index.d';
 import { User } from "./user";
 
 export interface UserProfile{
