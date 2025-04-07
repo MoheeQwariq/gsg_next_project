@@ -1,8 +1,9 @@
 "use client";
-
-import type React from "react";
+import React from "react";
 import Image from "next/image";
 import { Upload, User } from "lucide-react";
+import { useTheme } from "@/context/ThemeContext";
+import photoUploadStyles from "@/styles/auth/photoUploadStyles";
 
 interface IPhotoUploadProps {
   previewUrl: string | null;
@@ -11,38 +12,38 @@ interface IPhotoUploadProps {
 }
 
 const PhotoUpload = ({ previewUrl, onChange, label }: IPhotoUploadProps) => {
+  const { theme } = useTheme();
+  const styles = photoUploadStyles[theme];
+
   return (
-    <div className="space-y-2 text-right">
-      <label htmlFor="photo-upload" className="block text-gray-700 font-medium">
+    <div className={styles.container}>
+      <label htmlFor="photo-upload" className={styles.label}>
         {label}
       </label>
-      <div className="flex items-center gap-4 flex-row-reverse">
-        <div className="relative h-20 w-20 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border-2 border-blue-200">
+      <div className={styles.mainRow}>
+        <div className={styles.imageWrapper}>
           {previewUrl ? (
             <Image
               src={previewUrl || "/placeholder.svg"}
               alt="صورة المستخدم"
               fill
-              className="object-cover"
+              className={styles.image}
             />
           ) : (
-            <User className="h-10 w-10 text-gray-400" />
+            <User className={styles.userIcon} />
           )}
         </div>
         <div className="flex-1">
-          <label
-            htmlFor="photo-upload"
-            className="cursor-pointer flex items-center justify-center gap-2 p-4 border-2 border-dashed border-blue-200 rounded-xl hover:bg-blue-50 transition-colors"
-          >
-            <Upload className="h-5 w-5 text-blue-500" />
-            <span className="text-blue-600 font-medium">اختر صورة</span>
+          <label htmlFor="photo-upload" className={styles.fileLabel}>
+            <Upload className={styles.fileLabelIcon} />
+            <span className={styles.fileLabelText}>اختر صورة</span>
           </label>
           <input
             id="photo-upload"
             type="file"
             name="photo"
             accept="image/*"
-            className="hidden"
+            className={styles.input}
             onChange={onChange}
           />
         </div>

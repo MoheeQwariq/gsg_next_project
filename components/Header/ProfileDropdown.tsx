@@ -1,17 +1,21 @@
 "use client";
-
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { CiLogout } from "react-icons/ci";
-import myPhoto from "../../public/myPhoto.jpg";
+import { useTheme } from "@/context/ThemeContext";
+import { useAuth } from "@/context/AuthContext";
+import profileDropdownStyles from "@/styles/profileDropdownStyles";
 
 const ProfileDropdown = () => {
   const [open, setOpen] = useState(false);
+  const { theme } = useTheme();
+  const { user } = useAuth();
+  const styles = profileDropdownStyles[theme];
 
   return (
     <div
-      className="relative inline-block mr-2"
+      className={styles.container}
       tabIndex={0}
       onBlur={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget as Node)) {
@@ -19,54 +23,46 @@ const ProfileDropdown = () => {
         }
       }}
     >
-      <button
-        onClick={() => setOpen((prev) => !prev)}
-        className="group flex items-center gap-x-3 focus:outline-none cursor-pointer"
-      >
-        <div className="relative h-10 w-10 overflow-hidden rounded-full">
+      <button onClick={() => setOpen((prev) => !prev)} className={styles.button}>
+        <div className={styles.imageWrapper}>
           <Image
-            src={myPhoto}
+            src={user.imageUrl}
             alt="صورة المستخدم"
             width={40}
             height={40}
-            className="h-full w-full object-cover"
+            className={styles.image}
           />
         </div>
-        <span
-          className="hidden text-gray-800 font-medium md:inline-block
-          group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#3652E1] group-hover:to-[#8057F5]"
-        >
-          فيصل أبو زكري
-        </span>
+        <span className={styles.userName}>{user.name}</span>
       </button>
       {open && (
-        <div className="absolute left-0 top-full z-50 mt-2 w-48 max-w-xs rounded-lg bg-white border border-gray-200 shadow-lg">
-          <ul className="py-2">
+        <div className={styles.dropdown}>
+          <ul className={styles.dropdownList}>
             <li>
               <Link
-                href="/profile"
+                href={`/profile/${user.username}`}
                 onClick={() => setOpen(false)}
-                className="block px-4 py-2 text-gray-700
-                           hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-[#3652E1] hover:to-[#8057F5]"
+                className={styles.dropdownItem}
               >
                 الملف الشخصي
               </Link>
             </li>
+            <li className={styles.separator}></li>
             <li>
               <Link
                 href="/settings"
                 onClick={() => setOpen(false)}
-                className="block px-4 py-2 text-gray-700
-                           hover:text-transparent hover:bg-clip-text hover:bg-gradient-to-r hover:from-[#3652E1] hover:to-[#8057F5]"
+                className={styles.dropdownItem}
               >
                 الإعدادات
               </Link>
             </li>
+            <li className={styles.separator}></li>
             <li>
               <Link
                 href="/logout"
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-x-1.5 block px-4 py-2 text-red-600 hover:text-red-800"
+                className={styles.dropdownItemFlex}
               >
                 <CiLogout className="h-4 w-4" />
                 <span>تسجيل الخروج</span>

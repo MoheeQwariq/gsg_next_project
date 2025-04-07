@@ -1,9 +1,11 @@
 "use client";
-
-import React, { useState } from "react";
+import React, { useState, FormEvent, ChangeEvent } from "react";
 import { FaTimes } from "react-icons/fa";
 import type { UserProfile } from "@/types/profile";
+import type { User } from "@/types/user";
+import { useTheme } from "@/context/ThemeContext";
 import profileHeaderEditModalStyles from "@/styles/profileHeaderEditModal";
+import { InputField, FileUploadField, fileToBase64 } from "./FormComponents";
 
 interface ProfileFormData {
   name: string;
@@ -18,268 +20,178 @@ interface ProfileFormData {
 interface ProfileEditModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (updatedData: UserProfile) => void;
-  currentData: UserProfile;
+  onSave: (updatedUser: User, updatedProfile: UserProfile) => void;
+  user: User;
+  profile: UserProfile;
+  isOwner: boolean;
 }
 
 const ProfileEditModal: React.FC<ProfileEditModalProps> = ({
   isOpen,
   onClose,
   onSave,
-  currentData,
+  user,
+  profile,
+  isOwner,
 }) => {
+  const { theme } = useTheme();
+  const styles = profileHeaderEditModalStyles[theme];
+
+
+
   const [formData, setFormData] = useState<ProfileFormData>({
-    name: currentData.user.name,
-    bio: currentData.bio || "",
-    XUrl: currentData.XUrl || "",
-    facebookUrl: currentData.facebookUrl || "",
-    linkedinUrl: currentData.linkedinUrl || "",
-    phoneNumber: currentData.phoneNumber || "",
-    email: currentData.user.email,
+    name: user.name,
+    bio: profile.bio || "",
+    XUrl: profile.XUrl || "",
+    facebookUrl: profile.facebookUrl || "",
+    linkedinUrl: profile.linkedinUrl || "",
+    phoneNumber: profile.phoneNumber || "",
+    email: user.email,
   });
+
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [coverFile, setCoverFile] = useState<File | null>(null);
-
-  const fileToBase64 = (file: File): Promise<string> =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === "string") {
-          resolve(reader.result);
-        } else {
-          reject(new Error("Error reading file"));
-        }
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
-
+  if (!isOwner) {
+    return (
+      <div className={styles.overlay} onClick={onClose}>
+        <div className={styles.container} onClick={(e) => e.stopPropagation()}>
+          <div className={styles.header}>
+            <h2 className={styles.headerTitle}>ليس لديك إذن لتحرير الملف الشخصي</h2>
+            <button onClick={onClose} className={styles.closeButton}>
+              <FaTimes className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
   if (!isOpen) return null;
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    let avatarBase64 = currentData.avatarUrl;
+    let avatarBase64 = user.imageUrl;
     if (avatarFile) {
       avatarBase64 = await fileToBase64(avatarFile);
     }
-    let coverBase64 = currentData.coverUrl;
+    let coverBase64 = profile.coverUrl;
     if (coverFile) {
       coverBase64 = await fileToBase64(coverFile);
     }
+    const updatedUser: User = {
+      ...user,
+      name: formData.name,
+      email: formData.email,
+      imageUrl: avatarBase64,
+    };
     const updatedProfile: UserProfile = {
-      ...currentData,
+      ...profile,
       bio: formData.bio,
       XUrl: formData.XUrl,
       facebookUrl: formData.facebookUrl,
       linkedinUrl: formData.linkedinUrl,
       phoneNumber: formData.phoneNumber,
-      avatarUrl: avatarBase64,
       coverUrl: coverBase64,
-      user: {
-        ...currentData.user,
-        name: formData.name,
-        email: formData.email,
-      },
     };
-    onSave(updatedProfile);
+    onSave(updatedUser, updatedProfile);
   };
 
   return (
-    <div
-      className={profileHeaderEditModalStyles.overlay}
-      onClick={onClose}
-    >
-      <div
-        className={profileHeaderEditModalStyles.container}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className={profileHeaderEditModalStyles.header}>
-          <h2 className={profileHeaderEditModalStyles.headerTitle}>
-            تعديل الملف الشخصي
-          </h2>
-          <button
-            onClick={onClose}
-            className={profileHeaderEditModalStyles.closeButton}
-          >
+    <div className={styles.overlay} onClick={onClose}>
+      <div className={styles.container} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.header}>
+          <h2 className={styles.headerTitle}>تعديل الملف الشخصي</h2>
+          <button onClick={onClose} className={styles.closeButton}>
             <FaTimes className="h-5 w-5" />
           </button>
         </div>
-        <form onSubmit={handleSubmit} className={profileHeaderEditModalStyles.form}>
-          <div>
-            <label htmlFor="name" className={profileHeaderEditModalStyles.label}>
-              الاسم
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleChange}
-              placeholder="أدخل الاسم..."
-              required
-              className={profileHeaderEditModalStyles.input}
-            />
-          </div>
-          <div>
-            <label htmlFor="bio" className={profileHeaderEditModalStyles.label}>
-              النبذة التعريفية
-            </label>
-            <textarea
-              id="bio"
-              name="bio"
-              rows={3}
-              value={formData.bio}
-              onChange={handleChange}
-              placeholder="اكتب نبذة قصيرة عنك..."
-              className={profileHeaderEditModalStyles.input}
-            ></textarea>
-          </div>
-          <div>
-            <label htmlFor="XUrl" className={profileHeaderEditModalStyles.label}>
-              X
-            </label>
-            <input
-              type="url"
-              id="XUrl"
-              name="XUrl"
-              value={formData.XUrl || ""}
-              onChange={handleChange}
-              placeholder="رابط X"
-              className={profileHeaderEditModalStyles.input}
-            />
-          </div>
-          <div>
-            <label htmlFor="facebookUrl" className={profileHeaderEditModalStyles.label}>
-              فيسبوك
-            </label>
-            <input
-              type="url"
-              id="facebookUrl"
-              name="facebookUrl"
-              value={formData.facebookUrl || ""}
-              onChange={handleChange}
-              placeholder="رابط فيسبوك"
-              className={profileHeaderEditModalStyles.input}
-            />
-          </div>
-          <div>
-            <label htmlFor="linkedinUrl" className={profileHeaderEditModalStyles.label}>
-              لينكد إن
-            </label>
-            <input
-              type="url"
-              id="linkedinUrl"
-              name="linkedinUrl"
-              value={formData.linkedinUrl || ""}
-              onChange={handleChange}
-              placeholder="رابط لينكد إن"
-              className={profileHeaderEditModalStyles.input}
-            />
-          </div>
-          <div>
-            <label htmlFor="phoneNumber" className={profileHeaderEditModalStyles.label}>
-              رقم الهاتف
-            </label>
-            <input
-              type="tel"
-              id="phoneNumber"
-              name="phoneNumber"
-              value={formData.phoneNumber || ""}
-              onChange={handleChange}
-              placeholder="أدخل رقم الهاتف"
-              className={profileHeaderEditModalStyles.input}
-            />
-          </div>
-          <div>
-            <label htmlFor="email" className={profileHeaderEditModalStyles.label}>
-              البريد الإلكتروني
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              value={formData.email || ""}
-              onChange={handleChange}
-              placeholder="أدخل البريد الإلكتروني"
-              required
-              className={profileHeaderEditModalStyles.input}
-            />
-          </div>
-          <div>
-            <label htmlFor="avatarUpload" className={profileHeaderEditModalStyles.label}>
-              صورة الملف الشخصي
-            </label>
-            <div className="flex items-center justify-center w-full">
-              <label
-                htmlFor="avatarUpload"
-                className={profileHeaderEditModalStyles.fileUploadLabel}
-              >
-                <div className={profileHeaderEditModalStyles.fileUploadInner}>
-                  <p className={profileHeaderEditModalStyles.fileUploadText}>
-                    {currentData.avatarUrl ? "تحديث الصورة" : "اضغط للرفع"}
-                  </p>
-                </div>
-                <input
-                  id="avatarUpload"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => {
-                    if (e.target.files && e.target.files[0]) {
-                      setAvatarFile(e.target.files[0]);
-                    }
-                  }}
-                />
-              </label>
-            </div>
-          </div>
-          <div>
-            <label htmlFor="coverUpload" className={profileHeaderEditModalStyles.label}>
-              صورة الغلاف
-            </label>
-            <div className="flex items-center justify-center w-full">
-              <label
-                htmlFor="coverUpload"
-                className={profileHeaderEditModalStyles.fileUploadLabel}
-              >
-                <div className={profileHeaderEditModalStyles.fileUploadInner}>
-                  <p className={profileHeaderEditModalStyles.fileUploadText}>
-                    {currentData.coverUrl ? "تحديث صورة الغلاف" : "اضغط للرفع"}
-                  </p>
-                </div>
-                <input
-                  id="coverUpload"
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={(e) => {
-                    if (e.target.files && e.target.files[0]) {
-                      setCoverFile(e.target.files[0]);
-                    }
-                  }}
-                />
-              </label>
-            </div>
-          </div>
-          <div className={profileHeaderEditModalStyles.buttonContainer}>
+        <form onSubmit={handleSubmit} className={styles.form}>
+          <InputField
+            label="الاسم"
+            name="name"
+            placeholder="أدخل الاسم..."
+            value={formData.name}
+            onChange={handleInputChange}
+            required
+          />
+          <InputField
+            label="النبذة التعريفية"
+            name="bio"
+            placeholder="اكتب نبذة قصيرة عنك..."
+            value={formData.bio || ""}
+            onChange={handleInputChange}
+            textarea
+          />
+          <InputField
+            label="X"
+            name="XUrl"
+            placeholder="رابط X"
+            value={formData.XUrl || ""}
+            onChange={handleInputChange}
+          />
+          <InputField
+            label="فيسبوك"
+            name="facebookUrl"
+            placeholder="رابط فيسبوك"
+            value={formData.facebookUrl || ""}
+            onChange={handleInputChange}
+          />
+          <InputField
+            label="لينكد إن"
+            name="linkedinUrl"
+            placeholder="رابط لينكد إن"
+            value={formData.linkedinUrl || ""}
+            onChange={handleInputChange}
+          />
+          <InputField
+            label="رقم الهاتف"
+            name="phoneNumber"
+            placeholder="أدخل رقم الهاتف"
+            value={formData.phoneNumber || ""}
+            onChange={handleInputChange}
+          />
+          <InputField
+            label="البريد الإلكتروني"
+            name="email"
+            placeholder="أدخل البريد الإلكتروني"
+            value={formData.email || ""}
+            onChange={handleInputChange}
+            required
+          />
+          <FileUploadField
+            label="صورة الملف الشخصي"
+            file={avatarFile}
+            onFileChange={(e: ChangeEvent<HTMLInputElement>) => {
+              if (e.target.files && e.target.files[0]) {
+                setAvatarFile(e.target.files[0]);
+              }
+            }}
+          />
+          <FileUploadField
+            label="صورة الغلاف"
+            file={coverFile}
+            onFileChange={(e: ChangeEvent<HTMLInputElement>) => {
+              if (e.target.files && e.target.files[0]) {
+                setCoverFile(e.target.files[0]);
+              }
+            }}
+          />
+          <div className={styles.buttonContainer}>
             <button
               type="button"
               onClick={onClose}
-              className={profileHeaderEditModalStyles.cancelButton}
+              className={styles.cancelButton}
             >
               إلغاء
             </button>
-            <button
-              type="submit"
-              className={profileHeaderEditModalStyles.submitButton}
-            >
+            <button type="submit" className={styles.submitButton}>
               حفظ التغييرات
             </button>
           </div>

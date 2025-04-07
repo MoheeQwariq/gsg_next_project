@@ -1,13 +1,9 @@
-import { User } from "./user";
-
 export interface UserProfile{
-    sections: never[];
     id: number;
-    user: User;
+    userId: number;
 
     bio?: string;
-    avatarUrl?: string;
-    coverUrl?: string;
+    coverUrl?: string ;
     facebookUrl?: string;
     XUrl?: string;
     linkedinUrl?: string;
@@ -22,11 +18,33 @@ export interface UserProfile{
     starsCount?: number;
     commentsCount?: number;
     isFollowing?: boolean;
-
     showStats?: boolean;
     showInteractions?: boolean;
 }
 
+
+export const defaultUserProfile: UserProfile = {
+    id: 0,
+    userId: 0,
+    bio: "",
+    coverUrl: "",
+    facebookUrl: "",
+    XUrl: "",
+    linkedinUrl: "",
+    phoneNumber: "",
+    website: "",
+    country: "",
+    city: "",
+    birthdate: "",
+    followersCount: 0,
+    articlesCount: 0,
+    starsCount: 0,
+    commentsCount: 0,
+    isFollowing: false,
+    showStats: false,
+    showInteractions: false,
+
+};
 export interface ProfileSection {
     id: number;
     title: string;
