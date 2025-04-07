@@ -1,68 +1,34 @@
 "use client";
-
-import React, { useState } from "react";
-// import CardBlog from "@/components/blog/CardBlog";
-import type { Article } from "@/types/blog";
+import React, { useState, useEffect } from "react";
+import { useTheme } from "@/context/ThemeContext";
 import profileArticlesStyles from "@/styles/profileArticles";
+import { getUserBlogs } from "@/services/blog/blog.service";
+import type { BlogDetail } from "@/types/type";
+import Pagination from "@/components/Pagination";
 
 interface ProfileArticlesProps {
-  articles: Article[];
+  userId: number;
 }
 
-interface PaginationProps {
-  totalPages: number;
-  currentPage: number;
-  onPageChange: (page: number) => void;
-  goToNextPage: () => void;
-  goToPreviousPage: () => void;
-}
-
-function Pagination({
-  totalPages,
-  currentPage,
-  onPageChange,
-  goToNextPage,
-  goToPreviousPage,
-}: PaginationProps) {
-  return (
-    <div className={profileArticlesStyles.paginationContainer}>
-      <button
-        onClick={goToPreviousPage}
-        disabled={currentPage === 1}
-        className={`${profileArticlesStyles.navButton} ${currentPage === 1 ? profileArticlesStyles.navButtonDisabled : ""}`}
-      >
-        السابق
-      </button>
-      <div className="flex items-center gap-2">
-        {Array.from({ length: totalPages }, (_, i) => (
-          <button
-            key={i + 1}
-            onClick={() => onPageChange(i + 1)}
-            className={`${profileArticlesStyles.pageButton} ${
-              currentPage === i + 1
-                ? profileArticlesStyles.activePageButton
-                : profileArticlesStyles.inactivePageButton
-            }`}
-          >
-            {i + 1}
-          </button>
-        ))}
-      </div>
-      <button
-        onClick={goToNextPage}
-        disabled={currentPage === totalPages}
-        className={`${profileArticlesStyles.navButton} ${currentPage === totalPages ? profileArticlesStyles.navButtonDisabled : ""}`}
-      >
-        التالي
-      </button>
-    </div>
-  );
-}
-
-export default function ProfileArticles({ articles }: ProfileArticlesProps) {
+export default function ProfileArticles({ userId }: ProfileArticlesProps) {
+  const { theme } = useTheme();
+  const styles = profileArticlesStyles[theme];
   const articlesPerPage = 5;
+  const [articles, setArticles] = useState<BlogDetail[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(articles.length / articlesPerPage);
+
+  useEffect(() => {
+    async function fetchArticles() {
+      try {
+        const fetchedArticles = await getUserBlogs(userId);
+        setArticles(fetchedArticles);
+      } catch (error) {
+        console.error("Error fetching articles:", error);
+      }
+    }
+    fetchArticles();
+  }, [userId]);
 
   const indexOfLastArticle = currentPage * articlesPerPage;
   const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
@@ -77,10 +43,12 @@ export default function ProfileArticles({ articles }: ProfileArticlesProps) {
   };
 
   return (
-    <div className={profileArticlesStyles.container} dir="rtl">
+    <div className={styles.container} dir="rtl">
       {currentArticles.map((article) => (
-        // <CardBlog key={article.id} article={article} />
-        <div key={article.id}> no content , just until fix the types </div>
+        <div key={article.blogId}>
+          <h3>{article.title}</h3>
+          <p>{article.content.slice(0, 100)}...</p>
+        </div>
       ))}
       {totalPages > 1 && (
         <Pagination
