@@ -15,8 +15,9 @@ declare namespace Stories {
     id: number;
     name: string;
     email: string;
-    role?: string;
+    role: "admin" | "user" | "guest";
     avatar?: string | null; 
+    username:string
   }
 }
 

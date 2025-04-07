@@ -1,6 +1,7 @@
 import sqlite3 from "better-sqlite3";
 
 const db = sqlite3("stories.db");
+
 db.pragma("foreign_keys = ON");
 db.prepare(
   `
@@ -9,9 +10,10 @@ CREATE TABLE IF NOT EXISTS users (
   name TEXT NOT NULL,
   email TEXT UNIQUE NOT NULL,
   password TEXT NOT NULL, 
-  role TEXT NOT NULL CHECK(role IN ('admin', 'user')),
+  role TEXT NOT NULL CHECK(role IN ('admin', 'user','guest')),
   avatar TEXT,
-  birthday TEXT            
+  username TEXT UNIQUE NOT NULL
+
 );
 `
 ).run();
@@ -34,7 +36,6 @@ db.prepare(
 
 const securePassword =
   "$2b$12$OGlKAjuTnvhjSdYhaoGKuOTs9XuVfM1B2pCacvKbENMew.cENK3Nm";
-
 const fakeUsers = [
   {
     name: "Aseel",
@@ -42,6 +43,7 @@ const fakeUsers = [
     password: securePassword,
     role: "admin",
     avatar: "/images.jpg",
+    username: "aseel123",
   },
   {
     name: "Mohee",
@@ -49,20 +51,23 @@ const fakeUsers = [
     password: securePassword,
     role: "user",
     avatar: "/images.jpg",
+    username: "mohee42",
   },
   {
     name: "Lama",
     email: "lama@example.com",
     password: securePassword,
-    role: "user",
+    role: "guest",
     avatar: "/images.jpg",
+    username: "lama_56",
   },
   {
     name: "Faisal",
     email: "faisal@example.com",
     password: securePassword,
-    role: "user",
+    role: "admin",
     avatar: "/images.jpg",
+    username: "faisal_23",
   },
   {
     name: "Abd Alsalam",
@@ -70,33 +75,151 @@ const fakeUsers = [
     password: securePassword,
     role: "user",
     avatar: null,
+    username: "abdalsalam_1",
   },
   {
-    name: "أحمد سالم",
-    email: "ahmeds@example.com",
+    name: "Menaa",
+    email: "Menaa@example.com",
     password: securePassword,
-    role: "user",
-    avatar: null,
+    role: "guest",
+    avatar: "/images.jpg",
+    username: "menaa_salem",
   },
   {
     name: "سارة محمود",
     email: "sarah@example.com",
     password: securePassword,
     role: "user",
-    avatar: null,
+    avatar: "/images.jpg",
+    username: "sarah_mohamed",
   },
   {
     name: "فاطمة علي",
     email: "fatima@example.com",
     password: securePassword,
+    role: "admin",
+    avatar: "/images.jpg",
+    username: "fatima_ali",
+  },
+  {
+    name: "Ali",
+    email: "ali@example.com",
+    password: securePassword,
+    role: "guest",
+    avatar: "/images.jpg",
+    username: "ali_123",
+  },
+  {
+    name: "Nora",
+    email: "nora@example.com",
+    password: securePassword,
+    role: "user",
+    avatar: "/images.jpg",
+    username: "nora_234",
+  },
+  {
+    name: "John Doe",
+    email: "john.doe@example.com",
+    password: securePassword,
+    role: "admin",
+    avatar: null,
+    username: "john_doe_100",
+  },
+  {
+    name: "Maya Ali",
+    email: "maya.ali@example.com",
+    password: securePassword,
     role: "user",
     avatar: null,
+    username: "maya_ali_321",
   },
+  {
+    name: "Omar Farooq",
+    email: "omar.farooq@example.com",
+    password: securePassword,
+    role: "guest",
+    avatar: null,
+    username: "omar_22",
+  },
+  {
+    name: "Ranya Zaid",
+    email: "ranya.zaid@example.com",
+    password: securePassword,
+    role: "user",
+    avatar: null,
+    username: "ranya_456",
+  },
+  {
+    name: "Khalid Alhassan",
+    email: "khalid.alhassan@example.com",
+    password: securePassword,
+    role: "admin",
+    avatar: null,
+    username: "khalid_789",
+  },
+  {
+    name: "Lina Abed",
+    email: "lina.abed@example.com",
+    password: securePassword,
+    role: "user",
+    avatar: null,
+    username: "lina_333",
+  },
+  {
+    name: "Zayd Ali",
+    email: "zayd.ali@example.com",
+    password: securePassword,
+    role: "guest",
+    avatar: null,
+    username: "zayd_444",
+  },
+  {
+    name: "Huda Al Rashed",
+    email: "huda.rashed@example.com",
+    password: securePassword,
+    role: "admin",
+    avatar: null,
+    username: "huda_555",
+  },
+  {
+    name: "Layla Ahmad",
+    email: "layla.ahmad@example.com",
+    password: securePassword,
+    role: "user",
+    avatar: null,
+    username: "layla_666",
+  },
+  {
+    name: "Rami Salim",
+    email: "rami.salim@example.com",
+    password: securePassword,
+    role: "guest",
+    avatar: "/rami_avatar.jpg",
+    username: "rami_777",
+  },
+  {
+    name: "Jasmine El-Tayeb",
+    email: "jasmine.el.tayeb@example.com",
+    password: securePassword,
+    role: "user",
+    avatar: null,
+    username: "jasmine_888",
+  },
+  {
+    name: "Salman Al-Turk",
+    email: "salman.alturk@example.com",
+    password: securePassword,
+    role: "admin",
+    avatar: null,
+    username: "salman_999",
+  }
 ];
 
+
+
 const insertUser = db.prepare(`
-  INSERT OR IGNORE INTO users (name, email, password, role, avatar) 
-  VALUES (@name, @email, @password, @role, @avatar)
+  INSERT OR IGNORE INTO users (name, email, password, role, avatar,username) 
+  VALUES (@name, @email, @password, @role, @avatar,@username)
 `);
 
 for (const user of fakeUsers) {
