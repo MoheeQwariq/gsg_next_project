@@ -5,7 +5,6 @@ import { useTheme } from "@/context/ThemeContext";
 import React from "react";
 import { FaPlus } from "react-icons/fa";
 
-// Extracted styles for AddBlogButton component
 const addBlogButtonStyles = {
   light: {
     button:

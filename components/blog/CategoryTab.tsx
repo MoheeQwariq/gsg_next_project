@@ -1,9 +1,14 @@
 "use client";
-
-import { CategoryTabProps } from "@/types/type";
-import { useSearchParams, useRouter } from "next/navigation";
 import React from "react";
+import { useRouter } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
+
+export interface CategoryTabProps {
+  children: React.ReactNode;
+  category: string;
+  onCategoryChange?: (category: string) => void;
+  currentCategory?: string;
+}
 
 const categoryTabStyles = {
   light: {
@@ -16,23 +21,26 @@ const categoryTabStyles = {
   },
 };
 
-const CategoryTab = ({ children, category }: CategoryTabProps) => {
+const CategoryTab: React.FC<CategoryTabProps> = ({ children, category, onCategoryChange, currentCategory }) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const currentCategory = searchParams.get("category") || "الكل";
   const { theme } = useTheme();
   const styles = categoryTabStyles[theme];
 
+  const activeCategory = currentCategory || "الكل";
+
   const handleCategoryClick = (category: string) => {
-    if (category === "الكل") {
-      router.push("/blogs");
+    if (onCategoryChange) {
+      onCategoryChange(category);
     } else {
-      router.push(`/blogs?category=${category}`);
+      if (category === "الكل") {
+        router.push("/blogs");
+      } else {
+        router.push(`/blogs?category=${category}`);
+      }
     }
   };
 
-  const activeStyle =
-    currentCategory === category ? styles.active : styles.inactive;
+  const activeStyle = activeCategory === category ? styles.active : styles.inactive;
 
   return (
     <button

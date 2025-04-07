@@ -1,11 +1,12 @@
 "use client";
-
 import React, { useState } from "react";
 import { FaSearch } from "react-icons/fa";
-import { useRouter, useSearchParams } from "next/navigation";
 import { useTheme } from "@/context/ThemeContext";
 
-// Extracted styles for SearchBlogs component
+interface SearchBlogsProps {
+  onSearch: (query: string) => void;
+}
+
 const searchBlogsStyles = {
   light: {
     container: "relative max-w-md",
@@ -25,25 +26,15 @@ const searchBlogsStyles = {
   },
 };
 
-const SearchBlogs = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+const SearchBlogs: React.FC<SearchBlogsProps> = ({ onSearch }) => {
   const { theme } = useTheme();
   const styles = searchBlogsStyles[theme];
-
-  const [query, setQuery] = useState(searchParams.get("search") || "");
+  const [query, setQuery] = useState("");
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
-
-    const params = new URLSearchParams(searchParams.toString());
-    if (value) {
-      params.set("search", value);
-    } else {
-      params.delete("search");
-    }
-    router.push(`/blogs?${params.toString()}`);
+    onSearch(value);
   };
 
   return (

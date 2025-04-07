@@ -1,13 +1,17 @@
 "use client";
+import React, { useState, ChangeEvent } from "react";
 import { useModal } from "@/context/ModalContext";
+import { useTheme } from "@/context/ThemeContext";
 import { FaTimes } from "react-icons/fa";
 import { MdOutlineCloudUpload } from "react-icons/md";
 import { categories } from "@/constant/constant";
-import { ChangeEvent, useState } from "react";
-import { BlogDetail } from "@/types/type";
-import { useTheme } from "@/context/ThemeContext";
+import type { BlogDetail } from "@/types/type";
+import Image from "next/image";
 
-// Extracted styles for BlogModal component
+interface BlogModalProps {
+  onAddBlog: (blogData: Partial<BlogDetail>) => void;
+}
+
 const blogModalStyles = {
   light: {
     overlay:
@@ -33,8 +37,7 @@ const blogModalStyles = {
     submitButton:
       "cursor-pointer rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition duration-300 hover:from-blue-700 hover:to-indigo-700",
     imagePreviewContainer: "relative w-full h-64",
-    imagePreview:
-      "h-full w-full object-cover rounded-lg",
+    imagePreview: "h-full w-full object-cover rounded-lg",
     imagePreviewRemove:
       "absolute top-2 right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600",
   },
@@ -62,18 +65,16 @@ const blogModalStyles = {
     submitButton:
       "cursor-pointer rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition duration-300 hover:from-blue-600 hover:to-indigo-600",
     imagePreviewContainer: "relative w-full h-64",
-    imagePreview:
-      "h-full w-full object-cover rounded-lg",
+    imagePreview: "h-full w-full object-cover rounded-lg",
     imagePreviewRemove:
       "absolute top-2 right-2 rounded-full bg-red-500 p-1 text-white hover:bg-red-600",
   },
 };
 
-const BlogModal = () => {
+const BlogModal = ({ onAddBlog }: BlogModalProps) => {
   const { isOpen, handleModal } = useModal();
   const { theme } = useTheme();
   const styles = blogModalStyles[theme];
-  if (!isOpen) return null;
 
   const [formData, setFormData] = useState<
     Omit<BlogDetail, "blogId" | "createdAt" | "author">
@@ -85,9 +86,10 @@ const BlogModal = () => {
     imageUrl: "",
     like: 0,
   });
-
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  if (!isOpen) return null;
 
   const titlehandleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({
@@ -95,18 +97,21 @@ const BlogModal = () => {
       title: e.target.value,
     }));
   };
+
   const CategoryhandleChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setFormData((prev) => ({
       ...prev,
       category: e.target.value,
     }));
   };
+
   const ContenthandleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setFormData((prev) => ({
       ...prev,
       content: e.target.value,
     }));
   };
+
   const tagshandleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({
       ...prev,
@@ -114,12 +119,10 @@ const BlogModal = () => {
     }));
   };
 
-  const ImagehandleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const ImagehandleUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 2 * 1024 * 1024) {
-      return;
-    }
+    if (file.size > 2 * 1024 * 1024) return;
     const reader = new FileReader();
     reader.onloadend = () => {
       const result = reader.result as string;
@@ -135,33 +138,15 @@ const BlogModal = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-
     try {
       if (!formData.title || !formData.category || !formData.content) {
         setIsSubmitting(false);
         return;
       }
-
-      const newArticle: BlogDetail = {
-        ...formData,
-        blogId: `blog-${Date.now()}`,
-        createdAt: new Date().toISOString(),
-        author: {
-          name: "فيصل أبو زكري",
-          image: "/placeholder.svg?height=40&width=40",
-        },
-      };
-      const existingArticles = JSON.parse(
-        localStorage.getItem("articles") || "[]"
-      );
-      const updatedArticles = [newArticle, ...existingArticles];
-      localStorage.setItem("articles", JSON.stringify(updatedArticles));
-
-      window.dispatchEvent(new Event("articlesUpdated"));
-
+      onAddBlog(formData);
       setFormData({
         title: "",
-        category: "",
+        category: categories[0] || "",
         content: "",
         tags: "",
         imageUrl: "",
@@ -226,9 +211,10 @@ const BlogModal = () => {
             <div className="flex items-center justify-center w-full">
               {imagePreview ? (
                 <div className={styles.imagePreviewContainer}>
-                  <img
+                  <Image
                     src={imagePreview || "/placeholder.svg"}
                     alt="معاينة الصورة"
+                    fill
                     className={styles.imagePreview}
                   />
                   <button
@@ -245,9 +231,7 @@ const BlogModal = () => {
               ) : (
                 <label htmlFor="image-upload" className={styles.fileLabel}>
                   <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                    <MdOutlineCloudUpload
-                      className={styles.fileLabelIcon}
-                    />
+                    <MdOutlineCloudUpload className={styles.fileLabelIcon} />
                     <p className={styles.fileLabelText}>
                       <span className="font-semibold">اضغط للرفع</span>
                     </p>
