@@ -4,7 +4,6 @@ import NavBar from "../components/Header/NavBar";
 import { AuthProvider } from "@/context/AuthContext";
 import { ModalWrapper } from "@/context/ModalContext";
 import { Geist, Geist_Mono } from "next/font/google";
-import { ProfileProvider } from "@/context/ProfileContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 
 export const metadata: Metadata = {
@@ -31,12 +30,10 @@ export default function RootLayout({
     <html lang="ar" dir="rtl">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#EFEFEF]`}>
         <AuthProvider>
-          <ProfileProvider>
             <ThemeProvider>
               <NavBar/>
               <ModalWrapper>{children}</ModalWrapper>
             </ThemeProvider>
-          </ProfileProvider>
         </AuthProvider>
       </body>
     </html>

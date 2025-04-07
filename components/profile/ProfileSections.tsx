@@ -1,19 +1,49 @@
 "use client";
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AddSectionModal from "./AddSectionModal";
 import EditSectionModal from "./EditSectionModal";
-import type { UserProfile, ProfileSection } from "@/types/profile";
+import type { ProfileSection } from "@/types/profile";
 import profileSectionsStyles from "@/styles/profileSections";
-import useSections from "@/hooks/useSections";
-import SectionItem from "./SectionItem";
-interface IProps {
-  profile: UserProfile;
+import ProfileSectionItem from "./ProfileSectionItem";
+import { useTheme } from "@/context/ThemeContext";
+import {
+  getUserSections,
+  addUserSection,
+  updateProfileSection,
+  deleteProfileSection,
+} from "@/services/profile/sections.service";
+import type { User } from "@/types/user";
+
+interface ProfileSectionsProps {
+  isOwner: boolean;
+  user: User;
 }
 
-export default function ProfileSections({ profile }: IProps) {
-  const initialSections: ProfileSection[] = profile.sections || [];
-  const { sections, addSection, updateSection } = useSections(initialSections);
+export default function ProfileSections({ isOwner, user }: ProfileSectionsProps) {
+  const { theme } = useTheme();
+  const styles = profileSectionsStyles[theme];
+
+  const [sections, setSections] = useState<ProfileSection[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string>("");
+
+  useEffect(() => {
+    async function fetchSections() {
+      try {
+        const fetchedSections = await getUserSections(user.id);
+        setSections(fetchedSections);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          setError(err.message || "حدث خطأ أثناء جلب الأقسام");
+        } else {
+          setError("حدث خطأ أثناء جلب الأقسام");
+        }
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchSections();
+  }, [user.id]);
 
   const [modalOpen, setModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -32,36 +62,77 @@ export default function ProfileSections({ profile }: IProps) {
     setEditModalOpen(false);
   };
 
-  const handleAddSection = (newSection: Omit<ProfileSection, "id">) => {
-    addSection(newSection);
+  const handleAddSection = async (newSection: Omit<ProfileSection, "id">) => {
+    try {
+      const savedSection = await addUserSection(user.id, newSection);
+      setSections((prev) => [...prev, savedSection]);
+    } catch (err) {
+      console.error("Error adding section:", err);
+    }
     closeModal();
   };
 
-  const handleUpdateSection = (updated: ProfileSection) => {
-    updateSection(updated);
+  const handleUpdateSection = async (updated: ProfileSection) => {
+    try {
+      const updatedSection = await updateProfileSection(
+        user.id,
+        updated.id,
+        {
+          title: updated.title,
+          content: updated.content,
+          imageUrl: updated.imageUrl || "",
+          imageDirection: updated.imageDirection || "left",
+        }
+      );
+      setSections((prev) =>
+        prev.map((s) => (s.id === updatedSection.id ? updatedSection : s))
+      );
+    } catch (err) {
+      console.error("Error updating section:", err);
+    }
     closeEditModal();
   };
 
+  const handleDeleteSection = async (section: ProfileSection) => {
+    try {
+      await deleteProfileSection(user.id, section.id);
+      setSections((prev) => prev.filter((s) => s.id !== section.id));
+    } catch (err) {
+      console.error("Error deleting section:", err);
+    }
+  };
+
   return (
-    <div className={profileSectionsStyles.container} dir="rtl">
-      <div className={profileSectionsStyles.addButtonWrapper}>
-        <button onClick={openModal} className={profileSectionsStyles.addButton}>
-          إضافة قسم
-        </button>
-      </div>
-
+    <div className={styles.container} dir="rtl">
+      {isOwner && (
+        <div className={styles.addButtonWrapper}>
+          <button onClick={openModal} className={styles.addButton}>
+            إضافة قسم
+          </button>
+        </div>
+      )}
+      {loading && <p>جاري تحميل الأقسام...</p>}
+      {error && <p className={styles.emptyMessage}>خطأ: {error}</p>}
       {sections.map((section) => (
-        <SectionItem key={section.id} section={section} onEdit={openEditModal} />
+        <ProfileSectionItem
+          key={section.id}
+          section={section}
+          isOwner={isOwner}
+          onEdit={openEditModal}
+          onDelete={handleDeleteSection}
+        />
       ))}
-
-      <AddSectionModal
-        isOpen={modalOpen}
-        onClose={closeModal}
-        onAddSection={handleAddSection}
-      />
-
-      {editingSection && (
+      {isOwner && (
+        <AddSectionModal
+          isOpen={modalOpen}
+          onClose={closeModal}
+          onAddSection={handleAddSection}
+          user={user}
+        />
+      )}
+      {isOwner && editingSection && (
         <EditSectionModal
+          user={user}
           isOpen={editModalOpen}
           onClose={closeEditModal}
           onSave={handleUpdateSection}

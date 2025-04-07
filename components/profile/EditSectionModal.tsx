@@ -1,16 +1,18 @@
 "use client";
-
 import React, { useState, ChangeEvent, FormEvent } from "react";
-import { MdOutlineCloudUpload } from "react-icons/md";
 import type { ProfileSection } from "@/types/profile";
-import { updateProfileSection } from "@/services/profile.service";
+import { updateProfileSection } from "@/services/profile/sections.service";
+import { useTheme } from "@/context/ThemeContext";
 import editSectionModalStyles from "@/styles/editSectionModal";
+import { User } from "@/types/user";
+import { InputField, FileUploadField, fileToBase64 } from "./FormComponents";
 
 interface EditSectionModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (updatedSection: ProfileSection) => void;
   currentData: ProfileSection;
+  user: User;
 }
 
 interface SectionFormState {
@@ -24,27 +26,17 @@ export default function EditSectionModal({
   onClose,
   onSave,
   currentData,
+  user,
 }: EditSectionModalProps) {
+  const { theme } = useTheme();
+  const modalStyles = editSectionModalStyles[theme];
+
   const [formState, setFormState] = useState<SectionFormState>({
     title: currentData.title,
     content: currentData.content,
     imageDirection: currentData.imageDirection || "left",
   });
   const [file, setFile] = useState<File | null>(null);
-
-  const fileToBase64 = (file: File): Promise<string> =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === "string") {
-          resolve(reader.result);
-        } else {
-          reject(new Error("Error reading file"));
-        }
-      };
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
 
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
@@ -54,9 +46,7 @@ export default function EditSectionModal({
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-    }
+    if (e.target.files && e.target.files[0]) setFile(e.target.files[0]);
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -65,16 +55,13 @@ export default function EditSectionModal({
     if (file) {
       base64Image = await fileToBase64(file);
     }
-    const updatedSectionData = {
+    const updatedSectionData: Omit<ProfileSection, "id"> = {
       title: formState.title,
       content: formState.content,
       imageUrl: base64Image || "",
       imageDirection: formState.imageDirection,
     };
-    const updatedSection = await updateProfileSection(
-      currentData.id,
-      updatedSectionData
-    );
+    const updatedSection = await updateProfileSection(user.id, currentData.id, updatedSectionData);
     onSave(updatedSection);
     onClose();
   };
@@ -82,24 +69,15 @@ export default function EditSectionModal({
   if (!isOpen) return null;
 
   return (
-    <div
-      className={editSectionModalStyles.overlay}
-      onClick={onClose}
-    >
-      <div
-        className={editSectionModalStyles.container}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className={editSectionModalStyles.header}>
-          <h2 className={editSectionModalStyles.headerTitle}>تعديل القسم</h2>
-          <button
-            onClick={onClose}
-            className={editSectionModalStyles.closeButton}
-          >
+    <div className={modalStyles.overlay} onClick={onClose}>
+      <div className={modalStyles.container} onClick={(e) => e.stopPropagation()}>
+        <div className={modalStyles.header}>
+          <h2 className={modalStyles.headerTitle}>تعديل القسم</h2>
+          <button onClick={onClose} className={modalStyles.closeButton}>
             ✕
           </button>
         </div>
-        <form onSubmit={handleSubmit} className={editSectionModalStyles.form} dir="rtl">
+        <form onSubmit={handleSubmit} className={modalStyles.form} dir="rtl">
           <InputField
             label="العنوان"
             name="title"
@@ -107,6 +85,7 @@ export default function EditSectionModal({
             value={formState.title}
             onChange={handleInputChange}
             required
+            // modalStyles={modalStyles}
           />
           <InputField
             label="المحتوى"
@@ -116,11 +95,13 @@ export default function EditSectionModal({
             onChange={handleInputChange}
             textarea
             required
+            // modalStyles={modalStyles}
           />
           <FileUploadField
             label="صورة القسم"
             file={file}
             onFileChange={handleFileChange}
+            // modalStyles={modalStyles}
           />
           <InputField
             label="اتجاه الصورة"
@@ -133,19 +114,13 @@ export default function EditSectionModal({
               { value: "left", label: "إلى اليمين" },
             ]}
             required
+            // modalStyles={modalStyles}
           />
-          <div className={editSectionModalStyles.buttonContainer}>
-            <button
-              type="button"
-              onClick={onClose}
-              className={editSectionModalStyles.cancelButton}
-            >
+          <div className={modalStyles.buttonContainer}>
+            <button type="button" onClick={onClose} className={modalStyles.cancelButton}>
               إلغاء
             </button>
-            <button
-              type="submit"
-              className={editSectionModalStyles.submitButton}
-            >
+            <button type="submit" className={modalStyles.submitButton}>
               حفظ التغييرات
             </button>
           </div>
@@ -154,122 +129,3 @@ export default function EditSectionModal({
     </div>
   );
 }
-
-
-interface InputFieldProps {
-  label: string;
-  name: string;
-  placeholder?: string;
-  value: string;
-  onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
-  required?: boolean;
-  textarea?: boolean;
-  select?: boolean;
-  options?: { value: string; label: string }[];
-}
-
-const InputField: React.FC<InputFieldProps> = ({
-  label,
-  name,
-  placeholder,
-  value,
-  onChange,
-  required = false,
-  textarea = false,
-  select = false,
-  options = [],
-}) => {
-  return (
-    <div>
-      <label className={editSectionModalStyles.label}>{label}</label>
-      {textarea ? (
-        <textarea
-          name={name}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-          required={required}
-          className={editSectionModalStyles.textarea}
-          rows={4}
-        ></textarea>
-      ) : select ? (
-        <select
-          name={name}
-          value={value}
-          onChange={onChange}
-          required={required}
-          className={editSectionModalStyles.select}
-        >
-          {options.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      ) : (
-        <input
-          type="text"
-          name={name}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-          required={required}
-          className={editSectionModalStyles.input}
-        />
-      )}
-    </div>
-  );
-};
-
-
-interface FileUploadFieldProps {
-  label: string;
-  file: File | null;
-  onFileChange: (e: ChangeEvent<HTMLInputElement>) => void;
-}
-
-const FileUploadField: React.FC<FileUploadFieldProps> = ({
-  label,
-  file,
-  onFileChange,
-}) => {
-  return (
-    <div>
-      <label className={editSectionModalStyles.label}>{label}</label>
-      <div className="flex items-center justify-center w-full">
-        <label
-          htmlFor="edit-image-upload"
-          className={editSectionModalStyles.fileUploadLabel}
-        >
-          {!file ? (
-            <div className={editSectionModalStyles.fileUploadInner}>
-              <MdOutlineCloudUpload className="w-10 h-10 mb-3 text-gray-400" />
-              <p className={editSectionModalStyles.fileUploadText}>
-                <span className="font-semibold">اضغط للرفع</span> أو اسحب وأفلت
-              </p>
-              <p className="text-xs text-gray-500">
-                SVG, PNG, JPG أو GIF (الحد الأقصى 2MB)
-              </p>
-            </div>
-          ) : (
-            <div className="text-center p-4">
-              <p className="text-sm text-gray-600">
-                تم اختيار الملف: {file.name}
-              </p>
-              <p className="text-xs text-gray-400">
-                اضغط هنا لاختيار ملف آخر
-              </p>
-            </div>
-          )}
-          <input
-            id="edit-image-upload"
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={onFileChange}
-          />
-        </label>
-      </div>
-    </div>
-  );
-};

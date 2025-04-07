@@ -1,60 +1,100 @@
 "use client";
-
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import type { User } from "@/types/user";
-
-const mockUser: User = {
-  id: 100,
-  name: "Jane Doe",
-  email: "janedoe@example.com",
-  username: "janedoe",
-  role: "user", // "admin" "user" "guest"
-};
-
-interface IAuthContext {
-  user: User | null;
+import type { UserProfile } from "@/types/profile";
+import { defaultUser } from "@/types/user";
+import { defaultUserProfile } from "@/types/profile";
+interface AuthContextType {
+  user: User;
+  profile: UserProfile ;
   isLoggedIn: boolean;
-  login: () => void;
-  logout: () => void;
+  login: (credentials: { email: string; password: string }) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
-const AuthContext = createContext<IAuthContext | undefined>(undefined);
+const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<User>(defaultUser);
+  const [profile, setProfile] = useState<UserProfile >(defaultUserProfile);
+  const [loading, setLoading] = useState(true);
+  const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
+
+  const fetchProfile = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setProfile(defaultUserProfile);
+      return;
+    }
+    try {
+      const res = await fetch(`${API_URL}/me`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setProfile(data.profile);
+      } else {
+        setProfile(defaultUserProfile);
+      }
+    } catch (error) {
+      console.error("Failed to fetch profile", error);
+      setProfile(defaultUserProfile);
+    }
+  };
 
   useEffect(() => {
-    const loggedIn = localStorage.getItem("isLoggedIn") === "true";
-    if (loggedIn) {
-      setUser(mockUser);
-      setIsLoggedIn(true);
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetchProfile().finally(() => setLoading(false));
+    } else {
+      setLoading(false);
     }
-  }, []);
+  }, [API_URL]);
 
-  const login = () => {
-    localStorage.setItem("isLoggedIn", "true");
-    setUser(mockUser); // Simulate logging in with our mock user
-    setIsLoggedIn(true);
+  
+  const login = async (credentials: { email: string; password: string }) => {
+    const res = await fetch(`${API_URL}/auth/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(credentials),
+    });
+    if (!res.ok) throw new Error("Login failed");
+    const data = await res.json();
+    localStorage.setItem("token", data.token);
+    setUser(data.user);
+    await fetchProfile();
   };
 
-  const logout = () => {
-    localStorage.removeItem("isLoggedIn");
-    setUser(null);
-    setIsLoggedIn(false);
+  const logout = async () => {
+    try {
+      await fetch(`${API_URL}/auth/logout`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      localStorage.removeItem("token");
+      setUser(defaultUser);
+      setProfile(defaultUserProfile);
+    }
   };
+
+  const isLoggedIn = !!user.id;
 
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn, login, logout }}>
-      {children}
+    <AuthContext.Provider value={{ user, profile, isLoggedIn, login, logout }}>
+      {!loading && children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => {
+export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
+  if (!context) throw new Error("useAuth must be used within an AuthProvider");
   return context;
 };
