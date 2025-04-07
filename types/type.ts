@@ -12,6 +12,7 @@ export interface BlogDetail {
   createdAt: string;
   like: number;
   author: {
+    id: number;
     name: string;
     image: string;
   };

@@ -1,65 +1,63 @@
 "use client";
-
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState, useEffect, JSX } from "react";
+import { useParams } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+import { getUserByUsername } from "@/services/user/user.service";
+import { getProfile } from "@/services/profile/profile.service";
+import type { User } from "@/types/user";
 import type { UserProfile } from "@/types/profile";
-import type { UserRole } from "@/types/User";
 
-const mockProfile: UserProfile = {
-  id: 1,
-  user: {
-    id: 100,
-    name: "Jane Doe",
-    email: "janedoe@example.com",
-    username: "janedoe",
-    role: "user" as UserRole,
-  },
-  bio: "This is a mock bio for testing the ProfileContext.",
-  avatarUrl: "https://example.com/avatar.jpg",
-  coverUrl: "https://example.com/cover.jpg",
-  facebookUrl: "https://facebook.com/janedoe",
-  XUrl: "https://twitter.com/janedoe",
-  linkedinUrl: "https://linkedin.com/in/janedoe",
-  phoneNumber: "123-456-7890",
-  website: "https://janedoe.com",
-  country: "Wonderland",
-  city: "Imagination",
-  birthdate: "1990-01-01",
-  followersCount: 120,
-  articlesCount: 8,
-  starsCount: 15,
-  commentsCount: 25,
-  isFollowing: false,
-  showStats: true,
-  showInteractions: true,
-
-  sections: [],
-};
-
-interface IProfileContext {
-  profile: UserProfile;
-  setProfile: React.Dispatch<React.SetStateAction<UserProfile>>;
+interface UserProfileData {
+  user: User | null;
+  profile: UserProfile | null;
+  isOwner: boolean;
+  loading: boolean;
 }
 
-const ProfileContext = createContext<IProfileContext | undefined>(undefined);
+const UserProfileDataContext = createContext<UserProfileData>({
+  user: null,
+  profile: null,
+  isOwner: false,
+  loading: true,
+});
 
-export const ProfileProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const [profile, setProfile] = useState<UserProfile>(mockProfile);
+export function useUserProfileData() {
+  return useContext(UserProfileDataContext);
+}
+
+export function UserProfileDataProvider({ children }: { children: React.ReactNode }): JSX.Element {
+  const { username: usernameParam } = useParams();
+  const username = typeof usernameParam === "string" ? usernameParam : "";
+  const { user: authUser, profile: authProfile } = useAuth();
+  const isOwner = username === authUser.username;
+
+  const [userData, setUserData] = useState<User | null>(isOwner ? authUser : null);
+  const [profileData, setProfileData] = useState<UserProfile | null>(isOwner ? authProfile : null);
+  const [loading, setLoading] = useState<boolean>(!isOwner);
+
+  useEffect(() => {
+    if (!isOwner && username) {
+      async function fetchData() {
+        try {
+          const fetchedUser = await getUserByUsername(username);
+          const fetchedProfile = await getProfile(fetchedUser.profileId);
+          setUserData(fetchedUser);
+          setProfileData(fetchedProfile);
+        } catch (error) {
+          console.error("Error fetching user/profile data:", error);
+        } finally {
+          setLoading(false);
+        }
+      }
+      fetchData();
+    }
+  }, [isOwner, username]);
 
   return (
-    <ProfileContext.Provider value={{ profile, setProfile }}>
+    <UserProfileDataContext.Provider
+      value={{ user: userData, profile: profileData, isOwner, loading }}
+    >
       {children}
-    </ProfileContext.Provider>
+    </UserProfileDataContext.Provider>
   );
-};
-
-export const useProfile = () => {
-  const context = useContext(ProfileContext);
-  if (!context) {
-    throw new Error("useProfile must be used within a ProfileProvider");
-  }
-  return context;
-};
+}

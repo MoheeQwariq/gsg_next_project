@@ -1,11 +1,11 @@
 "use client";
-
 import React, { useState, ChangeEvent, FormEvent } from "react";
-import { MdOutlineCloudUpload } from "react-icons/md";
 import type { ProfileSection } from "@/types/profile";
-// import { saveProfileSection } from "@/services/profile.service";
-import addSectionModalStyles from "@/styles/addSectionModalStyles";
-
+import { useTheme } from "@/context/ThemeContext";
+import { addUserSection } from "@/services/profile/sections.service";
+import addSectionModalStylesRaw from "@/styles/addSectionModalStyles";
+import { User } from "@/types/user";
+import { InputField, FileUploadField } from "./FormComponents";
 interface SectionFormState {
   title: string;
   content: string;
@@ -13,69 +13,63 @@ interface SectionFormState {
 }
 
 interface AddSectionModalProps {
+  user:User
   isOpen: boolean;
   onClose: () => void;
   onAddSection: (newSection: ProfileSection) => void;
 }
 
 const AddSectionModal: React.FC<AddSectionModalProps> = ({
+  user,
   isOpen,
   onClose,
   onAddSection,
 }) => {
+  const { theme } = useTheme();
+  const modalStyles = addSectionModalStylesRaw[theme];
+
   const [formState, setFormState] = useState<SectionFormState>({
     title: "",
     content: "",
     imageDirection: "left",
   });
-
   const [file, setFile] = useState<File | null>(null);
 
   const fileToBase64 = (file: File): Promise<string> =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => {
-        if (typeof reader.result === "string") {
-          resolve(reader.result);
-        } else {
-          reject(new Error("فشل في قراءة الملف"));
-        }
+        if (typeof reader.result === "string") resolve(reader.result);
+        else reject(new Error("فشل في قراءة الملف"));
       };
       reader.onerror = reject;
       reader.readAsDataURL(file);
     });
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setFormState((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-    }
+    if (e.target.files && e.target.files[0]) setFile(e.target.files[0]);
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     let base64Image = "";
-    if (file) {
-      base64Image = await fileToBase64(file);
-    }
+    if (file) base64Image = await fileToBase64(file);
     const newSectionData: Omit<ProfileSection, "id"> = {
       title: formState.title,
       content: formState.content,
       imageUrl: base64Image,
       imageDirection: formState.imageDirection,
     };
-    // const savedSection = await saveProfileSection(newSectionData);
+    const savedSection = await addUserSection(user.id, newSectionData);
     onAddSection(savedSection);
-    // Reset the form.
-    setFormState({
-      title: "",
-      content: "",
-      imageDirection: "left",
-    });
+    setFormState({ title: "", content: "", imageDirection: "left" });
     setFile(null);
     onClose();
   };
@@ -83,24 +77,15 @@ const AddSectionModal: React.FC<AddSectionModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div
-      className={addSectionModalStyles.overlay}
-      onClick={onClose}
-    >
-      <div
-        className={addSectionModalStyles.container}
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className={addSectionModalStyles.header}>
-          <h2 className={addSectionModalStyles.headerTitle}>إضافة قسم</h2>
-          <button
-            onClick={onClose}
-            className={addSectionModalStyles.closeButton}
-          >
+    <div className={modalStyles.overlay} onClick={onClose}>
+      <div className={modalStyles.container} onClick={(e) => e.stopPropagation()}>
+        <div className={modalStyles.header}>
+          <h2 className={modalStyles.headerTitle}>إضافة قسم</h2>
+          <button onClick={onClose} className={modalStyles.closeButton}>
             ✕
           </button>
         </div>
-        <form onSubmit={handleSubmit} className={addSectionModalStyles.form} dir="rtl">
+        <form onSubmit={handleSubmit} className={modalStyles.form} dir="rtl">
           <InputField
             label="العنوان"
             name="title"
@@ -108,6 +93,7 @@ const AddSectionModal: React.FC<AddSectionModalProps> = ({
             value={formState.title}
             onChange={handleInputChange}
             required
+            // modalStyles={modalStyles}
           />
           <InputField
             label="المحتوى"
@@ -117,11 +103,13 @@ const AddSectionModal: React.FC<AddSectionModalProps> = ({
             onChange={handleInputChange}
             textarea
             required
+            // modalStyles={modalStyles}
           />
           <FileUploadField
             label="صورة القسم"
             file={file}
             onFileChange={handleFileChange}
+            // modalStyles={modalStyles}
           />
           <InputField
             label="اتجاه الصورة"
@@ -134,19 +122,17 @@ const AddSectionModal: React.FC<AddSectionModalProps> = ({
               { value: "left", label: "إلى اليمين" },
             ]}
             required
+            // modalStyles={modalStyles}
           />
-          <div className={addSectionModalStyles.buttonContainer}>
+          <div className={modalStyles.buttonContainer}>
             <button
               type="button"
               onClick={onClose}
-              className={addSectionModalStyles.cancelButton}
+              className={modalStyles.cancelButton}
             >
               إلغاء
             </button>
-            <button
-              type="submit"
-              className={addSectionModalStyles.submitButton}
-            >
+            <button type="submit" className={modalStyles.submitButton}>
               إضافة
             </button>
           </div>
@@ -156,118 +142,7 @@ const AddSectionModal: React.FC<AddSectionModalProps> = ({
   );
 };
 
-interface InputFieldProps {
-  label: string;
-  name: string;
-  placeholder?: string;
-  value: string;
-  onChange: (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => void;
-  required?: boolean;
-  textarea?: boolean;
-  select?: boolean;
-  options?: { value: string; label: string }[];
-}
 
-const InputField: React.FC<InputFieldProps> = ({
-  label,
-  name,
-  placeholder,
-  value,
-  onChange,
-  required = false,
-  textarea = false,
-  select = false,
-  options = [],
-}) => {
-  return (
-    <div>
-      <label className={addSectionModalStyles.label}>{label}</label>
-      {textarea ? (
-        <textarea
-          name={name}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-          required={required}
-          className={addSectionModalStyles.textarea}
-          rows={4}
-        ></textarea>
-      ) : select ? (
-        <select
-          name={name}
-          value={value}
-          onChange={onChange}
-          required={required}
-          className={addSectionModalStyles.select}
-        >
-          {options.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-      ) : (
-        <input
-          type="text"
-          name={name}
-          placeholder={placeholder}
-          value={value}
-          onChange={onChange}
-          required={required}
-          className={addSectionModalStyles.input}
-        />
-      )}
-    </div>
-  );
-};
 
-// Reusable FileUploadField component.
-interface FileUploadFieldProps {
-  label: string;
-  file: File | null;
-  onFileChange: (e: ChangeEvent<HTMLInputElement>) => void;
-}
-
-const FileUploadField: React.FC<FileUploadFieldProps> = ({
-  label,
-  file,
-  onFileChange,
-}) => {
-  return (
-    <div>
-      <label className={addSectionModalStyles.label}>{label}</label>
-      <div className="flex items-center justify-center w-full">
-        <label
-          htmlFor="image-upload"
-          className={addSectionModalStyles.fileUploadLabel}
-        >
-          {!file ? (
-            <div className={addSectionModalStyles.fileUploadInner}>
-              <MdOutlineCloudUpload className="w-10 h-10 mb-3 text-gray-400" />
-              <p className={addSectionModalStyles.fileUploadText}>
-                <span className="font-semibold">اضغط للرفع</span> أو اسحب وأفلت
-              </p>
-              <p className="text-xs text-gray-500">
-                SVG, PNG, JPG أو GIF (الحد الأقصى 2MB)
-              </p>
-            </div>
-          ) : (
-            <div className="text-center p-4">
-              <p className="text-sm text-gray-600">تم اختيار الملف: {file.name}</p>
-              <p className="text-xs text-gray-400">اضغط هنا لاختيار ملف آخر</p>
-            </div>
-          )}
-          <input
-            id="image-upload"
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={onFileChange}
-          />
-        </label>
-      </div>
-    </div>
-  );
-};
 
 export default AddSectionModal;

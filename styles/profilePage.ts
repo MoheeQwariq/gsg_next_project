@@ -1,5 +1,6 @@
 const profilePageStyles = {
   light: {
+    container: "min-h-auto p-4", // no forced full-screen height
     headerContainer:
       "mb-6 flex flex-col justify-between gap-4 border-b border-gray-200 pb-4 sm:flex-row sm:items-center",
     pageHeading:
@@ -10,6 +11,7 @@ const profilePageStyles = {
     emptyMessage: "p-4 text-center text-gray-600",
   },
   dark: {
+    container: "min-h-auto p-4", // no forced full-screen height
     headerContainer:
       "mb-6 flex flex-col justify-between gap-4 border-b border-gray-700 pb-4 sm:flex-row sm:items-center",
     pageHeading:
