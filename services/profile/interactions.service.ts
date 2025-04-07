@@ -1,10 +1,5 @@
-export interface Interaction {
-  id: number;
-  type: string;
-  content?: string;
-  articleId: number;
-}
 
+import type { Interaction } from "@/types/dashboardStats";
 export async function getUserInteractions(userId: number): Promise<Interaction[]> {
   const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
   try {
