@@ -2,8 +2,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { FaUserFriends, FaNewspaper } from "react-icons/fa";
-import myPhoto from "@/public/myPhoto.jpg";
 import { useTheme } from "@/context/ThemeContext";
+import myPhoto from "@/public/myPhoto.jpg";
 
 interface TopPublisherProps {
   name: string;
@@ -12,7 +12,6 @@ interface TopPublisherProps {
   imageSrc?: string;
 }
 
-// Extracted styles for TopPublisher component
 const topPublisherStyles = {
   light: {
     container:
@@ -22,8 +21,7 @@ const topPublisherStyles = {
     image: "object-cover transition-transform group-hover:scale-105",
     content: "flex flex-1 flex-col",
     name: "font-medium text-gray-900 group-hover:text-blue-600",
-    metaContainer:
-      "mt-1 flex items-center gap-4 text-xs text-gray-500",
+    metaContainer: "mt-1 flex items-center gap-4 text-xs text-gray-500",
     iconNewspaper: "h-3 w-3 text-blue-500",
     iconUserFriends: "h-3 w-3 text-blue-500",
     link:
@@ -37,8 +35,7 @@ const topPublisherStyles = {
     image: "object-cover transition-transform group-hover:scale-105",
     content: "flex flex-1 flex-col",
     name: "font-medium text-gray-100 group-hover:text-blue-400",
-    metaContainer:
-      "mt-1 flex items-center gap-4 text-xs text-gray-400",
+    metaContainer: "mt-1 flex items-center gap-4 text-xs text-gray-400",
     iconNewspaper: "h-3 w-3 text-blue-400",
     iconUserFriends: "h-3 w-3 text-blue-400",
     link:
@@ -46,7 +43,7 @@ const topPublisherStyles = {
   },
 };
 
-const TopPublisher = ({ name, articles, followers }: TopPublisherProps) => {
+const TopPublisher = ({ name, articles, followers, imageSrc }: TopPublisherProps) => {
   const { theme } = useTheme();
   const styles = topPublisherStyles[theme];
 
@@ -54,16 +51,14 @@ const TopPublisher = ({ name, articles, followers }: TopPublisherProps) => {
     <div className={styles.container}>
       <div className={styles.imageWrapper}>
         <Image
-          src={myPhoto}
+          src={imageSrc || myPhoto}
           alt={name}
           fill
           className={styles.image}
         />
       </div>
-
       <div className={styles.content}>
         <h4 className={styles.name}>{name}</h4>
-
         <div className={styles.metaContainer}>
           <div className="flex items-center gap-1">
             <FaNewspaper className={styles.iconNewspaper} />
@@ -75,7 +70,6 @@ const TopPublisher = ({ name, articles, followers }: TopPublisherProps) => {
           </div>
         </div>
       </div>
-
       <Link href={`/`} className={styles.link}>
         زيارة الصفحة
       </Link>

@@ -85,3 +85,20 @@ export async function getUserByUsername(username: string): Promise<User> {
     throw error;
   }
 }
+
+export async function getTrendUsers(): Promise<User[]> {
+  try {
+    const response = await fetch(`${API_URL}/users/trends`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!response.ok) {
+      throw new Error(`Failed to get trend users: ${response.statusText}`);
+    }
+    const data = await response.json();
+    return data as User[];
+  } catch (error) {
+    console.error("Error fetching trend users", error);
+    throw error;
+  }
+}

@@ -4,7 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaCalendarAlt } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
+import type { BlogDetail } from "@/types/type";
 import myPhoto from "@/public/myPhoto.jpg";
+
+interface TrendingBlogProps {
+  blog: BlogDetail;
+}
 
 const trendingBlogStyles = {
   light: {
@@ -37,43 +42,41 @@ const trendingBlogStyles = {
   },
 };
 
-const TrendingBlog = () => {
+const TrendingBlog = ({ blog }: TrendingBlogProps) => {
   const { theme } = useTheme();
   const styles = trendingBlogStyles[theme];
 
   return (
-    <Link href="/blogs/1" className={styles.link}>
+    <Link href={`/blogs/${blog.blogId}`} className={styles.link}>
       <div className={styles.imageWrapper}>
         <Image
-          src={myPhoto}
-          alt="عنوان المقالة"
+          src={blog.imageUrl || myPhoto}
+          alt={blog.title}
           fill
           className={styles.image}
         />
       </div>
       <div className={styles.content}>
-        <h4 className={styles.title}>
-          عنوان المقالة الرائجة هنا يمكن أن يكون طويلاً
-        </h4>
-
+        <h4 className={styles.title}>{blog.title}</h4>
         <div className={styles.meta}>
           <div className={styles.authorContainer}>
             <div className={styles.authorImageWrapper}>
               <Image
-                src={myPhoto}
-                alt="فيصل أبو زكري"
+                src={blog.author.image || myPhoto}
+                alt={blog.author.name}
                 fill
                 className="object-cover"
               />
             </div>
-            <span className={styles.authorName}>فيصل أبو زكري</span>
+            <span className={styles.authorName}>{blog.author.name}</span>
           </div>
-
           <span className={styles.date}>
             <FaCalendarAlt className={styles.calendarIcon} />
-            قبل 3 أيام
+            {new Date(blog.createdAt).toLocaleDateString("ar-EG")}
           </span>
-          <span className={styles.extraDate}>قبل 3 أيام</span>
+          <span className={styles.extraDate}>
+            {new Date(blog.createdAt).toLocaleTimeString("ar-EG")}
+          </span>
         </div>
       </div>
     </Link>
