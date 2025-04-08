@@ -104,3 +104,18 @@ export async function deleteBlog(id: string): Promise<{ message: string }> {
 
   return response.json();
 }
+
+
+export async function getTrendBlogs(): Promise<BlogDetail[]> {
+  const response = await fetch(`${API_BASE_URL}/blogs/trends`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Error fetching trend blogs: ${errorText}`);
+  }
+  return response.json();
+}

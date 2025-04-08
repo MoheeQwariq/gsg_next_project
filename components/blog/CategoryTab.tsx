@@ -1,30 +1,51 @@
 "use client";
-
-import { CategoryTabProps } from "@/types/type";
-import { useSearchParams, useRouter } from "next/navigation";
 import React from "react";
+import { useRouter } from "next/navigation";
+import { useTheme } from "@/context/ThemeContext";
 
-const CategoryTab = ({ children, category }: CategoryTabProps) => {
+export interface CategoryTabProps {
+  children: React.ReactNode;
+  category: string;
+  onCategoryChange?: (category: string) => void;
+  currentCategory?: string;
+}
+
+const categoryTabStyles = {
+  light: {
+    active: "bg-blue-500 text-white",
+    inactive: "bg-gray-100 text-gray-700 hover:bg-blue-500 hover:text-white",
+  },
+  dark: {
+    active: "bg-blue-400 text-white",
+    inactive: "bg-gray-700 text-gray-300 hover:bg-blue-400 hover:text-white",
+  },
+};
+
+const CategoryTab: React.FC<CategoryTabProps> = ({ children, category, onCategoryChange, currentCategory }) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const currentCategory = searchParams.get("category") || "الكل";
+  const { theme } = useTheme();
+  const styles = categoryTabStyles[theme];
+
+  const activeCategory = currentCategory || "الكل";
 
   const handleCategoryClick = (category: string) => {
-    if (category === "الكل") {
-      router.push("/blogs");
+    if (onCategoryChange) {
+      onCategoryChange(category);
     } else {
-      router.push(`/blogs?category=${category}`);
+      if (category === "الكل") {
+        router.push("/blogs");
+      } else {
+        router.push(`/blogs?category=${category}`);
+      }
     }
   };
+
+  const activeStyle = activeCategory === category ? styles.active : styles.inactive;
 
   return (
     <button
       onClick={() => handleCategoryClick(category)}
-      className={`cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-colors ${
-        currentCategory === category
-          ? "bg-blue-500 text-white"
-          : "bg-gray-100 text-gray-700 hover:bg-blue-500 hover:text-white"
-      }`}
+      className={`cursor-pointer rounded-full px-4 py-2 text-sm font-medium transition-colors ${activeStyle}`}
     >
       {children}
     </button>

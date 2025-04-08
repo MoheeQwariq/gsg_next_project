@@ -7,9 +7,11 @@ import { MdOutlineCloudUpload } from "react-icons/md";
 import { categories } from "@/constant/constant";
 import type { BlogDetail } from "@/types/type";
 import Image from "next/image";
+import { editBlog } from "@/services/blog/blog.service";
 
-interface BlogModalProps {
-  onAddBlog: (blogData: Partial<BlogDetail>) => void;
+interface EditBlogModalProps {
+  blog: BlogDetail;
+  onBlogEdited: (updatedBlog: BlogDetail) => void;
 }
 
 const blogModalStyles = {
@@ -71,7 +73,7 @@ const blogModalStyles = {
   },
 };
 
-const BlogModal = ({ onAddBlog }: BlogModalProps) => {
+const EditBlogModal: React.FC<EditBlogModalProps> = ({ blog, onBlogEdited }) => {
   const { isOpen, handleModal } = useModal();
   const { theme } = useTheme();
   const styles = blogModalStyles[theme];
@@ -79,44 +81,33 @@ const BlogModal = ({ onAddBlog }: BlogModalProps) => {
   const [formData, setFormData] = useState<
     Omit<BlogDetail, "blogId" | "createdAt" | "author">
   >({
-    title: "",
-    category: categories[0] || "",
-    content: "",
-    tags: "",
-    imageUrl: "",
-    like: 0,
+    title: blog.title,
+    category: blog.category,
+    content: blog.content,
+    tags: blog.tags,
+    imageUrl: blog.imageUrl,
+    like: blog.like,
   });
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  
+  const [imagePreview, setImagePreview] = useState<string | null>(blog.imageUrl || null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;
 
   const titlehandleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      title: e.target.value,
-    }));
+    setFormData((prev) => ({ ...prev, title: e.target.value }));
   };
 
   const CategoryhandleChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      category: e.target.value,
-    }));
+    setFormData((prev) => ({ ...prev, category: e.target.value }));
   };
 
   const ContenthandleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      content: e.target.value,
-    }));
+    setFormData((prev) => ({ ...prev, content: e.target.value }));
   };
 
   const tagshandleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFormData((prev) => ({
-      ...prev,
-      tags: e.target.value,
-    }));
+    setFormData((prev) => ({ ...prev, tags: e.target.value }));
   };
 
   const ImagehandleUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -127,15 +118,12 @@ const BlogModal = ({ onAddBlog }: BlogModalProps) => {
     reader.onloadend = () => {
       const result = reader.result as string;
       setImagePreview(result);
-      setFormData((prev) => ({
-        ...prev,
-        imageUrl: result,
-      }));
+      setFormData((prev) => ({ ...prev, imageUrl: result }));
     };
     reader.readAsDataURL(file);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
@@ -143,19 +131,11 @@ const BlogModal = ({ onAddBlog }: BlogModalProps) => {
         setIsSubmitting(false);
         return;
       }
-      onAddBlog(formData);
-      setFormData({
-        title: "",
-        category: categories[0] || "",
-        content: "",
-        tags: "",
-        imageUrl: "",
-        like: 0,
-      });
-      setImagePreview(null);
+      const updatedBlog = await editBlog(blog.blogId, formData);
+      onBlogEdited(updatedBlog);
       handleModal();
     } catch (error) {
-      console.error("Error saving article:", error);
+      console.error("Error updating article:", error);
     } finally {
       setIsSubmitting(false);
     }
@@ -165,7 +145,7 @@ const BlogModal = ({ onAddBlog }: BlogModalProps) => {
     <div className={styles.overlay} onClick={handleModal}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
-          <h2 className={styles.headerTitle}>إضافة مقال جديد</h2>
+          <h2 className={styles.headerTitle}>تعديل المقال</h2>
           <button onClick={handleModal} className={styles.closeButton}>
             <FaTimes className="h-5 w-5" />
           </button>
@@ -212,7 +192,7 @@ const BlogModal = ({ onAddBlog }: BlogModalProps) => {
               {imagePreview ? (
                 <div className={styles.imagePreviewContainer}>
                   <Image
-                    src={imagePreview || "/placeholder.svg"}
+                    src={imagePreview}
                     alt="معاينة الصورة"
                     fill
                     className={styles.imagePreview}
@@ -292,7 +272,7 @@ const BlogModal = ({ onAddBlog }: BlogModalProps) => {
               className={styles.submitButton}
               disabled={isSubmitting}
             >
-              {isSubmitting ? "جاري النشر..." : "نشر المقال"}
+              {isSubmitting ? "جاري التحديث..." : "تحديث المقال"}
             </button>
           </div>
         </form>
@@ -301,4 +281,4 @@ const BlogModal = ({ onAddBlog }: BlogModalProps) => {
   );
 };
 
-export default BlogModal;
+export default EditBlogModal;
