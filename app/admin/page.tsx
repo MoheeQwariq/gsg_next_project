@@ -3,9 +3,10 @@ import { useEffect, useState } from "react"
 import { FaUsers, FaBook, FaHome, FaChartLine, FaCalendarAlt, FaArrowRight } from "react-icons/fa"
 import Link from "next/link"
 import Image from "next/image"
+import { User } from "@/types/user"
 
 export default function AdminDashboard() {
-  const [users, setUsers] = useState<Stories.User[]>([])
+  const [users, setUsers] = useState<User[]>([])
   const [posts, setPosts] = useState<Stories.Post[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

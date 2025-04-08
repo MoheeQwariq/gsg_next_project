@@ -3,20 +3,16 @@
 import type React from "react"
 
 import { useEffect, useState, useCallback, useRef } from "react"
-import { FaUsers, FaUser, FaSearch, FaChevronRight, FaChevronLeft } from "react-icons/fa"
+import { FaUsers, FaUser, FaSearch, FaChevronRight, FaChevronLeft, FaTrashAlt } from "react-icons/fa"
 import Image from "next/image"
 import { useRouter, useSearchParams } from "next/navigation"
 import { User } from "@/types/user"
-
-
 interface ApiResponse {
   total: number
   page: number
   data: User[]
   description: string
 }
-
-
 export default function UsersPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -28,7 +24,7 @@ export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState(initialSearch)
-  const [searchInputValue, setSearchInputValue] = useState(initialSearch) 
+  const [searchInputValue, setSearchInputValue] = useState(initialSearch)
   const [filter, setFilter] = useState(initialFilter)
   const [error, setError] = useState<string | null>(null)
   const [currentPage, setCurrentPage] = useState(initialPage)
@@ -36,7 +32,7 @@ export default function UsersPage() {
   const [totalItems, setTotalItems] = useState(0)
   const [pageResetMessage, setPageResetMessage] = useState(false)
 
- 
+
   const searchTimeout = useRef<NodeJS.Timeout | null>(null)
 
   const updateURL = useCallback(() => {
@@ -79,11 +75,11 @@ export default function UsersPage() {
     } finally {
       setLoading(false)
     }
-  }, [searchQuery, filter, currentPage, itemsPerPage]) 
+  }, [searchQuery, filter, currentPage, itemsPerPage])
 
   useEffect(() => {
     fetchUsers()
-  }, [fetchUsers])  
+  }, [fetchUsers])
 
   useEffect(() => {
     if (pageResetMessage) {
@@ -281,8 +277,19 @@ export default function UsersPage() {
                     </div>
 
                     <span className="mr-auto px-3 py-1 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full text-xs font-medium shadow-sm">
-                      {user.role || "مستخدم"}
+                      {user.role}
                     </span>
+                    <button
+                      onClick={() => {
+                        const confirmDelete = window.confirm("هل أنت متأكد من أنك تريد حذف هذا المستخدم؟");
+                        if (confirmDelete) {
+                          setUsers(users.filter(u => u.id !== user.id));
+                        }
+                      }}
+                      className="text-red-500 hover:text-red-700 ml-4"
+                    >
+                      <FaTrashAlt className="text-xl" />
+                    </button>
                   </div>
                 ))}
               </div>
@@ -292,11 +299,10 @@ export default function UsersPage() {
                   <button
                     onClick={goToPreviousPage}
                     disabled={currentPage === 1}
-                    className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      currentPage === 1
+                    className={`w-10 h-10 rounded-full flex items-center justify-center ${currentPage === 1
                         ? "text-gray-400 cursor-not-allowed"
                         : "bg-blue-100 text-blue-600 hover:bg-blue-200"
-                    }`}
+                      }`}
                   >
                     <FaChevronRight className="text-sm" />
                   </button>
@@ -306,13 +312,12 @@ export default function UsersPage() {
                       <button
                         key={index}
                         onClick={() => (typeof page === "number" ? goToPage(page) : null)}
-                        className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                          page === currentPage
+                        className={`w-10 h-10 rounded-full flex items-center justify-center ${page === currentPage
                             ? "bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-medium"
                             : page === "..."
                               ? "text-blue-600"
                               : "bg-blue-50 text-blue-600 hover:bg-blue-100"
-                        }`}
+                          }`}
                         disabled={page === "..."}
                       >
                         {page}
@@ -323,11 +328,10 @@ export default function UsersPage() {
                   <button
                     onClick={goToNextPage}
                     disabled={currentPage === totalPages}
-                    className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                      currentPage === totalPages
+                    className={`w-10 h-10 rounded-full flex items-center justify-center ${currentPage === totalPages
                         ? "text-gray-400 cursor-not-allowed"
                         : "bg-blue-100 text-blue-600 hover:bg-blue-200"
-                    }`}
+                      }`}
                   >
                     <FaChevronLeft className="text-sm" />
                   </button>
@@ -349,7 +353,7 @@ export default function UsersPage() {
           onChange={(e) => {
             const newValue = Number(e.target.value)
 
-          
+
             if (currentPage > 1) {
               setPageResetMessage(true)
             }

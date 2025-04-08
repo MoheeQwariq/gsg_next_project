@@ -3,6 +3,7 @@ import sqlite3 from "better-sqlite3";
 const db = sqlite3("stories.db");
 
 db.pragma("foreign_keys = ON");
+
 db.prepare(
   `
 CREATE TABLE IF NOT EXISTS users (
@@ -17,7 +18,6 @@ CREATE TABLE IF NOT EXISTS users (
 );
 `
 ).run();
-
 db.prepare(
   `
   CREATE TABLE IF NOT EXISTS posts (
