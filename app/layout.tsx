@@ -5,6 +5,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ModalWrapper } from "@/context/ModalContext";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ThemeProvider } from "@/context/ThemeContext";
+import ThemeWrapper from "../components/ThemeWrapper";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -28,12 +29,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#EFEFEF]`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
         <AuthProvider>
-            <ThemeProvider>
-              <NavBar/>
+          <ThemeProvider>
+            <ThemeWrapper>
+              <NavBar />
               <ModalWrapper>{children}</ModalWrapper>
-            </ThemeProvider>
+            </ThemeWrapper>
+          </ThemeProvider>
         </AuthProvider>
       </body>
     </html>
