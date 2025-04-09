@@ -37,6 +37,17 @@ db.prepare(`
     FOREIGN KEY (followedEmail) REFERENCES users(email) ON DELETE CASCADE
   );
 `).run();
+db.prepare(`
+  CREATE TABLE IF NOT EXISTS stars (
+  userEmail TEXT NOT NULL,
+  starredEmail TEXT NOT NULL,
+  PRIMARY KEY (userEmail, starredEmail),
+  FOREIGN KEY (userEmail) REFERENCES users(email) ON DELETE CASCADE,
+  FOREIGN KEY (starredEmail) REFERENCES users(email) ON DELETE CASCADE
+);
+
+`).run();
+
 
 const fakeUsers = [
   { name: "Aseel", email: "aseel@gmail.com", password: securePassword, role: "admin", avatar: "/images.jpg", username: "aseel123", birthday: "1995-07-15" },
@@ -142,4 +153,16 @@ const insertFollower = db.prepare(`
 `);
 for (const follower of fakeFollowers) {
   insertFollower.run(follower);
+}
+const fakeStars = [
+  { userEmail: "sanohd@gmail.com", starredEmail: "aseel@gmail.com" },
+  { userEmail: "sarah@example.com", starredEmail: "ahmeds@example.com" },
+];
+
+const insertStar = db.prepare(
+  "INSERT OR IGNORE INTO stars (userEmail, starredEmail) VALUES (@userEmail, @starredEmail)"
+);
+
+for (const star of fakeStars) {
+  insertStar.run(star);
 }

@@ -7,30 +7,27 @@ const JWT_SECRET = process.env.JWT_SECRET!;
 
 async function isStarred(userEmail: string, starredEmail: string) {
   const result = db
-    .prepare("SELECT 1 FROM stars WHERE user_email = ? AND starred_email = ?")
+    .prepare("SELECT 1 FROM stars WHERE userEmail = ? AND starredEmail = ?")
     .get(userEmail, starredEmail);
   return !!result;
 }
 
 async function starUser(userEmail: string, starredEmail: string) {
-  const insertStar = db.prepare(`
-    INSERT OR IGNORE INTO stars (user_email, starred_email)
-    VALUES (?, ?)
-  `);
+  const insertStar = db.prepare(
+    "INSERT OR IGNORE INTO stars (userEmail, starredEmail) VALUES (?, ?)"
+  );
   insertStar.run(userEmail, starredEmail);
 }
 
 async function unstarUser(userEmail: string, starredEmail: string) {
-  const deleteStar = db.prepare(`
-    DELETE FROM stars WHERE user_email = ? AND starred_email = ?
-  `);
+  const deleteStar = db.prepare(
+    "DELETE FROM stars WHERE userEmail = ? AND starredEmail = ?"
+  );
   deleteStar.run(userEmail, starredEmail);
 }
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { email: string } }
-) {
+export async function POST(req: NextRequest, { params }: { params: { email: string } }) {
+  const { email: starredEmail } = await params;
   const authHeader = req.headers.get("authorization");
 
   if (!authHeader) {
@@ -43,11 +40,8 @@ export async function POST(
     const decoded = jwt.verify(token, JWT_SECRET) as { email: string; role: string };
     const userEmail = decoded.email;
 
-    // تأكد من أن `params` يتم الوصول إليها بشكل صحيح
-    const { email: starredEmail } = await params; // قم باستخدام await هنا
-
     if (userEmail === starredEmail) {
-      return NextResponse.json({ message: "لا يمكنك تمييز نفسك بنجمة" }, { status: 400 });
+      return NextResponse.json({ message: "لا يمكنك تفضيل نفسك" }, { status: 400 });
     }
 
     const starredUser = db
@@ -64,30 +58,26 @@ export async function POST(
       const alreadyStarred = await isStarred(userEmail, starredEmail);
 
       if (alreadyStarred) {
-        return NextResponse.json({ message: "لقد قمت بالفعل بتمييز هذا المستخدم بنجمة" });
+        return NextResponse.json({ message: "قمت بتفضيل هذا المستخدم من قبل" });
       }
 
       await starUser(userEmail, starredEmail);
 
-      const isMutual = await isStarred(starredEmail, userEmail);
-
-      return NextResponse.json({
-        message: isMutual ? "تم تمييز المستخدم بنجمة بنجاح، والمستخدم قام بتمييزك أيضاً 🎉" : "تم تمييز المستخدم بنجمة بنجاح",
-      });
+      return NextResponse.json({ message: "تم تفضيل المستخدم بنجاح" });
     } else if (action === "unstar") {
       const alreadyStarred = await isStarred(userEmail, starredEmail);
 
       if (!alreadyStarred) {
-        return NextResponse.json({ message: "أنت لم تقم بتمييز هذا المستخدم بنجمة" });
+        return NextResponse.json({ message: "لم تقم بتفضيل هذا المستخدم" });
       }
 
       await unstarUser(userEmail, starredEmail);
 
-      return NextResponse.json({ message: "تم إلغاء تمييز المستخدم بنجمة بنجاح" });
+      return NextResponse.json({ message: "تم إلغاء التفضيل بنجاح" });
     } else {
-      return NextResponse.json({ message: "العملية غير صحيحة" }, { status: 400 });
+      return NextResponse.json({ message: "الإجراء غير صالح" }, { status: 400 });
     }
   } catch (error) {
-    return NextResponse.json({ message: "التوكن غير صالح" }, { status: 401 });
+    return NextResponse.json({ message: "توكن غير صالح" }, { status: 401 });
   }
 }
