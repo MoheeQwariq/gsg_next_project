@@ -129,9 +129,11 @@ for (const post of fakePosts) {
 }
 
 const fakeFollowers = [
-  { followerEmail: "mohee@example.com", followedEmail: "aseel@gmail.com" },
-  { followerEmail: "lama@example.com", followedEmail: "mohee@example.com" },
-  { followerEmail: "aseel@gmail.com", followedEmail: "lama@example.com" },
+  { followerEmail: "mohee@example.com", followedEmail: "Sana@gmail.com" },
+  { followerEmail: "lama@example.com", followedEmail: "Sana@gmail.com" },
+  { followerEmail: "Sana@gmail.com", followedEmail: "aseel@gmail.com" },
+  { followerEmail: "Sana@gmail.com", followedEmail: "mohee@example.com" },
+  { followerEmail: "rami@example.com", followedEmail: "Sana@gmail.com" },
 ];
 
 const insertFollower = db.prepare(`

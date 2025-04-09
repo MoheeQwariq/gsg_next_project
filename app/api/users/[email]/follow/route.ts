@@ -7,14 +7,14 @@ const JWT_SECRET = process.env.JWT_SECRET!;
 
 async function isFollowing(followerEmail: string, followedEmail: string) {
   const result = db
-    .prepare("SELECT 1 FROM follows WHERE follower_email = ? AND followed_email = ?")
+    .prepare("SELECT 1 FROM followers WHERE followerEmail = ? AND followedEmail = ?")
     .get(followerEmail, followedEmail);
   return !!result;
 }
 
 async function followUser(followerEmail: string, followedEmail: string) {
   const insertFollow = db.prepare(`
-    INSERT OR IGNORE INTO follows (follower_email, followed_email)
+    INSERT OR IGNORE INTO followers (followerEmail, followedEmail)
     VALUES (?, ?)
   `);
   insertFollow.run(followerEmail, followedEmail);
@@ -22,15 +22,14 @@ async function followUser(followerEmail: string, followedEmail: string) {
 
 async function unfollowUser(followerEmail: string, followedEmail: string) {
   const deleteFollow = db.prepare(`
-    DELETE FROM follows WHERE follower_email = ? AND followed_email = ?
+    DELETE FROM followers WHERE followerEmail = ? AND followedEmail = ?
   `);
   deleteFollow.run(followerEmail, followedEmail);
 }
 
-export async function POST(
-  req: NextRequest,
-  { params }: { params: { email: string } }
-) {
+export async function POST(req: NextRequest, { params }: { params: { email: string } }) {
+  const { email: followedEmail } = await params;
+
   const authHeader = req.headers.get("authorization");
 
   if (!authHeader) {
@@ -43,13 +42,12 @@ export async function POST(
     const decoded = jwt.verify(token, JWT_SECRET) as { email: string; role: string };
     const followerEmail = decoded.email;
 
-    if (followerEmail === params.email) {
+    if (followerEmail === followedEmail) {
       return NextResponse.json({ message: "لا يمكنك متابعة نفسك" }, { status: 400 });
     }
-
     const followedUser = db
       .prepare("SELECT * FROM users WHERE email = ?")
-      .get(params.email);
+      .get(followedEmail);
 
     if (!followedUser) {
       return NextResponse.json({ message: "المستخدم غير موجود" }, { status: 404 });
@@ -58,27 +56,23 @@ export async function POST(
     const { action } = await req.json();
 
     if (action === "follow") {
-      const alreadyFollowing = await isFollowing(followerEmail, params.email);
+      const alreadyFollowing = await isFollowing(followerEmail, followedEmail);
 
       if (alreadyFollowing) {
         return NextResponse.json({ message: "أنت تتابع هذا المستخدم بالفعل" });
       }
 
-      await followUser(followerEmail, params.email);
+      await followUser(followerEmail, followedEmail);
 
-      const isMutual = await isFollowing(params.email, followerEmail);
-
-      return NextResponse.json({
-        message: isMutual ? "تمت المتابعة بنجاح، والتابع يتابعك أيضاً 🎉" : "تمت المتابعة بنجاح",
-      });
+      return NextResponse.json({ message: "تمت المتابعة بنجاح" });
     } else if (action === "unfollow") {
-      const alreadyFollowing = await isFollowing(followerEmail, params.email);
+      const alreadyFollowing = await isFollowing(followerEmail, followedEmail);
 
       if (!alreadyFollowing) {
         return NextResponse.json({ message: "أنت لا تتابع هذا المستخدم أصلاً" });
       }
 
-      await unfollowUser(followerEmail, params.email);
+      await unfollowUser(followerEmail, followedEmail);
 
       return NextResponse.json({ message: "تمت إلغاء المتابعة بنجاح" });
     } else {
@@ -88,3 +82,4 @@ export async function POST(
     return NextResponse.json({ message: "التوكن غير صالح" }, { status: 401 });
   }
 }
+
