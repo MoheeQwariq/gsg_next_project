@@ -6,27 +6,32 @@ import bcrypt from 'bcryptjs';
 const db = sqlite3("stories.db")
 const JWT_SECRET = process.env.JWT_SECRET!
 
-export async function GET(request: NextRequest) {
-    try {
-      const url = new URL(request.url);
-      const pathParts = url.pathname.split("/");
-      const id = pathParts[pathParts.length - 1];
-  
-      if (!id) {
-        return NextResponse.json({ message: "ID is required" }, { status: 400 });
-      }
-  
-      const user = db.prepare("SELECT * FROM users WHERE id = ?").get(id) as User;
-  
-      if (user) {
-        return NextResponse.json(user, { status: 200 });
-      }
-  
-      return NextResponse.json({ message: "User not found" }, { status: 404 });
-    } catch (error) {
-      return NextResponse.json({ message: "Error fetching user", error }, { status: 500 });
+
+export async function GET(
+  _: NextRequest,
+  { params }: { params: { id: string } } 
+) {
+  try {
+    const id = params.id;
+
+    if (!id) {
+      return NextResponse.json({ message: "الـ ID مطلوب" }, { status: 400 });
     }
+
+    const user = db.prepare("SELECT * FROM users WHERE id = ?").get(id) as User;
+
+    if (user) {
+      return NextResponse.json(user, { status: 200 });
+    }
+
+    return NextResponse.json({ message: "المستخدم غير موجود" }, { status: 404 });
+  } catch (error) {
+    return NextResponse.json(
+      { message: "حدث خطأ أثناء جلب البيانات", error: String(error) },
+      { status: 500 }
+    );
   }
+}
 
   export async function PUT(request: NextRequest) {
     try {
