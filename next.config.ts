@@ -6,6 +6,8 @@ const nextConfig: NextConfig = {
       "www.alquds.co.uk",
       "static.srpcdigital.com",
       "static.dw.com",
+      "example.com",
+      "res.cloudinary.com"
     ],
   },
   async headers() {

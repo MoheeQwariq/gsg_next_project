@@ -10,13 +10,5 @@ declare namespace Stories {
     createdAt: string;
     userId: number; 
   }
-
-  export interface User {
-    id: number;
-    name: string;
-    email: string;
-    role?: string;
-    avatar?: string | null; 
-  }
 }
 
