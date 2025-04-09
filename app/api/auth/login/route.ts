@@ -9,7 +9,7 @@ interface IDBUser {
   email: string;
   password: string;
   role: string;
-  avatar?: string | null;
+  imageUrl?: string | null;
 }
 
 const db = sqlite3("stories.db");
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
       name: user.name,
       email: user.email,
       role: user.role,
-      avatar: user.avatar,
+      imageUrl: user.imageUrl,
     },
   });
 }

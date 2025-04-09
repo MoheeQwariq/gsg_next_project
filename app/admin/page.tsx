@@ -125,9 +125,9 @@ export default function AdminDashboard() {
               {users.slice(0, 5).map((user) => (
                 <div key={user.id} className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50">
                   <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-500 overflow-hidden">
-                    {user.avatar ? (
+                    {user.imageUrl ? (
                       <Image
-                        src={user.avatar}
+                        src={user.imageUrl}
                         alt={user.name}
                         width={40}
                         height={40}

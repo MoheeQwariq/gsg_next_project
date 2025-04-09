@@ -1,30 +1,26 @@
 "use client";
-
 import React from "react";
+import { useTheme } from "@/context/ThemeContext";
 import sideBarPageSkeletonStyles from "@/styles/sideBarPageSkeleton";
 
 export default function SideBarPageSkeleton() {
-  return (
-    <div className={sideBarPageSkeletonStyles.container} dir="rtl">
-      <div className={sideBarPageSkeletonStyles.mainRow}>
-        {/* Left Sidebar Skeleton */}
-        <div className={sideBarPageSkeletonStyles.sidebar}>
-          {/* User Info Card */}
-          <div className={sideBarPageSkeletonStyles.userInfoCard}>
-            {/* Avatar */}
-            <div className={sideBarPageSkeletonStyles.avatar}></div>
-            {/* Name */}
-            <div className={sideBarPageSkeletonStyles.nameLine}></div>
-            {/* Stats */}
-            <div className={sideBarPageSkeletonStyles.statsLine1}></div>
-            <div className={sideBarPageSkeletonStyles.statsLine2}></div>
-          </div>
+  const { theme } = useTheme();
+  const styles = sideBarPageSkeletonStyles[theme];
 
-          {/* Interactions Card */}
-          <div className={sideBarPageSkeletonStyles.interactionsCard}>
-            <div className={sideBarPageSkeletonStyles.interactionLine1}></div>
-            <div className={sideBarPageSkeletonStyles.interactionLine2}></div>
-            <div className={sideBarPageSkeletonStyles.interactionLine3}></div>
+  return (
+    <div className={styles.container} dir="rtl">
+      <div className={styles.mainRow}>
+        <div className={styles.sidebar}>
+          <div className={styles.userInfoCard}>
+            <div className={styles.avatar}></div>
+            <div className={styles.nameLine}></div>
+            <div className={styles.statsLine1}></div>
+            <div className={styles.statsLine2}></div>
+          </div>
+          <div className={styles.interactionsCard}>
+            <div className={styles.interactionLine1}></div>
+            <div className={styles.interactionLine2}></div>
+            <div className={styles.interactionLine3}></div>
           </div>
         </div>
       </div>

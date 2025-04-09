@@ -71,11 +71,11 @@ export async function GET(request: NextRequest) {
   
         const requestData = await request.json()
         const currentUser = db.prepare("SELECT * FROM users WHERE id = ?").get(userId) as User
-        const { name, email, avatar, username, role, password } = requestData
+        const { name, email, imageUrl, username, role, password } = requestData
   
         const updatedName = name || currentUser.name
         const updatedEmail = email || currentUser.email
-        const updatedAvatar = avatar !== undefined ? avatar : currentUser.avatar
+        const updatedimageUrl = imageUrl !== undefined ? imageUrl : currentUser.imageUrl
         const updatedUsername = username || currentUser.username
         const updatedRole = role || currentUser.role
   
@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
         if (
           updatedName === currentUser.name &&
           updatedEmail === currentUser.email &&
-          updatedAvatar === currentUser.avatar &&
+          updatedimageUrl === currentUser.imageUrl &&
           updatedUsername === currentUser.username &&
           updatedRole === currentUser.role &&
           updatedPassword === currentUser.password
@@ -109,13 +109,13 @@ export async function GET(request: NextRequest) {
         }
   
         const updateUser = db.prepare(
-          "UPDATE users SET name = ?, email = ?, avatar = ?, username = ?, role = ?, password = ? WHERE id = ?"
+          "UPDATE users SET name = ?, email = ?, imageUrl = ?, username = ?, role = ?, password = ? WHERE id = ?"
         )
   
         const result = updateUser.run(
           updatedName,
           updatedEmail,
-          updatedAvatar,
+          updatedimageUrl,
           updatedUsername,
           updatedRole,
           updatedPassword,

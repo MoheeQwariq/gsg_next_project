@@ -3,17 +3,21 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { FaBars, FaTimes, FaMoon, FaSun } from "react-icons/fa";
 
 import { useAuth } from "@/context/AuthContext";
 import ProfileDropdown from "./ProfileDropdown";
 import generalNavItems from "@/constant/generalNavItems";
-import styles from "@/styles/generalNavbarStyles";
+import generalNavbarStyles from "@/styles/generalNavbarStyles";
+import { useTheme } from "@/context/ThemeContext";
 
 export default function GeneralNavbar() {
   const pathname = usePathname();
   const { isLoggedIn } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const { theme, toggleTheme } = useTheme();
+  const styles = generalNavbarStyles[theme];
 
   const toggleMobileMenu = () => setIsMobileMenuOpen((prev) => !prev);
 
@@ -35,9 +39,14 @@ export default function GeneralNavbar() {
     <nav className={styles.navContainer}>
       <div className={styles.mainWrapper}>
         <div className={styles.navRow}>
-          <Link href="/" className={styles.brand}>
-            حروف النازحين
-          </Link>
+          <div className="flex items-center gap-x-2">
+            <Link href="/" className={styles.brand}>
+              حروف النازحين
+            </Link>
+            <button onClick={toggleTheme} className={styles.themeToggle}>
+              {theme === "light" ? <FaMoon size={16} /> : <FaSun size={16} />}
+            </button>
+          </div>
 
           <div className={styles.desktopNav}>
             {generalNavItems.map((item) => (
@@ -48,7 +57,6 @@ export default function GeneralNavbar() {
                 </div>
               </Link>
             ))}
-
             {isLoggedIn ? (
               <ProfileDropdown />
             ) : (
@@ -78,6 +86,16 @@ export default function GeneralNavbar() {
               </div>
             </Link>
           ))}
+
+          <button
+            onClick={() => {
+              toggleTheme();
+              setIsMobileMenuOpen(false);
+            }}
+            className={styles.themeToggle}
+          >
+            {theme === "light" ? <FaMoon size={16} /> : <FaSun size={16} />}
+          </button>
 
           {isLoggedIn ? (
             <ProfileDropdown />

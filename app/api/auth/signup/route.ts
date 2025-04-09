@@ -111,7 +111,7 @@ export async function POST(req: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     db.prepare(
-      `INSERT INTO users (name, email, password, role, avatar, birthday)
+      `INSERT INTO users (name, email, password, role, imageUrl, birthday)
        VALUES (?, ?, ?, ?, ?, ?)`
     ).run(name, email, hashedPassword, "user", uploadRes.secure_url, birthday);
 
@@ -121,7 +121,7 @@ export async function POST(req: NextRequest) {
         user: {
           name,
           email,
-          avatar: uploadRes.secure_url,
+          imageUrl: uploadRes.secure_url,
           birthday,
         },
       },

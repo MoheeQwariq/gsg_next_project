@@ -1,13 +1,15 @@
 "use client";
-
 import type React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import { Eye, EyeOff, User, Mail, Lock } from "lucide-react";
 import FormInput from "@/components/auth/input-field/FormInput";
 import PhotoUpload from "@/components/auth/input-field/PhotoUpload";
 import { validateRegisterForm } from "@/utils/validation";
-import { useState } from "react";
-import { Eye, EyeOff, User, Mail, Lock } from "lucide-react";
+import { useTheme } from "@/context/ThemeContext";
+import signUpFormStyles from "@/styles/auth/signUpFormStyles";
+import { registerUser } from "@/services/auth.service";
 
 const initialFormData = {
   name: "",
@@ -24,12 +26,12 @@ const SignUpForm = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const { theme } = useTheme();
+  const styles = signUpFormStyles[theme];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = e.target;
-    if (error) {
-      setError("");
-    }
+    if (error) setError("");
     if (name === "photo" && files && files.length > 0) {
       setFormData({ ...formData, photo: files[0] });
       setPreviewUrl(URL.createObjectURL(files[0]));
@@ -38,34 +40,42 @@ const SignUpForm = () => {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
     const result = validateRegisterForm(formData);
-
     if (!result.isValid) {
       const errorMessages = Object.values(result.errors).join(" - ");
       setError(errorMessages || "حدث خطأ غير متوقع");
       return;
     }
-
-    console.log("تم التسجيل بنجاح", formData);
-    setFormData(initialFormData);
-    setPreviewUrl(null);
-    const inputs = document.querySelectorAll("input");
-    inputs.forEach((input) => (input.value = ""));
+    try {
+      const username = formData.email.split("@")[0];
+      const payload = { ...formData, username };
+      await registerUser(payload);
+      setFormData(initialFormData);
+      setPreviewUrl(null);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error(err);
+        setError(err.message);
+      } else {
+        console.error("An unknown error occurred");
+        setError("حدث خطأ غير متوقع");
+      }
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4 rtl">
-      <div className="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
-        <div className="w-full md:w-1/2 p-8 md:p-12 bg-white">
-          <div className="text-center mb-8">
-            <div className="inline-block mb-4">
-              <div className="w-16 h-16 rounded-full bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center">
+    <div className={styles.wrapper}>
+      <div className={styles.container}>
+        <div className={styles.formSection}>
+          <div className={styles.headerContainer}>
+            <div className={styles.logoWrapper}>
+              <div className={styles.logoContainer}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-8 w-8 text-white"
+                  className={styles.logoSvg}
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -79,19 +89,11 @@ const SignUpForm = () => {
                 </svg>
               </div>
             </div>
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">
-              إنشاء حساب جديد
-            </h1>
-            <p className="text-gray-500">انضم إلينا لمشاركة قصتك</p>
+            <h1 className={styles.title}>إنشاء حساب جديد</h1>
+            <p className={styles.subtitle}>انضم إلينا لمشاركة قصتك</p>
           </div>
-
-          {error && (
-            <div className="bg-red-50 text-red-500 p-4 rounded-xl mb-6 text-sm border border-red-100 text-right">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-5">
+          {error && <div className={styles.errorBox}>{error}</div>}
+          <form onSubmit={handleSubmit} className={styles.form}>
             <FormInput
               id="name"
               name="name"
@@ -102,7 +104,6 @@ const SignUpForm = () => {
               icon={<User size={20} />}
               onChange={handleChange}
             />
-
             <FormInput
               id="email"
               name="email"
@@ -113,7 +114,6 @@ const SignUpForm = () => {
               icon={<Mail size={20} />}
               onChange={handleChange}
             />
-
             <FormInput
               id="password"
               name="password"
@@ -122,13 +122,10 @@ const SignUpForm = () => {
               placeholder="********"
               label="كلمة المرور"
               icon={<Lock size={20} />}
-              rightIcon={
-                showPassword ? <EyeOff size={18} /> : <Eye size={18} />
-              }
+              rightIcon={showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               onChange={handleChange}
               onRightIcon={() => setShowPassword(!showPassword)}
             />
-
             <FormInput
               id="confirmPassword"
               name="confirmPassword"
@@ -136,13 +133,10 @@ const SignUpForm = () => {
               placeholder="********"
               label="تأكيد كلمة المرور"
               icon={<Lock size={20} />}
-              rightIcon={
-                showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />
-              }
+              rightIcon={showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
               onChange={handleChange}
               onRightIcon={() => setShowConfirmPassword(!showConfirmPassword)}
             />
-
             <FormInput
               id="birthday"
               name="birthday"
@@ -150,32 +144,22 @@ const SignUpForm = () => {
               label="تاريخ الميلاد"
               onChange={handleChange}
             />
-
             <PhotoUpload
               previewUrl={previewUrl}
               onChange={handleChange}
               label="الصورة الشخصية"
             />
-
-            <button
-              type="submit"
-              className="w-full py-4 mt-6 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-xl transition-all duration-300 font-semibold text-lg shadow-lg hover:shadow-xl"
-            >
+            <button type="submit" className={styles.submitButton}>
               إنشاء الحساب
             </button>
           </form>
-
-          <p className="text-center text-gray-500 mt-6">
-            لديك حساب بالفعل؟
-            <Link
-              href="/auth/login"
-              className="text-blue-600 hover:text-blue-800 font-medium mr-1"
-            >
+          <p className={styles.footerText}>
+            لديك حساب بالفعل؟{" "}
+            <Link href="/auth/login" className={styles.footerLink}>
               تسجيل الدخول
             </Link>
           </p>
         </div>
-
         <div className="w-1/2 hidden md:block relative">
           <Image
             src="/blog-image.jpg"

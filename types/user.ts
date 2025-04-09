@@ -4,8 +4,22 @@ export interface User {
   email: string;
   password:string
   role: UserRole;
-  avatar?: string | null; 
-  username:string
+  imageUrl?: string | null; 
+  username:string;
+  profileId: number;
   }
+    
+   
 
 export type UserRole = "admin" | "user" | "guest";
+
+export const defaultUser: User = {
+    id: 0,
+    name: "",
+    email: "",
+    username: "",
+    password:"",
+    role: "guest",
+    imageUrl: "/user.svg", 
+    profileId: 0,
+};

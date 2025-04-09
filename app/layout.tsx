@@ -4,8 +4,8 @@ import NavBar from "../components/Header/NavBar";
 import { AuthProvider } from "@/context/AuthContext";
 import { ModalWrapper } from "@/context/ModalContext";
 import { Geist, Geist_Mono } from "next/font/google";
-import { ProfileProvider } from "@/context/ProfileContext";
 import { ThemeProvider } from "@/context/ThemeContext";
+import ThemeWrapper from "../components/ThemeWrapper";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -29,14 +29,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ar" dir="rtl">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#EFEFEF]`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
         <AuthProvider>
-          <ProfileProvider>
-            <ThemeProvider>
-              <NavBar/>
+          <ThemeProvider>
+            <ThemeWrapper>
+              <NavBar />
               <ModalWrapper>{children}</ModalWrapper>
-            </ThemeProvider>
-          </ProfileProvider>
+            </ThemeWrapper>
+          </ThemeProvider>
         </AuthProvider>
       </body>
     </html>

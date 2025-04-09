@@ -259,9 +259,9 @@ export default function UsersPage() {
                     className="flex items-center gap-4 p-4 rounded-xl hover:bg-blue-50 transition-all duration-200 border border-transparent hover:border-blue-100 transform hover:scale-[1.01]"
                   >
                     <div className="h-14 w-14 rounded-full bg-gradient-to-r from-blue-400 to-cyan-400 flex items-center justify-center text-white text-lg font-medium overflow-hidden shadow-md">
-                      {user.avatar ? (
+                      {user.imageUrl ? (
                         <Image
-                          src={user.avatar || "/placeholder.svg"}
+                          src={user.imageUrl || "/placeholder.svg"}
                           alt={user.name}
                           width={56}
                           height={56}
