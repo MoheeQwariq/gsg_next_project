@@ -16,7 +16,7 @@ const LoginForm = () => {
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
-  const { login } = useAuth();
+  const { login } = useAuth(); 
   const router = useRouter();
 
   const { theme } = useTheme();
@@ -36,11 +36,14 @@ const LoginForm = () => {
       return;
     }
     try {
-      await login({ email: formData.email, password: formData.password });
-      router.push("/blogs");
+      const result =await login({ email: formData.email, password: formData.password });
+      if ( result === null)
+        setError("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+      else router.push("/blogs");
     } catch (err) {
       console.error(err);
       setError("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+      return;
     }
   };
 

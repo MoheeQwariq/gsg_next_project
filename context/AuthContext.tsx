@@ -8,7 +8,7 @@ interface AuthContextType {
   user: User;
   profile: UserProfile ;
   isLoggedIn: boolean;
-  login: (credentials: { email: string; password: string }) => Promise<void>;
+  login: (credentials: { email: string; password: string }) => Promise<void | null>;
   logout: () => Promise<void>;
 }
 
@@ -23,11 +23,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const fetchProfile = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
+      setUser(defaultUser);
       setProfile(defaultUserProfile);
       return;
     }
     try {
-      const res = await fetch(`${API_URL}/me`, {
+      const res = await fetch(`${API_URL}/profile/me`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -36,12 +37,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
       if (res.ok) {
         const data = await res.json();
+        setUser(data.user);
         setProfile(data.profile);
       } else {
+        setUser(defaultUser);
         setProfile(defaultUserProfile);
       }
     } catch (error) {
       console.error("Failed to fetch profile", error);
+      setUser(defaultUser);
       setProfile(defaultUserProfile);
     }
   };
@@ -62,7 +66,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(credentials),
     });
-    if (!res.ok) throw new Error("Login failed");
+    if (!res.ok)return null
     const data = await res.json();
     localStorage.setItem("token", data.token);
     setUser(data.user);
@@ -70,10 +74,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const logout = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return;
+    }
     try {
       await fetch(`${API_URL}/auth/logout`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" ,
+        Authorization: `Bearer ${token}`,
+        }
       });
     } catch (error) {
       console.error(error);

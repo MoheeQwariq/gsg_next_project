@@ -46,7 +46,7 @@ export interface RegisterData {
 
     const result = await response.json();
     if (!response.ok) {
-      throw new Error(result.message || "Registration failed");
+      return (result.error || "حدث خطا غير متوقع");
     }
     return result;
   }

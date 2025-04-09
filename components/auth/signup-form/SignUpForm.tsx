@@ -10,6 +10,7 @@ import { validateRegisterForm } from "@/utils/validation";
 import { useTheme } from "@/context/ThemeContext";
 import signUpFormStyles from "@/styles/auth/signUpFormStyles";
 import { registerUser } from "@/services/auth.service";
+import { useRouter } from "next/navigation";
 
 const initialFormData = {
   name: "",
@@ -28,6 +29,7 @@ const SignUpForm = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const { theme } = useTheme();
   const styles = signUpFormStyles[theme];
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, files } = e.target;
@@ -52,9 +54,21 @@ const SignUpForm = () => {
     try {
       const username = formData.email.split("@")[0];
       const payload = { ...formData, username };
-      await registerUser(payload);
+      const resultreq = await registerUser(payload);
+      if (typeof resultreq === "string") {
+        setError(resultreq);
+        return;
+      }
+      if (resultreq === null) {
+        setError("حدث خطأ غير متوقع");
+        return;
+      }
+      setError("تم التسجيل بنجاح");
       setFormData(initialFormData);
       setPreviewUrl(null);
+      setTimeout(() => {
+        router.push("/auth/login");
+      }, 800);
     } catch (err: unknown) {
       if (err instanceof Error) {
         console.error(err);
@@ -92,7 +106,11 @@ const SignUpForm = () => {
             <h1 className={styles.title}>إنشاء حساب جديد</h1>
             <p className={styles.subtitle}>انضم إلينا لمشاركة قصتك</p>
           </div>
-          {error && <div className={styles.errorBox}>{error}</div>}
+          {error && (
+            <div className={error === "تم التسجيل بنجاح" ? styles.successBox : styles.errorBox}>
+              {error}
+            </div>
+          )}
           <form onSubmit={handleSubmit} className={styles.form}>
             <FormInput
               id="name"
