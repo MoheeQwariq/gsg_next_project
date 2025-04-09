@@ -1,7 +1,5 @@
 import sqlite3 from "better-sqlite3";
 const db = sqlite3("stories.db");
-db.prepare(`DROP TABLE IF EXISTS posts`).run();
-db.prepare(`DROP TABLE IF EXISTS users`).run();
 db.pragma("foreign_keys = ON");
 const securePassword = "$2b$12$OGlKAjuTnvhjSdYhaoGKuOTs9XuVfM1B2pCacvKbENMew.cENK3Nm";
 
@@ -11,10 +9,10 @@ db.prepare(`
     name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL, 
-    role TEXT NOT NULL CHECK(role IN ('admin', 'user', 'guest')),
+    role TEXT  CHECK(role IN ('admin', 'user', 'guest')),
     avatar TEXT,
-    username TEXT,
-    birthday TEXT NOT NULL
+    username TEXT UNIQUE NOT NULL,
+    birthday TEXT 
   );
 `).run();
 
@@ -28,8 +26,7 @@ db.prepare(`
     authorEmail TEXT NOT NULL,
     category TEXT NOT NULL CHECK(category IN ('قصص شخصية', 'قصص شهداء ومفقودين', 'قصص النزوح واللجوء', 'التعليم وسط الحرب', 'قصص الحياة اليومية الي تحت الحصار')),
     createdAt TEXT NOT NULL,
-    FOREIGN KEY(authorEmail) REFERENCES users(email)
-  );
+ FOREIGN KEY(authorEmail) REFERENCES users(email) ON DELETE CASCADE  );
 `).run();
 db.prepare(`
   CREATE TABLE IF NOT EXISTS followers (
