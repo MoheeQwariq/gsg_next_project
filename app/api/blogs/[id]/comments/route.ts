@@ -12,6 +12,13 @@ function addComment(userEmail: string, postId: number, content: string) {
   insertComment.run(userEmail, postId, content);
 }
 
+function getComments(postId: number) {
+  const getCommentsQuery = db.prepare(
+    "SELECT comments.*, users.name as userName FROM comments LEFT JOIN users ON comments.userEmail = users.email WHERE postId = ?"
+  );
+  return getCommentsQuery.all(postId);
+}
+
 export async function POST(req: NextRequest, context: { params: { id: string } }) {
   const { id } = await context.params;
   const postId = parseInt(id, 10);
@@ -46,4 +53,19 @@ export async function POST(req: NextRequest, context: { params: { id: string } }
   } catch (error) {
     return NextResponse.json({ message: "التوكن غير صالح أو منتهي الصلاحية" }, { status: 401 });
   }
+}
+
+export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+  const { id } = await params;  
+
+  const postId = parseInt(id, 10);  
+
+  const post = db.prepare("SELECT * FROM posts WHERE id = ?").get(postId);
+  if (!post) {
+    return NextResponse.json({ message: "المدونة غير موجودة" }, { status: 404 });
+  }
+
+  const comments = getComments(postId);
+
+  return NextResponse.json({ data: comments });
 }
