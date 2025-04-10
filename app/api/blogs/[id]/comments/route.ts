@@ -21,7 +21,12 @@ function getComments(postId: number) {
 
 export async function POST(req: NextRequest, context: { params: { id: string } }) {
   const { id } = await context.params;
-  const postId = parseInt(id, 10);
+
+  const postId = Number(id);
+
+  if (!Number.isInteger(postId)) {
+    return NextResponse.json({ message: "المعرف غير صالح" }, { status: 400 });
+  }
   const authHeader = req.headers.get("authorization");
   if (!authHeader) {
     return NextResponse.json(
@@ -56,9 +61,12 @@ export async function POST(req: NextRequest, context: { params: { id: string } }
 }
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = await params;  
+  const { id } = await params;
+  const postId = Number(id);
 
-  const postId = parseInt(id, 10);  
+  if (!Number.isInteger(postId)) {
+    return NextResponse.json({ message: "المعرف غير صالح" }, { status: 400 });
+  }  
 
   const post = db.prepare("SELECT * FROM posts WHERE id = ?").get(postId);
   if (!post) {

@@ -111,15 +111,25 @@ db.prepare(`
   postId INTEGER NOT NULL,
   content TEXT NOT NULL,
   createdAt TEXT NOT NULL,
+  love INTEGER DEFAULT 0,
   FOREIGN KEY(postId) REFERENCES posts(id) ON DELETE CASCADE,
   FOREIGN KEY(userEmail) REFERENCES users(email) ON DELETE CASCADE
 );
 
-
 `).run();
 
 
-
+db.prepare(`
+CREATE TABLE IF NOT EXISTS comment_loves (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  userEmail TEXT NOT NULL,
+  commentId INTEGER NOT NULL,
+  FOREIGN KEY(userEmail) REFERENCES users(email) ON DELETE CASCADE,
+  FOREIGN KEY(commentId) REFERENCES comments(id) ON DELETE CASCADE,
+  UNIQUE(userEmail, commentId) -- هذه تجعل اليوزر غير قادر على إضافة أكثر من لايك لنفس التعليق
+);
+ `).run();
+ 
 
 
 const fakeUsers = [
