@@ -3,6 +3,7 @@ import sqlite3 from "better-sqlite3";
 import jwt from "jsonwebtoken";
 import { User } from "@/types/user";
 import { v2 as cloudinary } from "cloudinary";
+import { Post } from "@/types/post";
 
 const db = sqlite3("stories.db");
 const JWT_SECRET = process.env.JWT_SECRET!;
@@ -50,7 +51,7 @@ export async function POST(req: NextRequest) {
     const category = get("category")?.toString() || "";
     const createdAt = get("createdAt")?.toString() || "";
     const photo = get("photo") as File | null;
-    console.log ({title, content, category, createdAt, photo});
+    console.log({ title, content, category, createdAt, photo });
 
     if (!title || !content || !category || !createdAt || !photo) {
       return NextResponse.json(
@@ -59,7 +60,6 @@ export async function POST(req: NextRequest) {
       );
     }
 
-  
     const arrayBuffer = await photo.arrayBuffer();
     const base64 = Buffer.from(arrayBuffer).toString("base64");
     const dataUri = `data:${photo.type};base64,${base64}`;
@@ -94,6 +94,46 @@ export async function POST(req: NextRequest) {
     console.error("POST Error:", err);
     return NextResponse.json(
       { message: "توكن غير صالح أو خطأ داخلي" },
+      { status: 401 }
+    );
+  }
+}
+
+
+
+export async function GET(req: NextRequest) {
+  const authHeader = req.headers.get("authorization");
+
+  if (!authHeader) {
+    return NextResponse.json(
+      { message: "التوكن مفقود أو غير صالح" },
+      { status: 401 }
+    );
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { email: string };
+
+    const user = db
+      .prepare("SELECT * FROM users WHERE email = ?")
+      .get(decoded.email) as User;
+
+    if (!user) {
+      return NextResponse.json(
+        { message: "المستخدم غير موجود" },
+        { status: 404 }
+      );
+    }
+
+    const posts = db.prepare("SELECT * FROM posts ORDER BY createdAt DESC").all();
+
+    return NextResponse.json(posts, { status: 200 });
+  } catch (err) {
+    console.error("GET ALL POSTS Error:", err);
+    return NextResponse.json(
+      { message: "خطأ في التوكن أو خطأ داخلي" },
       { status: 401 }
     );
   }
