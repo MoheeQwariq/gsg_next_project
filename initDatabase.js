@@ -72,6 +72,7 @@ db.prepare(`
     title TEXT NOT NULL,
     content TEXT NOT NULL,
     image TEXT,
+    love INTEGER DEFAULT 0,
     author TEXT NOT NULL,
     authorEmail TEXT NOT NULL,
     category TEXT NOT NULL CHECK(category IN (
@@ -131,6 +132,17 @@ CREATE TABLE IF NOT EXISTS comment_loves (
  `).run();
  
 
+ db.prepare(`
+  CREATE TABLE IF NOT EXISTS post_loves (
+  userEmail TEXT NOT NULL,
+  postId INTEGER NOT NULL,
+  PRIMARY KEY (userEmail, postId),
+  FOREIGN KEY(userEmail) REFERENCES users(email) ON DELETE CASCADE,
+  FOREIGN KEY(postId) REFERENCES posts(id) ON DELETE CASCADE
+);
+
+   `).run();
+   
 
 const fakeUsers = [
   { name: "Aseel", email: "aseel@gmail.com", password: securePassword, role: "admin", imageUrl: "/images.jpg", username: "aseel123", birthday: "1995-07-15" },
