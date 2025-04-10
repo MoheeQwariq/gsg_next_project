@@ -16,7 +16,7 @@ cloudinary.config({
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { id: string } }
+   context : { params: { id: string } }
 ) {
   const authHeader = req.headers.get("authorization");
   if (!authHeader) {
@@ -41,7 +41,7 @@ export async function PUT(
       );
     }
 
-    const postId = params.id;
+    const postId = context.params.id;
     const formData = await req.formData();
 
     const get = (key: string): string | File | null => {
