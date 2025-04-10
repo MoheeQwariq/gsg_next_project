@@ -38,8 +38,13 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (res.ok) {
         const data = await res.json();
         console.log("Fetched profile data:", data);
-        setUser(data.user);
-        setProfile(data.profile);
+        const fetchedUser = data.data.user;
+        if (fetchedUser && fetchedUser.email) {
+          const email = fetchedUser.email;
+          fetchedUser.username = email.split("@")[0];
+        }
+        setUser(fetchedUser);
+        setProfile(data.data.profile);
       } else {
         setUser(defaultUser);
         setProfile(defaultUserProfile);
@@ -55,6 +60,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const token = localStorage.getItem("token");
     if (token) {
       fetchProfile().finally(() => setLoading(false));
+      console.log("udrr sfter frtch ",user);
     } else {
       setLoading(false);
     }

@@ -30,11 +30,14 @@ export default function ProfileSections({ isOwner, user }: ProfileSectionsProps)
   useEffect(() => {
     async function fetchSections() {
       try {
-        const fetchedSections = await getUserSections(user.id);
+        const fetchedData = await getUserSections(user.id);
+        const fetchedSections = Array.isArray(fetchedData)
+          ? fetchedData
+          : fetchedData ?? [];
         setSections(fetchedSections);
       } catch (err: unknown) {
         if (err instanceof Error) {
-          setError(err.message || "حدث خطأ أثناء جلب الأقسام");
+          setError( "حدث خطأ أثناء جلب الأقسام");
         } else {
           setError("حدث خطأ أثناء جلب الأقسام");
         }
@@ -113,7 +116,7 @@ export default function ProfileSections({ isOwner, user }: ProfileSectionsProps)
       )}
       {loading && <p>جاري تحميل الأقسام...</p>}
       {error && <p className={styles.emptyMessage}>خطأ: {error}</p>}
-      {sections.map((section) => (
+      {sections && sections.map((section) => (
         <ProfileSectionItem
           key={section.id}
           section={section}
