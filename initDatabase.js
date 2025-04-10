@@ -126,7 +126,7 @@ CREATE TABLE IF NOT EXISTS comment_loves (
   commentId INTEGER NOT NULL,
   FOREIGN KEY(userEmail) REFERENCES users(email) ON DELETE CASCADE,
   FOREIGN KEY(commentId) REFERENCES comments(id) ON DELETE CASCADE,
-  UNIQUE(userEmail, commentId) -- هذه تجعل اليوزر غير قادر على إضافة أكثر من لايك لنفس التعليق
+  UNIQUE(userEmail, commentId)  
 );
  `).run();
  
