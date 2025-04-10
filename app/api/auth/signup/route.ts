@@ -25,8 +25,10 @@ export async function POST(req: NextRequest) {
     const email = get("email")?.toString().trim() || "";
     const password = get("password")?.toString() || "";
     const birthday = get("birthday")?.toString() || "";
+    const username = get("username")?.toString().trim() || "";
     const photo = get("photo") as File | null;
 
+    // Validations
     if (name.length < 4) {
       return NextResponse.json(
         { error: "الاسم الكامل يجب أن يكون على الأقل 4 أحرف" },
@@ -70,6 +72,23 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    if (!username || username.length < 3) {
+      return NextResponse.json(
+        { error: "اسم المستخدم مطلوب ويجب أن يكون 3 أحرف على الأقل" },
+        { status: 400 }
+      );
+    }
+
+    const usernameExists = db
+      .prepare("SELECT * FROM users WHERE username = ?")
+      .get(username);
+    if (usernameExists) {
+      return NextResponse.json(
+        { error: "اسم المستخدم مستخدم مسبقاً" },
+        { status: 409 }
+      );
+    }
+
     if (!photo) {
       return NextResponse.json(
         { error: "الصورة الشخصية مطلوبة" },
@@ -92,8 +111,10 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const exists = db.prepare("SELECT * FROM users WHERE email = ?").get(email);
-    if (exists) {
+    const emailExists = db
+      .prepare("SELECT * FROM users WHERE email = ?")
+      .get(email);
+    if (emailExists) {
       return NextResponse.json(
         { error: "البريد الإلكتروني مستخدم مسبقاً" },
         { status: 409 }
@@ -111,9 +132,17 @@ export async function POST(req: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     db.prepare(
-      `INSERT INTO users (name, email, password, role, imageUrl, birthday)
-       VALUES (?, ?, ?, ?, ?, ?)`
-    ).run(name, email, hashedPassword, "user", uploadRes.secure_url, birthday);
+      `INSERT INTO users (name, email, password, role, imageUrl, birthday, username)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`
+    ).run(
+      name,
+      email,
+      hashedPassword,
+      "user",
+      uploadRes.secure_url,
+      birthday,
+      username
+    );
 
     return NextResponse.json(
       {
@@ -123,6 +152,7 @@ export async function POST(req: NextRequest) {
           email,
           imageUrl: uploadRes.secure_url,
           birthday,
+          username,
         },
       },
       { status: 201 }
