@@ -74,6 +74,7 @@ db.prepare(
     title TEXT NOT NULL,
     content TEXT NOT NULL,
     image TEXT,
+    love INTEGER DEFAULT 0,
     author TEXT NOT NULL,
     authorEmail TEXT NOT NULL,
     category TEXT NOT NULL CHECK(category IN (
@@ -84,7 +85,7 @@ db.prepare(
       'قصص الحياة اليومية الي تحت الحصار'
     )),
     createdAt TEXT NOT NULL,
-    userId INTEGER NOT NULL,
+    userId INTEGER ,
  FOREIGN KEY(authorEmail) REFERENCES users(email) ON DELETE CASCADE  );
 `
 ).run();
@@ -109,191 +110,71 @@ db.prepare(
   FOREIGN KEY (starredEmail) REFERENCES users(email) ON DELETE CASCADE
 );
 
-`
-).run();
+`).run();
+
+db.prepare(`
+ CREATE TABLE IF NOT EXISTS comments (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  userEmail TEXT NOT NULL,
+  postId INTEGER NOT NULL,
+  content TEXT NOT NULL,
+  createdAt TEXT NOT NULL,
+  love INTEGER DEFAULT 0,
+  FOREIGN KEY(postId) REFERENCES posts(id) ON DELETE CASCADE,
+  FOREIGN KEY(userEmail) REFERENCES users(email) ON DELETE CASCADE
+);
+
+`).run();
+
+
+db.prepare(`
+CREATE TABLE IF NOT EXISTS comment_loves (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  userEmail TEXT NOT NULL,
+  commentId INTEGER NOT NULL,
+  FOREIGN KEY(userEmail) REFERENCES users(email) ON DELETE CASCADE,
+  FOREIGN KEY(commentId) REFERENCES comments(id) ON DELETE CASCADE,
+  UNIQUE(userEmail, commentId)  
+);
+ `).run();
+ 
+
+ db.prepare(`
+  CREATE TABLE IF NOT EXISTS post_loves (
+  userEmail TEXT NOT NULL,
+  postId INTEGER NOT NULL,
+  PRIMARY KEY (userEmail, postId),
+  FOREIGN KEY(userEmail) REFERENCES users(email) ON DELETE CASCADE,
+  FOREIGN KEY(postId) REFERENCES posts(id) ON DELETE CASCADE
+);
+
+   `).run();
+   
 
 const fakeUsers = [
-  {
-    name: "Aseel",
-    email: "aseel@gmail.com",
-    password: securePassword,
-    role: "admin",
-    imageUrl: "/images.jpg",
-    username: "aseel123",
-    birthday: "1995-07-15",
-  },
-  {
-    name: "Mohee",
-    email: "mohee@example.com",
-    password: securePassword,
-    role: "user",
-    imageUrl: "/images.jpg",
-    username: "mohee42",
-    birthday: "1995-07-15",
-  },
-  {
-    name: "Lama",
-    email: "lama@example.com",
-    password: securePassword,
-    role: "guest",
-    imageUrl: "/images.jpg",
-    username: "lama_56",
-    birthday: "1995-07-15",
-  },
-  {
-    name: "Ahmed",
-    email: "ahmeds@example.com",
-    password: securePassword,
-    role: "admin",
-    imageUrl: "/images.jpg",
-    username: "ahmed123",
-    birthday: "1990-10-25",
-  },
-  {
-    name: "Sarah",
-    email: "sarah@example.com",
-    password: securePassword,
-    role: "user",
-    imageUrl: "/images.jpg",
-    username: "sarah_98",
-    birthday: "1998-04-10",
-  },
-  {
-    name: "Mohammad",
-    email: "mohammad@example.com",
-    password: securePassword,
-    role: "user",
-    imageUrl: "/images.jpg",
-    username: "mohammad101",
-    birthday: "1997-02-18",
-  },
-  {
-    name: "Yara",
-    email: "yara@example.com",
-    password: securePassword,
-    role: "guest",
-    imageUrl: "/images.jpg",
-    username: "yara98",
-    birthday: "1999-09-12",
-  },
-  {
-    name: "Omar",
-    email: "omar@example.com",
-    password: securePassword,
-    role: "admin",
-    imageUrl: "/images.jpg",
-    username: "omar55",
-    birthday: "1992-03-05",
-  },
-  {
-    name: "Lina",
-    email: "lina@example.com",
-    password: securePassword,
-    role: "user",
-    imageUrl: "/images.jpg",
-    username: "lina_777",
-    birthday: "1996-08-30",
-  },
-  {
-    name: "Zain",
-    email: "zain@example.com",
-    password: securePassword,
-    role: "guest",
-    imageUrl: "/images.jpg",
-    username: "zain99",
-    birthday: "2000-01-22",
-  },
-  {
-    name: "Tariq",
-    email: "tariq@example.com",
-    password: securePassword,
-    role: "user",
-    imageUrl: "/images.jpg",
-    username: "tariq_1985",
-    birthday: "1985-12-02",
-  },
-  {
-    name: "Maya",
-    email: "maya@example.com",
-    password: securePassword,
-    role: "guest",
-    imageUrl: "/images.jpg",
-    username: "maya_666",
-    birthday: "2001-11-19",
-  },
-  {
-    name: "Rami",
-    email: "rami@example.com",
-    password: securePassword,
-    role: "admin",
-    imageUrl: "/images.jpg",
-    username: "rami_123",
-    birthday: "1988-06-21",
-  },
-  {
-    name: "Hanan",
-    email: "hanan@example.com",
-    password: securePassword,
-    role: "user",
-    imageUrl: "/images.jpg",
-    username: "hanan_2000",
-    birthday: "2000-09-14",
-  },
-  {
-    name: "Samir",
-    email: "samir@example.com",
-    password: securePassword,
-    role: "user",
-    imageUrl: "/images.jpg",
-    username: "samir_41",
-    birthday: "1992-04-25",
-  },
-  {
-    name: "Nour",
-    email: "nour@example.com",
-    password: securePassword,
-    role: "guest",
-    imageUrl: "/images.jpg",
-    username: "nour123",
-    birthday: "1995-07-01",
-  },
-  {
-    name: "Khaled",
-    email: "khaled@example.com",
-    password: securePassword,
-    role: "user",
-    imageUrl: "/images.jpg",
-    username: "khaled1994",
-    birthday: "1994-12-10",
-  },
-  {
-    name: "Diana",
-    email: "diana@example.com",
-    password: securePassword,
-    role: "admin",
-    imageUrl: "/images.jpg",
-    username: "diana_567",
-    birthday: "1990-02-22",
-  },
-  {
-    name: "Ali",
-    email: "ali@example.com",
-    password: securePassword,
-    role: "user",
-    imageUrl: "/images.jpg",
-    username: "ali_1201",
-    birthday: "1993-11-15",
-  },
-  {
-    name: "Zaynab",
-    email: "zaynab@example.com",
-    password: securePassword,
-    role: "guest",
-    imageUrl: "/images.jpg",
-    username: "zaynab_77",
-    birthday: "1998-03-13",
-  },
-];
+  { name: "Aseel", email: "aseel@gmail.com", password: securePassword, role: "admin", imageUrl: "/images.jpg", username: "aseel123", birthday: "1995-07-15" },
+  { name: "Mohee", email: "mohee@example.com", password: securePassword, role: "user", imageUrl: "/images.jpg", username: "mohee42", birthday: "1995-07-15" },
+  { name: "Lama", email: "lama@example.com", password: securePassword, role: "guest", imageUrl: "/images.jpg", username: "lama_56", birthday: "1995-07-15" },
+  { name: "Ahmed", email: "ahmeds@example.com", password: securePassword, role: "admin", imageUrl: "/images.jpg", username: "ahmed123", birthday: "1990-10-25" },
+  { name: "Sarah", email: "sarah@example.com", password: securePassword, role: "user", imageUrl: "/images.jpg", username: "sarah_98", birthday: "1998-04-10" },
+  { name: "Mohammad", email: "mohammad@example.com", password: securePassword, role: "user", imageUrl: "/images.jpg", username: "mohammad101", birthday: "1997-02-18" },
+  { name: "Yara", email: "yara@example.com", password: securePassword, role: "guest", imageUrl: "/images.jpg", username: "yara98", birthday: "1999-09-12" },
+  { name: "Sana", email: "Sana@gmail.com", password: securePassword, role: "user", imageUrl: "/images.jpg", username: "sana123", birthday: "1990-05-10" },
+  { name: "Omar", email: "omar@example.com", password: securePassword, role: "admin", imageUrl: "/images.jpg", username: "omar55", birthday: "1992-03-05" },
+  { name: "Lina", email: "lina@example.com", password: securePassword, role: "user", imageUrl: "/images.jpg", username: "lina_777", birthday: "1996-08-30" },
+  { name: "Zain", email: "zain@example.com", password: securePassword, role: "guest", imageUrl: "/images.jpg", username: "zain99", birthday: "2000-01-22" },
+  { name: "Tariq", email: "tariq@example.com", password: securePassword, role: "user", imageUrl: "/images.jpg", username: "tariq_1985", birthday: "1985-12-02" },
+  { name: "Maya", email: "maya@example.com", password: securePassword, role: "guest", imageUrl: "/images.jpg", username: "maya_666", birthday: "2001-11-19" },
+  { name: "Rami", email: "rami@example.com", password: securePassword, role: "admin", imageUrl: "/images.jpg", username: "rami_123", birthday: "1988-06-21" },
+  { name: "Hanan", email: "hanan@example.com", password: securePassword, role: "user", imageUrl: "/images.jpg", username: "hanan_2000", birthday: "2000-09-14" },
+  { name: "sanohd", email: "sanohd@gmail.com", password: securePassword, role: "user", imageUrl: "/images.jpg", username: "sanohd123", birthday: "1990-01-01" },
+  { name: "Samir", email: "samir@example.com", password: securePassword, role: "user", imageUrl: "/images.jpg", username: "samir_41", birthday: "1992-04-25" },
+  { name: "Nour", email: "nour@example.com", password: securePassword, role: "guest", imageUrl: "/images.jpg", username: "nour123", birthday: "1995-07-01" },
+  { name: "Khaled", email: "khaled@example.com", password: securePassword, role: "user", imageUrl: "/images.jpg", username: "khaled1994", birthday: "1994-12-10" },
+  { name: "Diana", email: "diana@example.com", password: securePassword, role: "admin", imageUrl: "/images.jpg", username: "diana_567", birthday: "1990-02-22" },
+  { name: "Ali", email: "ali@example.com", password: securePassword, role: "user", imageUrl: "/images.jpg", username: "ali_1201", birthday: "1993-11-15" },
+  { name: "Zaynab", email: "zaynab@example.com", password: securePassword, role: "guest", imageUrl: "/images.jpg", username: "zaynab_77", birthday: "1998-03-13" }
+]
 
 const insertUser = db.prepare(`
   INSERT OR IGNORE INTO users (name, email, password, role, imageUrl, username, birthday)
