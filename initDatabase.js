@@ -1,9 +1,8 @@
 import sqlite3 from "better-sqlite3";
 const db = sqlite3("stories.db");
 db.pragma("foreign_keys = ON");
-const securePassword = "$2b$12$OGlKAjuTnvhjSdYhaoGKuOTs9XuVfM1B2pCacvKbENMew.cENK3Nm";
-
-
+const securePassword =
+  "$2b$12$OGlKAjuTnvhjSdYhaoGKuOTs9XuVfM1B2pCacvKbENMew.cENK3Nm";
 
 db.prepare(
   `
@@ -53,7 +52,8 @@ db.prepare(
 `
 ).run();
 
-db.prepare(`
+db.prepare(
+  `
   CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -64,9 +64,11 @@ db.prepare(`
     username TEXT UNIQUE NOT NULL,
     birthday TEXT 
   );
-`).run();
+`
+).run();
 
-db.prepare(`
+db.prepare(
+  `
   CREATE TABLE IF NOT EXISTS posts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
@@ -83,9 +85,12 @@ db.prepare(`
       'قصص الحياة اليومية الي تحت الحصار'
     )),
     createdAt TEXT NOT NULL,
+    userId INTEGER ,
  FOREIGN KEY(authorEmail) REFERENCES users(email) ON DELETE CASCADE  );
-`).run();
-db.prepare(`
+`
+).run();
+db.prepare(
+  `
   CREATE TABLE IF NOT EXISTS followers (
     followerEmail TEXT NOT NULL,
     followedEmail TEXT NOT NULL,
@@ -93,8 +98,10 @@ db.prepare(`
     FOREIGN KEY (followerEmail) REFERENCES users(email) ON DELETE CASCADE,
     FOREIGN KEY (followedEmail) REFERENCES users(email) ON DELETE CASCADE
   );
-`).run();
-db.prepare(`
+`
+).run();
+db.prepare(
+  `
   CREATE TABLE IF NOT EXISTS stars (
   userEmail TEXT NOT NULL,
   starredEmail TEXT NOT NULL,
@@ -167,7 +174,7 @@ const fakeUsers = [
   { name: "Diana", email: "diana@example.com", password: securePassword, role: "admin", imageUrl: "/images.jpg", username: "diana_567", birthday: "1990-02-22" },
   { name: "Ali", email: "ali@example.com", password: securePassword, role: "user", imageUrl: "/images.jpg", username: "ali_1201", birthday: "1993-11-15" },
   { name: "Zaynab", email: "zaynab@example.com", password: securePassword, role: "guest", imageUrl: "/images.jpg", username: "zaynab_77", birthday: "1998-03-13" }
-];
+]
 
 const insertUser = db.prepare(`
   INSERT OR IGNORE INTO users (name, email, password, role, imageUrl, username, birthday)
@@ -225,7 +232,10 @@ const insertPost = db.prepare(`
   VALUES (@title, @content, @image, @author, @authorEmail, @category, @createdAt)
 `);
 for (const post of fakePosts) {
-  const authorName = db.prepare(`SELECT name FROM users WHERE email = ?`).pluck().get(post.authorEmail);
+  const authorName = db
+    .prepare(`SELECT name FROM users WHERE email = ?`)
+    .pluck()
+    .get(post.authorEmail);
   if (authorName) {
     post.author = authorName;
     insertPost.run(post);
