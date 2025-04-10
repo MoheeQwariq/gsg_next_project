@@ -40,7 +40,7 @@ const TrendingBlogs = () => {
     const fetchTrendingBlogs = async () => {
       try {
         const data = await getTrendBlogs();
-        setTrendingBlogs(data);
+        setTrendingBlogs(data.data);
       } catch (error) {
         console.error("Error fetching trending blogs", error);
       } finally {

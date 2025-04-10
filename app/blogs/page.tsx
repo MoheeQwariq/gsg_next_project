@@ -36,8 +36,8 @@ const Page = () => {
 
   const filteredBlogs = blogs.filter((blog) => {
     const matchesSearch =
-      blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      blog.content.toLowerCase().includes(searchQuery.toLowerCase());
+      (blog.title || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (blog.content || "").toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory =
       categoryFilter === "الكل" || blog.category === categoryFilter;
     return matchesSearch && matchesCategory;

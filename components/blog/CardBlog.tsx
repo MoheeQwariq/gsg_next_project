@@ -63,6 +63,7 @@ const cardBlogStyles = {
 };
 
 const CardBlog = ({ blog }: { blog: BlogDetail }) => {
+console.log("blog", blog);
   const { theme } = useTheme();
   const styles = cardBlogStyles[theme];
 

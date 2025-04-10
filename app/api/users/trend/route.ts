@@ -42,6 +42,7 @@ export async function GET(_: NextRequest) {
 
     return NextResponse.json(result, { status: 200 });
   } catch (error) {
+    
     return NextResponse.json(
       { message: "حدث خطأ أثناء جلب البيانات", error: String(error) },
       { status: 500 }

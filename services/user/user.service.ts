@@ -88,7 +88,7 @@ export async function getUserByUsername(username: string): Promise<User> {
 
 export async function getTrendUsers(): Promise<User[]> {
   try {
-    const response = await fetch(`${API_URL}/users/trends`, {
+    const response = await fetch(`${API_URL}/users/trend`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });

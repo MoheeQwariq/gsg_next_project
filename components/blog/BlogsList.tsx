@@ -26,7 +26,7 @@ const blogsListStyles = {
   },
 };
 
-const BlogsList: React.FC<BlogsListProps> = ({ blogs }) => {
+const BlogsList: React.FC<BlogsListProps> = ({ blogs }:BlogsListProps) => {
   const { theme } = useTheme();
   const styles = blogsListStyles[theme];
 
