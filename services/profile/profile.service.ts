@@ -32,7 +32,7 @@ export async function getProfile(profileId: number): Promise<UserProfile> {
 }
 
 export async function createProfile(profileData: Partial<UserProfile>): Promise<UserProfile> {
-  const response = await fetch(`${API_BASE_URL}/profile`, {
+  const response = await fetch(`${API_BASE_URL}/profile/profiles`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

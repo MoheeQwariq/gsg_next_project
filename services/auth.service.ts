@@ -1,3 +1,6 @@
+// import { defaultUserProfile, UserProfile } from "@/types/profile";
+// import { createProfile } from "./profile/profile.service";
+
 export interface RegisterData {
     name: string;
     email: string;
@@ -48,5 +51,21 @@ export interface RegisterData {
     if (!response.ok) {
       return (result.error || "حدث خطا غير متوقع");
     }
-    return result;
-  }
+  //   const dealtProfile: UserProfile = {
+  //     ...defaultUserProfile,
+  //     id: result.user.id,        
+  //     userId: result.user.id,   
+  //     bio: "",           
+  //   };
+    
+  //   try {
+  //     await createProfile(dealtProfile);
+  //     return {
+  //       message: "تم إنشاء الحساب بنجاح",
+  //     };
+  //   } catch (error) {
+  //     console.error("Error creating profile:", error);
+  //   return result;
+  // }
+  return result;
+}

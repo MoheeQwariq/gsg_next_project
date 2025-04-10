@@ -8,7 +8,7 @@ import IsOpenModal from "@/components/blog/IsOpenModal";
 import SearchBlogs from "@/components/blog/SearchBlogs";
 import BlogsList from "@/components/blog/BlogsList";
 import { getBlogs, addBlog } from "@/services/blog/blog.service";
-import type { BlogDetail } from "@/types/type";
+import type { BlogDetail } from "@/types/blog";
 
 const Page = () => {
   const { theme } = useTheme();
@@ -65,7 +65,7 @@ const Page = () => {
       <div className={styles.container}>
         <div className={styles.header}>
           <h1 className={styles.title}>المقالات</h1>
-          <AddBlogButton  />
+          <AddBlogButton />
         </div>
         <div className={styles.content}>
           <div className={styles.skeleton.search}></div>
@@ -95,7 +95,6 @@ const Page = () => {
         />
       </div>
       <div className={styles.blogsList}>
-        
         <BlogsList blogs={filteredBlogs} />
       </div>
       <IsOpenModal onAddBlog={handleAddBlog} />

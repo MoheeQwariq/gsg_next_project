@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useTheme } from "@/context/ThemeContext";
 import profileArticlesStyles from "@/styles/profileArticles";
 import { getUserBlogs } from "@/services/blog/blog.service";
-import type { BlogDetail } from "@/types/type";
+import type { BlogDetail } from "@/types/blog";
 import Pagination from "@/components/Pagination";
 
 interface ProfileArticlesProps {
@@ -32,7 +32,10 @@ export default function ProfileArticles({ userId }: ProfileArticlesProps) {
 
   const indexOfLastArticle = currentPage * articlesPerPage;
   const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
-  const currentArticles = articles.slice(indexOfFirstArticle, indexOfLastArticle);
+  const currentArticles = articles.slice(
+    indexOfFirstArticle,
+    indexOfLastArticle
+  );
 
   const goToNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);

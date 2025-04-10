@@ -3,11 +3,15 @@ import React, { useEffect, useState, FC } from "react";
 import SocialMedia from "@/components/blog/SocialMedia";
 import UserCard from "@/components/profile/UserCard";
 import Comments from "@/components/blog/Comments";
-import type { BlogDetail } from "@/types/type";
+import type { BlogDetail } from "@/types/blog";
 import { defaultUser, type User } from "@/types/user";
 import { getBlog } from "@/services/blog/blog.service";
 import { getUser } from "@/services/user/user.service";
-import { getBlogComments, addComment, deleteComment } from "@/services/blog/comment.service";
+import {
+  getBlogComments,
+  addComment,
+  deleteComment,
+} from "@/services/blog/comment.service";
 import type { Comment, CommentData } from "@/types/comment";
 import { useTheme } from "@/context/ThemeContext";
 import Link from "next/link";
@@ -114,7 +118,11 @@ const Page: FC<PageProps> = ({ params }) => {
   const errorText = stylesObj[theme].errorText;
   const skeleton = skeletonStyles[theme];
 
-  const userForCard = { imageUrl: user.imageUrl, name: user.name, email: user.email };
+  const userForCard = {
+    imageUrl: user.imageUrl,
+    name: user.name,
+    email: user.email,
+  };
 
   if (loading) {
     return (

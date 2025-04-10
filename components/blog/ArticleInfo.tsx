@@ -11,7 +11,7 @@ import {
   FaEdit,
 } from "react-icons/fa";
 import Image from "next/image";
-import type { BlogDetail } from "@/types/type";
+import type { BlogDetail } from "@/types/blog";
 import { useTheme } from "@/context/ThemeContext";
 import articleInfoStyles from "@/styles/blog/blogDetailsStyles";
 import { formatDate } from "@/utils/formateDate";
@@ -40,7 +40,8 @@ const ArticleInfo: React.FC<ArticleInfoProps> = ({ blog }) => {
       <div className={styles.emptyContainer}>
         <h3 className={styles.emptyHeading}>المقال غير موجود</h3>
         <p className={styles.emptyText}>
-          لم يتم العثور على المقال المطلوب. قد يكون تم حذفه أو أن الرابط غير صحيح.
+          لم يتم العثور على المقال المطلوب. قد يكون تم حذفه أو أن الرابط غير
+          صحيح.
         </p>
         <Link href={"/blogs"} className={styles.emptyLink}>
           العودة للمقالات
@@ -86,9 +87,7 @@ const ArticleInfo: React.FC<ArticleInfoProps> = ({ blog }) => {
               </Link>
             </div>
             <div className="flex items-center gap-3">
-              <span className={styles.categoryBadge}>
-                {localBlog.category}
-              </span>
+              <span className={styles.categoryBadge}>{localBlog.category}</span>
               <span className={styles.date}>
                 <FaCalendarAlt className={styles.metaIconEye} />
                 {formatDate(localBlog.createdAt)}

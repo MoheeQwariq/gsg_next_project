@@ -1,14 +1,22 @@
-export interface Article {
-  id: number;
+export interface CategoryTabProps {
+  children: React.ReactNode;
+  category: string;
+}
+export interface BlogDetail {
+  blogId: string;
   title: string;
-  imageUrl: string;
+  category: string;
   content: string;
-  likes: number;
-  commentsCount: number;
-  category?: string;
-  createdAt?: string;
-  author?: {
+  tags: string;
+  imageUrl: string;
+  createdAt: string;
+  like: number;
+  author: {
+    id: number;
     name: string;
-    avatarUrl: string;
+    image: string;
   };
+}
+export interface BlogId {
+  blogId: string;
 }

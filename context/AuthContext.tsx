@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import type { User } from "@/types/user";
+import type { User, UserRole } from "@/types/user";
 import type { UserProfile } from "@/types/profile";
 import { defaultUser } from "@/types/user";
 import { defaultUserProfile } from "@/types/profile";
@@ -8,7 +8,7 @@ interface AuthContextType {
   user: User;
   profile: UserProfile ;
   isLoggedIn: boolean;
-  login: (credentials: { email: string; password: string }) => Promise<void | null>;
+  login: (credentials: { email: string; password: string }) => Promise<void | null | UserRole>;
   logout: () => Promise<void>;
 }
 
@@ -37,6 +37,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
       if (res.ok) {
         const data = await res.json();
+        console.log("Fetched profile data:", data);
         setUser(data.user);
         setProfile(data.profile);
       } else {
@@ -71,6 +72,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem("token", data.token);
     setUser(data.user);
     await fetchProfile();
+    return data.user.role;
   };
 
   const logout = async () => {
@@ -93,9 +95,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setProfile(defaultUserProfile);
     }
   };
-
-  const isLoggedIn = !!user.id;
-
+console.log("User:", user);
+console.log("Profile:", profile);
+  const isLoggedIn = !!user?.id || false;
+console.log("Is logged in:", isLoggedIn);
   return (
     <AuthContext.Provider value={{ user, profile, isLoggedIn, login, logout }}>
       {!loading && children}

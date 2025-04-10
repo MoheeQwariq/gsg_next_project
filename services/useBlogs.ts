@@ -1,4 +1,4 @@
-import { BlogDetail } from "@/types/type";
+import { BlogDetail } from "@/types/blog";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 

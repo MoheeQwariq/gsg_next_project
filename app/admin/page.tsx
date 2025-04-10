@@ -4,6 +4,7 @@ import { FaUsers, FaBook, FaHome, FaChartLine, FaCalendarAlt, FaArrowRight } fro
 import Link from "next/link"
 import Image from "next/image"
 import { User } from "@/types/user"
+import RoleBasedRoute from "@/components/RoleBasedRoute"
 
 export default function AdminDashboard() {
   const [users, setUsers] = useState<User[]>([])
@@ -49,6 +50,8 @@ export default function AdminDashboard() {
   })
 
   return (
+    <RoleBasedRoute allowedRoles={["admin"]}>
+
     <div className="max-w-7xl mx-auto px-6 py-8">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
         <div className="flex items-center">
@@ -189,5 +192,7 @@ export default function AdminDashboard() {
         </div>
       </div>
     </div>
+    </RoleBasedRoute>
+
   )
 }

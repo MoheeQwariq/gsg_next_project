@@ -97,7 +97,7 @@ export default function GeneralNavbar() {
             {theme === "light" ? <FaMoon size={16} /> : <FaSun size={16} />}
           </button>
 
-          {isLoggedIn ? (
+          {true ? (
             <ProfileDropdown />
           ) : (
             <Link

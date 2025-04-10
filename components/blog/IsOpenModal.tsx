@@ -3,7 +3,7 @@ import { useModal } from "@/context/ModalContext";
 import { useTheme } from "@/context/ThemeContext";
 import React from "react";
 import BlogModal from "./BlogModal";
-import type { BlogDetail } from "@/types/type";
+import type { BlogDetail } from "@/types/blog";
 
 const isOpenModalStyles = {
   light: {
@@ -21,7 +21,11 @@ const IsOpenModal = ({ onAddBlog }: IsOpenModalProps) => {
   const { theme } = useTheme();
   const styles = isOpenModalStyles[theme];
 
-  return <div className={styles.container}>{isOpen && <BlogModal onAddBlog={onAddBlog} />}</div>;
+  return (
+    <div className={styles.container}>
+      {isOpen && <BlogModal onAddBlog={onAddBlog} />}
+    </div>
+  );
 };
 
 export default IsOpenModal;

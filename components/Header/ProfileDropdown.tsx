@@ -10,7 +10,7 @@ import profileDropdownStyles from "@/styles/profileDropdownStyles";
 const ProfileDropdown = () => {
   const [open, setOpen] = useState(false);
   const { theme } = useTheme();
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const styles = profileDropdownStyles[theme];
 
   return (
@@ -26,7 +26,7 @@ const ProfileDropdown = () => {
       <button onClick={() => setOpen((prev) => !prev)} className={styles.button}>
         <div className={styles.imageWrapper}>
           <Image
-            src={user.imageUrl}
+            src={user.imageUrl || "/user.svg"}
             alt="صورة المستخدم"
             width={40}
             height={40}
@@ -59,14 +59,16 @@ const ProfileDropdown = () => {
             </li>
             <li className={styles.separator}></li>
             <li>
-              <Link
-                href="/logout"
-                onClick={() => setOpen(false)}
+              <button
+                onClick={async () => {
+                  await logout();
+                  setOpen(false);
+                }}
                 className={styles.dropdownItemFlex}
               >
                 <CiLogout className="h-4 w-4" />
                 <span>تسجيل الخروج</span>
-              </Link>
+              </button>
             </li>
           </ul>
         </div>

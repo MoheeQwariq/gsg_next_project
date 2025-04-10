@@ -1,14 +1,15 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
-import type { BlogDetail } from "@/types/type";
+import type { BlogDetail } from "@/types/blog";
 import { getTrendBlogs } from "@/services/blog/blog.service";
 import TrendingBlog from "./TrendingBlog";
 
 const trendingBlogsStyles = {
   light: {
     container: "rounded-xl border border-gray-200 bg-white p-5 shadow-sm",
-    heading: "mb-4 border-b border-gray-100 pb-2 text-xl font-bold text-gray-900",
+    heading:
+      "mb-4 border-b border-gray-100 pb-2 text-xl font-bold text-gray-900",
     list: "space-y-4",
     skeletonCard: "animate-pulse flex gap-3 mb-4",
     skeletonImage: "bg-gray-300 rounded-lg h-20 w-20",
@@ -18,7 +19,8 @@ const trendingBlogsStyles = {
   },
   dark: {
     container: "rounded-xl border border-gray-700 bg-gray-800 p-5 shadow-sm",
-    heading: "mb-4 border-b border-gray-600 pb-2 text-xl font-bold text-gray-100",
+    heading:
+      "mb-4 border-b border-gray-600 pb-2 text-xl font-bold text-gray-100",
     list: "space-y-4",
     skeletonCard: "animate-pulse flex gap-3 mb-4",
     skeletonImage: "bg-gray-600 rounded-lg h-20 w-20",

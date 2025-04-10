@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaCalendarAlt } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
-import type { BlogDetail } from "@/types/type";
+import type { BlogDetail } from "@/types/blog";
 import myPhoto from "@/public/myPhoto.jpg";
 
 interface TrendingBlogProps {
@@ -17,7 +17,8 @@ const trendingBlogStyles = {
     imageWrapper: "relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg",
     image: "object-cover transition-transform group-hover:scale-105",
     content: "flex flex-col",
-    title: "line-clamp-2 text-sm font-medium text-gray-900 group-hover:text-blue-600",
+    title:
+      "line-clamp-2 text-sm font-medium text-gray-900 group-hover:text-blue-600",
     meta: "mt-auto flex items-center justify-between",
     authorContainer: "flex items-center gap-2",
     authorImageWrapper: "relative h-6 w-6 overflow-hidden rounded-full",
@@ -31,7 +32,8 @@ const trendingBlogStyles = {
     imageWrapper: "relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg",
     image: "object-cover transition-transform group-hover:scale-105",
     content: "flex flex-col",
-    title: "line-clamp-2 text-sm font-medium text-gray-100 group-hover:text-blue-400",
+    title:
+      "line-clamp-2 text-sm font-medium text-gray-100 group-hover:text-blue-400",
     meta: "mt-auto flex items-center justify-between",
     authorContainer: "flex items-center gap-2",
     authorImageWrapper: "relative h-6 w-6 overflow-hidden rounded-full",

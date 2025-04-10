@@ -5,7 +5,7 @@ import { useTheme } from "@/context/ThemeContext";
 import { FaTimes } from "react-icons/fa";
 import { MdOutlineCloudUpload } from "react-icons/md";
 import { categories } from "@/constant/constant";
-import type { BlogDetail } from "@/types/type";
+import type { BlogDetail } from "@/types/blog";
 import Image from "next/image";
 import { editBlog } from "@/services/blog/blog.service";
 
@@ -20,7 +20,8 @@ const blogModalStyles = {
       "fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm p-4",
     modal:
       "relative max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-xl bg-white p-6 shadow-xl",
-    header: "mb-6 flex items-center justify-between border-b border-gray-200 pb-4",
+    header:
+      "mb-6 flex items-center justify-between border-b border-gray-200 pb-4",
     headerTitle: "text-2xl font-bold text-gray-900",
     closeButton:
       "rounded-full p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700",
@@ -48,7 +49,8 @@ const blogModalStyles = {
       "fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm p-4",
     modal:
       "relative max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-xl bg-gray-800 p-6 shadow-xl",
-    header: "mb-6 flex items-center justify-between border-b border-gray-700 pb-4",
+    header:
+      "mb-6 flex items-center justify-between border-b border-gray-700 pb-4",
     headerTitle: "text-2xl font-bold text-gray-100",
     closeButton:
       "rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-700 hover:text-gray-300",
@@ -73,7 +75,10 @@ const blogModalStyles = {
   },
 };
 
-const EditBlogModal: React.FC<EditBlogModalProps> = ({ blog, onBlogEdited }) => {
+const EditBlogModal: React.FC<EditBlogModalProps> = ({
+  blog,
+  onBlogEdited,
+}) => {
   const { isOpen, handleModal } = useModal();
   const { theme } = useTheme();
   const styles = blogModalStyles[theme];
@@ -88,8 +93,10 @@ const EditBlogModal: React.FC<EditBlogModalProps> = ({ blog, onBlogEdited }) => 
     imageUrl: blog.imageUrl,
     like: blog.like,
   });
-  
-  const [imagePreview, setImagePreview] = useState<string | null>(blog.imageUrl || null);
+
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    blog.imageUrl || null
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (!isOpen) return null;

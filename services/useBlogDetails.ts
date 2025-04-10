@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BlogDetail } from "@/types/type";
+import { BlogDetail } from "@/types/blog";
 
 export const useBlogDetails = (blogId: string) => {
   const [blog, setBlog] = useState<BlogDetail | null>(null);

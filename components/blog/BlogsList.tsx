@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import CardBlog from "./CardBlog";
 import { useTheme } from "@/context/ThemeContext";
 import Pagination from "@/components/Pagination";
-import type { BlogDetail } from "@/types/type";
+import type { BlogDetail } from "@/types/blog";
 
 interface BlogsListProps {
   blogs: BlogDetail[];
@@ -30,7 +30,7 @@ const BlogsList: React.FC<BlogsListProps> = ({ blogs }) => {
   const { theme } = useTheme();
   const styles = blogsListStyles[theme];
 
-  const itemsPerPage = 10; 
+  const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
   const totalPages = Math.ceil(blogs.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
