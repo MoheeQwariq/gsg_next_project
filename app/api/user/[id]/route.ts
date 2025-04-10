@@ -1,11 +1,11 @@
 import { type NextRequest, NextResponse } from "next/server"
+import { User } from "@/types/user"
 import sqlite3 from "better-sqlite3"
 import jwt from "jsonwebtoken"
-import { User } from "@/types/user"
 import bcrypt from 'bcryptjs';
+
 const db = sqlite3("stories.db")
 const JWT_SECRET = process.env.JWT_SECRET!
-
 
 export async function GET(
   _: NextRequest,
@@ -197,6 +197,7 @@ export async function DELETE(request: NextRequest) {
       db.prepare("DELETE FROM users WHERE id = ?").run(userId)
   
       return NextResponse.json({ message: "تم حذف المستخدم بنجاح" })
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
     
       return NextResponse.json({ message: "Token غير صالح أو منتهي" }, { status: 401 })

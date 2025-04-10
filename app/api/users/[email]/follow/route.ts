@@ -7,7 +7,9 @@ const JWT_SECRET = process.env.JWT_SECRET!;
 
 async function isFollowing(followerEmail: string, followedEmail: string) {
   const result = db
-    .prepare("SELECT 1 FROM followers WHERE followerEmail = ? AND followedEmail = ?")
+    .prepare(
+      "SELECT 1 FROM followers WHERE followerEmail = ? AND followedEmail = ?"
+    )
     .get(followerEmail, followedEmail);
   return !!result;
 }
@@ -27,30 +29,44 @@ async function unfollowUser(followerEmail: string, followedEmail: string) {
   deleteFollow.run(followerEmail, followedEmail);
 }
 
-export async function POST(req: NextRequest, { params }: { params: { email: string } }) {
+export async function POST(
+  req: NextRequest,
+  { params }: { params: { email: string } }
+) {
   const { email: followedEmail } = await params;
 
   const authHeader = req.headers.get("authorization");
-
-  if (!authHeader) {
-    return NextResponse.json({ message: "Token مفقود أو غير صالح" }, { status: 401 });
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return NextResponse.json(
+      { message: "Token مفقود أو غير صالح" },
+      { status: 401 }
+    );
   }
 
-  const token = authHeader;
+  const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as { email: string; role: string };
+    const decoded = jwt.verify(token, JWT_SECRET) as {
+      email: string;
+      role: string;
+    };
     const followerEmail = decoded.email;
 
     if (followerEmail === followedEmail) {
-      return NextResponse.json({ message: "لا يمكنك متابعة نفسك" }, { status: 400 });
+      return NextResponse.json(
+        { message: "لا يمكنك متابعة نفسك" },
+        { status: 400 }
+      );
     }
     const followedUser = db
       .prepare("SELECT * FROM users WHERE email = ?")
       .get(followedEmail);
 
     if (!followedUser) {
-      return NextResponse.json({ message: "المستخدم غير موجود" }, { status: 404 });
+      return NextResponse.json(
+        { message: "المستخدم غير موجود" },
+        { status: 404 }
+      );
     }
 
     const { action } = await req.json();
@@ -69,17 +85,22 @@ export async function POST(req: NextRequest, { params }: { params: { email: stri
       const alreadyFollowing = await isFollowing(followerEmail, followedEmail);
 
       if (!alreadyFollowing) {
-        return NextResponse.json({ message: "أنت لا تتابع هذا المستخدم أصلاً" });
+        return NextResponse.json({
+          message: "أنت لا تتابع هذا المستخدم أصلاً",
+        });
       }
 
       await unfollowUser(followerEmail, followedEmail);
 
       return NextResponse.json({ message: "تمت إلغاء المتابعة بنجاح" });
     } else {
-      return NextResponse.json({ message: "العملية غير صحيحة" }, { status: 400 });
+      return NextResponse.json(
+        { message: "العملية غير صحيحة" },
+        { status: 400 }
+      );
     }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return NextResponse.json({ message: "التوكن غير صالح" }, { status: 401 });
   }
 }
-

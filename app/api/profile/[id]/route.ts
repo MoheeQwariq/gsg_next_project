@@ -29,7 +29,8 @@ export async function GET(
 
     const user = db
       .prepare(
-        `SELECT id, name, email, role, avatar, birthday FROM users WHERE id = ?`
+        `SELECT id, name, email, role, imageUrl, birthday FROM users WHERE id = ?`
+
       )
       .get(userId);
 
