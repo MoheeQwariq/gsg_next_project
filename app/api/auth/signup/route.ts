@@ -149,6 +149,8 @@ export async function POST(req: NextRequest) {
       `INSERT INTO profiles (userId) VALUES (?)`
     ).run(userId);
 
+    
+
     return NextResponse.json(
       {
         message: "تم إنشاء الحساب بنجاح",

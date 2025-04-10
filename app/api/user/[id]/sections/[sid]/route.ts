@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "@/lib/constants";
 import sqlite3 from "better-sqlite3";
+import jwt from "jsonwebtoken";
 import { v2 as cloudinary } from "cloudinary";
+import { NextRequest, NextResponse } from "next/server";
+import { JWT_SECRET } from "@/lib/constants";
 
 const db = sqlite3("stories.db");
 

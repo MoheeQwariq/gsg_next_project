@@ -18,9 +18,17 @@ export async function GET(req: NextRequest) {
 
     const user = db
       .prepare(
-        `SELECT id, name, email, role, avatar, birthday FROM users WHERE id = ?`
+        `SELECT id, name, email, role, imageUrl, birthday FROM users WHERE id = ?`
       )
-      .get(userId);
+      .get(userId) as {
+      id: number;
+      name: string;
+      email: string;
+      role: string;
+      imageUrl: string;
+      birthday: string;
+    };
+
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
@@ -32,7 +40,10 @@ export async function GET(req: NextRequest) {
 
     return NextResponse.json({
       data: {
-        user,
+        user: {
+          ...user,
+          avatar: user.imageUrl, 
+        },
         profile: profile || null,
       },
     });

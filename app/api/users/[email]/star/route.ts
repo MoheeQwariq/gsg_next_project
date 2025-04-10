@@ -28,13 +28,16 @@ async function unstarUser(userEmail: string, starredEmail: string) {
 
 export async function POST(req: NextRequest, { params }: { params: { email: string } }) {
   const { email: starredEmail } = await params;
-  const authHeader = req.headers.get("authorization");
+const authHeader = req.headers.get("authorization");
 
-  if (!authHeader) {
-    return NextResponse.json({ message: "التوكن مفقود أو غير صالح" }, { status: 401 });
-  }
+if (!authHeader) {
+  return NextResponse.json(
+    { message: "التوكن مفقود أو غير صالح" },
+    { status: 401 }
+  );
+}
 
-  const token = authHeader;
+const token = authHeader.split(" ")[1];
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as { email: string; role: string };
@@ -77,6 +80,7 @@ export async function POST(req: NextRequest, { params }: { params: { email: stri
     } else {
       return NextResponse.json({ message: "الإجراء غير صالح" }, { status: 400 });
     }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
     return NextResponse.json({ message: "توكن غير صالح" }, { status: 401 });
   }

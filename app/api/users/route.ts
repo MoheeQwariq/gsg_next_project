@@ -12,7 +12,7 @@ export async function GET(req: NextRequest) {
     const page = parseInt(searchParams.get('page') || '1');
     const perPage = parseInt(searchParams.get('perPage') || '5');
 
-    let filteredUsers = users.filter((user:User) => {
+   const filteredUsers = users.filter((user:User) => {
       const matchSearch = user.name.toLowerCase().includes(search) ||
         (user.email.toLowerCase().includes(search) || false);
 
