@@ -98,3 +98,43 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+
+
+export async function GET(req: NextRequest) {
+  const authHeader = req.headers.get("authorization");
+
+  if (!authHeader) {
+    return NextResponse.json(
+      { message: "التوكن مفقود أو غير صالح" },
+      { status: 401 }
+    );
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { email: string };
+
+    const user = db
+      .prepare("SELECT * FROM users WHERE email = ?")
+      .get(decoded.email) as User;
+
+    if (!user) {
+      return NextResponse.json(
+        { message: "المستخدم غير موجود" },
+        { status: 404 }
+      );
+    }
+
+    const posts = db.prepare("SELECT * FROM posts ORDER BY createdAt DESC").all();
+
+    return NextResponse.json(posts, { status: 200 });
+  } catch (err) {
+    console.error("GET ALL POSTS Error:", err);
+    return NextResponse.json(
+      { message: "خطأ في التوكن أو خطأ داخلي" },
+      { status: 401 }
+    );
+  }
+}
