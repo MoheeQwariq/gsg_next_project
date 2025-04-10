@@ -117,3 +117,67 @@ export async function PUT(
     );
   }
 }
+
+
+export async function DELETE(req: NextRequest) {
+  const authHeader = req.headers.get("authorization");
+
+  if (!authHeader) {
+    return NextResponse.json(
+      { message: "التوكن مفقود أو غير صالح" },
+      { status: 401 }
+    );
+  }
+
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as { email: string };
+    const user = db
+      .prepare("SELECT * FROM users WHERE email = ?")
+      .get(decoded.email) as User;
+
+    if (!user) {
+      return NextResponse.json(
+        { message: "المستخدم غير موجود" },
+        { status: 404 }
+      );
+    }
+
+    const { searchParams } = new URL(req.url);
+    const postId = searchParams.get("id");
+
+    if (!postId) {
+      return NextResponse.json(
+        { message: "معرف المنشور غير موجود" },
+        { status: 400 }
+      );
+    }
+
+    const post = db
+      .prepare("SELECT * FROM posts WHERE id = ?")
+      .get(postId);
+
+    if (!post) {
+      return NextResponse.json(
+        { message: "المنشور غير موجود" },
+        { status: 404 }
+      );
+    }
+
+    const deletePost = db.prepare("DELETE FROM posts WHERE id = ?");
+    deletePost.run(postId);
+
+    return NextResponse.json(
+      { message: "تم حذف المنشور بنجاح" },
+      { status: 200 }
+    );
+  } catch (err) {
+    console.error("DELETE Error:", err);
+    return NextResponse.json(
+      { message: "توكن غير صالح أو خطأ داخلي" },
+      { status: 401 }
+    );
+  }
+}
+
