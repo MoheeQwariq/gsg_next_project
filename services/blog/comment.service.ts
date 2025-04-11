@@ -5,22 +5,23 @@ const API_BASE_URL =
 
 export async function addComment(
   blogId: string,
-  commentData: CommentData
+  commentData: CommentData,
+  userEmail: string
 ): Promise<Comment> {
+  const dataWithEmail = { ...commentData, userEmail };
   const response = await fetch(`${API_BASE_URL}/blogs/${blogId}/comments`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${localStorage.getItem("token")}`,
-
     },
-    body: JSON.stringify(commentData),
+    body: JSON.stringify(dataWithEmail),
   });
   if (!response.ok) {
     throw new Error("Error adding comment");
   }
   return response.json();
 }
+  
 
 export async function editComment(
   blogId: string,

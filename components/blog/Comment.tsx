@@ -61,14 +61,25 @@ const Comment: React.FC<CommentProps> = ({ comment, canDelete, onDelete }) => {
         const fetchedUser = await getUser(comment.authorId);
         if (isMounted) setAuthor(fetchedUser);
       } catch (error) {
-        console.error("Error fetching comment's author:", error);
+        console.error("Error fetching comment's author by id:", error);
+        
+        if (comment.userEmail) {
+          const username = comment.authorEmail.split("@")[0];
+          try {
+            const fetchedUserByUsername = await getUserByUsername(username);
+            if (isMounted) setAuthor(fetchedUserByUsername);
+          } catch (usernameError) {
+            console.error("Error fetching comment's author by username:", usernameError);
+          }
+        }
       }
     }
     fetchAuthor();
     return () => {
       isMounted = false;
     };
-  }, [comment.authorId]);
+  }, [comment.authorId, comment.authorEmail]);
+  
 
   const handleToggleLove = async () => {
     try {

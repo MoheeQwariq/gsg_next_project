@@ -11,6 +11,7 @@ export interface BlogDetail {
   imageUrl: string;
   createdAt: string;
   like: number;
+  commentsCount?: number;
   author: {
     id: number;
     name: string;

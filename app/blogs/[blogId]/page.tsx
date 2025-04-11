@@ -17,14 +17,15 @@ import type { Comment, CommentData } from "@/types/comment";
 import { useTheme } from "@/context/ThemeContext";
 import Link from "next/link";
 import ArticleInfo from "@/components/blog/ArticleInfo";
+import { useAuth } from "@/context/AuthContext";
 
 const Page: FC = () => {
   const { blogId } = useParams() as { blogId: string };
-
   const { theme } = useTheme();
-
+  const { user } = useAuth();
   const [blog, setBlog] = useState<BlogDetail | null>(null);
-  const [user, setUser] = useState<User>(defaultUser);
+  const [userOwner, setUser] = useState<User>(defaultUser);
+  // Initialize comments as an empty array.
   const [comments, setComments] = useState<Comment[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -55,8 +56,10 @@ const Page: FC = () => {
   useEffect(() => {
     const fetchComments = async () => {
       try {
-        const commentsData = await getBlogComments(blogId);
-        setComments(commentsData);
+        // Here we expect the API to return an object with a "data" property
+        const response = await getBlogComments(blogId);
+        // Extract the array of comments from the response
+        setComments(response.data);
       } catch (error: unknown) {
         if (error instanceof Error) {
           console.error("Error fetching comments:", error.message);
@@ -119,9 +122,9 @@ const Page: FC = () => {
   const skeleton = skeletonStyles[theme];
 
   const userForCard = {
-    imageUrl: user.imageUrl,
-    name: user.name,
-    email: user.email,
+    imageUrl: userOwner.imageUrl,
+    name: userOwner.name,
+    email: userOwner.email,
   };
 
   if (loading) {
@@ -151,11 +154,11 @@ const Page: FC = () => {
       </div>
     );
   }
+
   const handleAddComment = async (commentData: CommentData) => {
     try {
-      const newComment = await addComment(blogId, commentData);
-      setComments((prevComments) => [...prevComments, newComment]);
-      
+      const response = await addComment(blogId, commentData, user.email);
+      setComments((prevComments) => [...prevComments, response.data]);
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error("Error adding comment:", error.message);
@@ -164,6 +167,7 @@ const Page: FC = () => {
       }
     }
   };
+
   const handleDeleteComment = async (commentId: string) => {
     try {
       await deleteComment(blogId, commentId);
