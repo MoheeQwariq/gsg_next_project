@@ -54,7 +54,7 @@ export async function getBlogs(): Promise<BlogDetail[]> {
 }
 
 export async function getUserBlogs(userId: number): Promise<BlogDetail[]> {
-  const response = await fetch(`${API_BASE_URL}/${userId}/posts`, {
+  const response = await fetch(`${API_BASE_URL}/posts/user/${userId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -90,13 +90,27 @@ export async function getBlog(id: string): Promise<BlogDetail> {
 
 
 export async function editBlog(id: string, updatedData: Partial<BlogDetail>): Promise<BlogDetail> {
+  const formData = new FormData();
+
+  for (const key in updatedData) {
+    if (Object.prototype.hasOwnProperty.call(updatedData, key)) {
+      const value = updatedData[key as keyof BlogDetail];
+      if (value !== undefined && value !== null) {
+        if (typeof value === "object" && !(value instanceof Blob)) {
+          formData.append(key, JSON.stringify(value));
+        } else {
+          formData.append(key, value as string | Blob);
+        }
+      }
+    }
+  }
+
   const response = await fetch(`${API_BASE_URL}/posts/${id}`, {
     method: "PUT",
     headers: {
-      "Content-Type": "application/json",
       "Authorization": `Bearer ${localStorage.getItem("token")}`,
     },
-    body: JSON.stringify(updatedData),
+    body: formData,
   });
 
   if (!response.ok) {
@@ -106,6 +120,7 @@ export async function editBlog(id: string, updatedData: Partial<BlogDetail>): Pr
 
   return response.json();
 }
+
 
 
 export async function deleteBlog(id: string): Promise<{ message: string }> {

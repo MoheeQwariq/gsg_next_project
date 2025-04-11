@@ -5,6 +5,7 @@ import profileArticlesStyles from "@/styles/profileArticles";
 import { getUserBlogs } from "@/services/blog/blog.service";
 import type { BlogDetail } from "@/types/blog";
 import Pagination from "@/components/Pagination";
+import CardBlog from "../blog/CardBlog";
 
 interface ProfileArticlesProps {
   userId: number;
@@ -15,8 +16,8 @@ export default function ProfileArticles({ userId }: ProfileArticlesProps) {
   const styles = profileArticlesStyles[theme];
   const articlesPerPage = 5;
   const [articles, setArticles] = useState<BlogDetail[]>([]);
+  const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(articles.length / articlesPerPage);
 
   useEffect(() => {
     async function fetchArticles() {
@@ -25,17 +26,17 @@ export default function ProfileArticles({ userId }: ProfileArticlesProps) {
         setArticles(fetchedArticles);
       } catch (error) {
         console.error("Error fetching articles:", error);
+      } finally {
+        setLoading(false);
       }
     }
     fetchArticles();
   }, [userId]);
 
+  const totalPages = Math.ceil(articles.length / articlesPerPage);
   const indexOfLastArticle = currentPage * articlesPerPage;
   const indexOfFirstArticle = indexOfLastArticle - articlesPerPage;
-  const currentArticles = articles.slice(
-    indexOfFirstArticle,
-    indexOfLastArticle
-  );
+  const currentArticles = articles.slice(indexOfFirstArticle, indexOfLastArticle);
 
   const goToNextPage = () => {
     if (currentPage < totalPages) setCurrentPage(currentPage + 1);
@@ -47,13 +48,24 @@ export default function ProfileArticles({ userId }: ProfileArticlesProps) {
 
   return (
     <div className={styles.container} dir="rtl">
-      {currentArticles.map((article) => (
-        <div key={article.blogId}>
-          <h3>{article.title}</h3>
-          <p>{article.content.slice(0, 100)}...</p>
+      {loading ? (
+        Array.from({ length: articlesPerPage }).map((_, index) => (
+          <div key={index} className={styles.skeletonCard}>
+            <div className={styles.skeletonImage} />
+            <div className={styles.skeletonText} />
+          </div>
+        ))
+      ) : articles.length === 0 ? (
+        <div className={styles.noArticlesCard}>
+          <p>لا توجد مقالات متاحة</p>
         </div>
-      ))}
-      {totalPages > 1 && (
+      ) : (
+        currentArticles.map((article) => (
+          <CardBlog key={article.blogId} blog={article} />
+        ))
+      )}
+
+      {!loading && articles.length > 0 && totalPages > 1 && (
         <Pagination
           totalPages={totalPages}
           currentPage={currentPage}

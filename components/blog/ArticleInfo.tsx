@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import { addLoveToBlog } from "@/services/blog/comment.service";
 import { deleteBlog } from "@/services/blog/blog.service";
 import EditBlogModal from "./EditBlogModal";
+
 interface ArticleInfoProps {
   blog: BlogDetail | null;
 }
@@ -71,10 +72,13 @@ const ArticleInfo: React.FC<ArticleInfoProps> = ({ blog }) => {
   };
 
   const handleEditClick = () => {
+    console.log("Edit button clicked – opening modal");
     setIsEditOpen(true);
   };
 
+  // Make sure isAuthor evaluates correctly
   const isAuthor = isLoggedIn && user.id === localBlog.author.id;
+  console.log("Is Author:", isAuthor);
 
   return (
     <>
@@ -188,6 +192,8 @@ const ArticleInfo: React.FC<ArticleInfoProps> = ({ blog }) => {
       {isEditOpen && (
         <EditBlogModal
           blog={localBlog}
+          onClose={() => setIsEditOpen(false)}
+
           onBlogEdited={(updatedBlog) => {
             setLocalBlog(updatedBlog);
             setIsEditOpen(false);

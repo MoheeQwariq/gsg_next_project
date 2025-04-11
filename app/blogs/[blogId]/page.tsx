@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState, FC } from "react";
+import { useParams } from "next/navigation";
 import SocialMedia from "@/components/blog/SocialMedia";
 import UserCard from "@/components/profile/UserCard";
 import Comments from "@/components/blog/Comments";
@@ -17,12 +18,9 @@ import { useTheme } from "@/context/ThemeContext";
 import Link from "next/link";
 import ArticleInfo from "@/components/blog/ArticleInfo";
 
-interface PageProps {
-  params: { blogId: string };
-}
+const Page: FC = () => {
+  const { blogId } = useParams() as { blogId: string };
 
-const Page: FC<PageProps> = ({ params }) => {
-  const { blogId } = params;
   const { theme } = useTheme();
 
   const [blog, setBlog] = useState<BlogDetail | null>(null);
@@ -35,9 +33,11 @@ const Page: FC<PageProps> = ({ params }) => {
     const fetchBlogAndUser = async () => {
       try {
         const blogData = await getBlog(blogId);
+        console.log("Blog data:", blogData);
         setBlog(blogData);
         const userData = await getUser(blogData.author.id);
         setUser(userData);
+        console.log("User data:", userData);
       } catch (error: unknown) {
         if (error instanceof Error) {
           setError(error.message || "حدث خطأ أثناء جلب البيانات");

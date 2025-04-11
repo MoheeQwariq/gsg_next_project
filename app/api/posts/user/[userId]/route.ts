@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import sqlite3 from "better-sqlite3";
 import jwt from "jsonwebtoken";
 import { User } from "@/types/user";
+import { BlogDetail } from "@/types/blog";
 
 const db = sqlite3("stories.db");
 const JWT_SECRET = process.env.JWT_SECRET!;
@@ -44,7 +45,23 @@ export async function GET(req: NextRequest, context: { params: { userId: string 
       .prepare("SELECT * FROM posts WHERE userId = ? ORDER BY createdAt DESC")
       .all(user.id);
 
-    return NextResponse.json(posts, { status: 200 });
+    const blogDetails: BlogDetail[] = posts.map((row: any) => ({
+      blogId: row.id.toString(),
+      title: row.title,
+      category: row.category,
+      content: row.content,
+      tags: row.tags || "",
+      imageUrl: row.image,
+      createdAt: row.createdAt,
+      like: row.like || 0,
+      author: {
+        id: user.id,
+        name: user.name,
+        image: user.imageUrl || "/default-author.png",
+      },
+    }));
+
+    return NextResponse.json(blogDetails, { status: 200 });
   } catch (err) {
     console.error("GET USER POSTS Error:", err);
     return NextResponse.json(
