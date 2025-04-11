@@ -4,7 +4,7 @@ import React from "react";
 import { PiChatDots } from "react-icons/pi";
 import photo from "../../public/myPhoto.jpg";
 import Link from "next/link";
-import { BlogDetail } from "@/types/type";
+import { BlogDetail } from "@/types/blog";
 import LikesCounter from "./LikesCounter";
 import { formatDate } from "@/services/formateDate";
 import { useTheme } from "@/context/ThemeContext";
@@ -24,14 +24,13 @@ const cardBlogStyles = {
     title: "mb-2 text-xl font-bold text-gray-900",
     content: "mb-4 text-gray-600",
     footer: "mt-auto",
-    footerRow: "flex items-center justify-between border-t border-gray-100 pt-4",
+    footerRow:
+      "flex items-center justify-between border-t border-gray-100 pt-4",
     authorSection: "flex items-center space-x-3 rtl:space-x-reverse",
-    authorImage:
-      "h-10 w-10 rounded-full border border-gray-200 object-cover",
+    authorImage: "h-10 w-10 rounded-full border border-gray-200 object-cover",
     authorName: "font-medium text-gray-900",
     metaContainer: "flex items-center gap-4 text-sm text-gray-500",
-    chatLink:
-      "flex items-center gap-1 transition-colors hover:text-blue-600",
+    chatLink: "flex items-center gap-1 transition-colors hover:text-blue-600",
     chatIcon: "text-blue-500 cursor-pointer",
     readMore:
       "mt-4 block rounded-lg bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-center text-sm font-medium text-white transition hover:from-blue-700 hover:to-indigo-700",
@@ -45,20 +44,18 @@ const cardBlogStyles = {
     image: "object-cover",
     contentContainer: "flex flex-col p-5 md:col-span-2",
     header: "mb-2 flex items-center justify-between",
-    badge:
-      "rounded-lg bg-blue-900 px-3 py-1 text-xs font-medium text-blue-300",
+    badge: "rounded-lg bg-blue-900 px-3 py-1 text-xs font-medium text-blue-300",
     date: "text-xs text-gray-400",
     title: "mb-2 text-xl font-bold text-gray-100",
     content: "mb-4 text-gray-400",
     footer: "mt-auto",
-    footerRow: "flex items-center justify-between border-t border-gray-700 pt-4",
+    footerRow:
+      "flex items-center justify-between border-t border-gray-700 pt-4",
     authorSection: "flex items-center space-x-3 rtl:space-x-reverse",
-    authorImage:
-      "h-10 w-10 rounded-full border border-gray-600 object-cover",
+    authorImage: "h-10 w-10 rounded-full border border-gray-600 object-cover",
     authorName: "font-medium text-gray-100",
     metaContainer: "flex items-center gap-4 text-sm text-gray-400",
-    chatLink:
-      "flex items-center gap-1 transition-colors hover:text-blue-400",
+    chatLink: "flex items-center gap-1 transition-colors hover:text-blue-400",
     chatIcon: "text-blue-400 cursor-pointer",
     readMore:
       "mt-4 block rounded-lg bg-gradient-to-r from-blue-500 to-indigo-500 px-4 py-2 text-center text-sm font-medium text-white transition hover:from-blue-600 hover:to-indigo-600",
@@ -66,6 +63,7 @@ const cardBlogStyles = {
 };
 
 const CardBlog = ({ blog }: { blog: BlogDetail }) => {
+console.log("blog", blog);
   const { theme } = useTheme();
   const styles = cardBlogStyles[theme];
 

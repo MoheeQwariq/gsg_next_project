@@ -11,7 +11,7 @@ import {
   FaEdit,
 } from "react-icons/fa";
 import Image from "next/image";
-import type { BlogDetail } from "@/types/type";
+import type { BlogDetail } from "@/types/blog";
 import { useTheme } from "@/context/ThemeContext";
 import articleInfoStyles from "@/styles/blog/blogDetailsStyles";
 import { formatDate } from "@/utils/formateDate";
@@ -20,6 +20,7 @@ import { useRouter } from "next/navigation";
 import { addLoveToBlog } from "@/services/blog/comment.service";
 import { deleteBlog } from "@/services/blog/blog.service";
 import EditBlogModal from "./EditBlogModal";
+
 interface ArticleInfoProps {
   blog: BlogDetail | null;
 }
@@ -40,7 +41,8 @@ const ArticleInfo: React.FC<ArticleInfoProps> = ({ blog }) => {
       <div className={styles.emptyContainer}>
         <h3 className={styles.emptyHeading}>المقال غير موجود</h3>
         <p className={styles.emptyText}>
-          لم يتم العثور على المقال المطلوب. قد يكون تم حذفه أو أن الرابط غير صحيح.
+          لم يتم العثور على المقال المطلوب. قد يكون تم حذفه أو أن الرابط غير
+          صحيح.
         </p>
         <Link href={"/blogs"} className={styles.emptyLink}>
           العودة للمقالات
@@ -51,7 +53,7 @@ const ArticleInfo: React.FC<ArticleInfoProps> = ({ blog }) => {
 
   const handleToggleLove = async () => {
     try {
-      const updatedData = await addLoveToBlog(localBlog.blogId);
+      const updatedData = await addLoveToBlog(localBlog.blogId, isLoved? "like": "unlike" );
       setLoveCount(updatedData.likes);
       setIsLoved((prev) => !prev);
     } catch (error) {
@@ -70,10 +72,13 @@ const ArticleInfo: React.FC<ArticleInfoProps> = ({ blog }) => {
   };
 
   const handleEditClick = () => {
+    console.log("Edit button clicked – opening modal");
     setIsEditOpen(true);
   };
 
+  // Make sure isAuthor evaluates correctly
   const isAuthor = isLoggedIn && user.id === localBlog.author.id;
+  console.log("Is Author:", isAuthor);
 
   return (
     <>
@@ -86,9 +91,7 @@ const ArticleInfo: React.FC<ArticleInfoProps> = ({ blog }) => {
               </Link>
             </div>
             <div className="flex items-center gap-3">
-              <span className={styles.categoryBadge}>
-                {localBlog.category}
-              </span>
+              <span className={styles.categoryBadge}>{localBlog.category}</span>
               <span className={styles.date}>
                 <FaCalendarAlt className={styles.metaIconEye} />
                 {formatDate(localBlog.createdAt)}
@@ -189,6 +192,8 @@ const ArticleInfo: React.FC<ArticleInfoProps> = ({ blog }) => {
       {isEditOpen && (
         <EditBlogModal
           blog={localBlog}
+          onClose={() => setIsEditOpen(false)}
+
           onBlogEdited={(updatedBlog) => {
             setLocalBlog(updatedBlog);
             setIsEditOpen(false);

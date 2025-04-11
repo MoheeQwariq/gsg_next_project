@@ -32,7 +32,7 @@ export async function getProfile(profileId: number): Promise<UserProfile> {
 }
 
 export async function createProfile(profileData: Partial<UserProfile>): Promise<UserProfile> {
-  const response = await fetch(`${API_BASE_URL}/profile`, {
+  const response = await fetch(`${API_BASE_URL}/profile/profiles`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -47,19 +47,31 @@ export async function createProfile(profileData: Partial<UserProfile>): Promise<
 }
 
 export async function updateProfile(
-  profileId: number,
+  id: number,
   updatedData: Partial<UserProfile>
 ): Promise<UserProfile> {
-  const response = await fetch(`${API_BASE_URL}/profile/${profileId}`, {
+  const formData = new FormData();
+
+  (Object.keys(updatedData) as Array<keyof UserProfile>).forEach((key) => {
+    const value = updatedData[key];
+    if (value !== undefined) {
+      formData.append(key, value as any);
+    }
+  });
+
+  const response = await fetch(`${API_BASE_URL}/profile/${id}`, {
     method: "PUT",
     headers: {
-      "Content-Type": "application/json",
+      "Authorization": `Bearer ${localStorage.getItem("token")}`,
     },
-    body: JSON.stringify(updatedData),
+    body: formData,
   });
+
   if (!response.ok) {
     const errorText = await response.text();
     throw new Error(`Error updating profile: ${errorText}`);
   }
-  return response.json();
+
+  const data = await response.json();
+  return data.profile;
 }

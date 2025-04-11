@@ -39,14 +39,15 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     return NextResponse.json({ message: "المعرف غير صالح" }, { status: 400 });
   }
 
-  const authHeader = req.headers.get("authorization");
+  const authHeader = req.headers.get("Authorization");
   if (!authHeader) {
     return NextResponse.json({ message: "توكن مفقود أو غير صالح" }, { status: 401 });
   }
 
-  const token = authHeader 
+  const token = authHeader.split(" ")[1]; 
 
   try {
+    console.log("Token:", token);
     const decoded = jwt.verify(token, JWT_SECRET) as { id: number; email: string; role: string };
     const userEmail = decoded.email;
 
@@ -83,6 +84,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     }
 
   } catch (error) {
+    console.error("Error verifying token:", error);
     return NextResponse.json({ message: "التوكن غير صالح أو منتهي الصلاحية" }, { status: 401 });
   }
 }

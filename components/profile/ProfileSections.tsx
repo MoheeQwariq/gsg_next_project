@@ -30,14 +30,14 @@ export default function ProfileSections({ isOwner, user }: ProfileSectionsProps)
   useEffect(() => {
     async function fetchSections() {
       try {
-        const fetchedSections = await getUserSections(user.id);
+        const fetchedData = await getUserSections(user.id);
+        const fetchedSections = Array.isArray(fetchedData)
+          ? fetchedData
+          : fetchedData ?? [];
         setSections(fetchedSections);
       } catch (err: unknown) {
-        if (err instanceof Error) {
-          setError(err.message || "حدث خطأ أثناء جلب الأقسام");
-        } else {
-          setError("حدث خطأ أثناء جلب الأقسام");
-        }
+        console.error("Error fetching sections:", err);
+        setError("حدث خطأ أثناء جلب الأقسام");
       } finally {
         setLoading(false);
       }
@@ -102,6 +102,44 @@ export default function ProfileSections({ isOwner, user }: ProfileSectionsProps)
     }
   };
 
+  if (loading) {
+    return (
+      <div className={styles.container} dir="rtl">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <div key={index} className={styles.skeletonCard}>
+            <div className={styles.skeletonImage} />
+            <div className={styles.skeletonText} />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className={styles.noSectionsCard} dir="rtl">
+        <p>خطأ: {error}</p>
+      </div>
+    );
+  }
+
+  if (!loading && sections.length === 0) {
+    return (
+      <div className={styles.container} dir="rtl">
+      {isOwner && (
+        <div className={styles.addButtonWrapper}>
+          <button onClick={openModal} className={styles.addButton}>
+            إضافة قسم
+          </button>
+        </div>
+      )}
+      <div className={styles.noSectionsCard} dir="rtl">
+        <p>لا توجد أقسام متاحة</p>
+      </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.container} dir="rtl">
       {isOwner && (
@@ -111,8 +149,7 @@ export default function ProfileSections({ isOwner, user }: ProfileSectionsProps)
           </button>
         </div>
       )}
-      {loading && <p>جاري تحميل الأقسام...</p>}
-      {error && <p className={styles.emptyMessage}>خطأ: {error}</p>}
+
       {sections.map((section) => (
         <ProfileSectionItem
           key={section.id}
@@ -122,6 +159,7 @@ export default function ProfileSections({ isOwner, user }: ProfileSectionsProps)
           onDelete={handleDeleteSection}
         />
       ))}
+
       {isOwner && (
         <AddSectionModal
           isOpen={modalOpen}
@@ -130,6 +168,7 @@ export default function ProfileSections({ isOwner, user }: ProfileSectionsProps)
           user={user}
         />
       )}
+
       {isOwner && editingSection && (
         <EditSectionModal
           user={user}

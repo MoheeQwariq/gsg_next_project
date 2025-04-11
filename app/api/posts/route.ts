@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import sqlite3 from "better-sqlite3";
 import jwt from "jsonwebtoken";
 import { User } from "@/types/user";
+import { BlogDetail } from "@/types/blog";
 import { v2 as cloudinary } from "cloudinary";
-import { Post } from "@/types/post";
 
 const db = sqlite3("stories.db");
 const JWT_SECRET = process.env.JWT_SECRET!;
@@ -27,11 +27,11 @@ export async function POST(req: NextRequest) {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as { email: string };
-    const user = db
+    const currentUser = db
       .prepare("SELECT * FROM users WHERE email = ?")
       .get(decoded.email) as User;
 
-    if (!user) {
+    if (!currentUser) {
       return NextResponse.json(
         { message: "المستخدم غير موجود" },
         { status: 404 }
@@ -49,25 +49,24 @@ export async function POST(req: NextRequest) {
     const title = get("title")?.toString() || "";
     const content = get("content")?.toString() || "";
     const category = get("category")?.toString() || "";
-    const createdAt = get("createdAt")?.toString() || "";
-    const photo = get("photo") as File | null;
+    const createdAt = new Date().toISOString();
+    const photo = get("imageUrl") as File | null;
     console.log({ title, content, category, createdAt, photo });
 
-    if (!title || !content || !category || !createdAt || !photo) {
+    if (!title || !content || !category || !photo) {
       return NextResponse.json(
         { message: "البيانات غير مكتملة" },
         { status: 400 }
       );
     }
 
-    const arrayBuffer = await photo.arrayBuffer();
+    const arrayBuffer = await new Response(photo).arrayBuffer();
     const base64 = Buffer.from(arrayBuffer).toString("base64");
     const dataUri = `data:${photo.type};base64,${base64}`;
 
     const uploadRes = await cloudinary.uploader.upload(dataUri, {
       folder: "posts",
     });
-
     const imageUrl = uploadRes.secure_url;
 
     const insertPost = db.prepare(`
@@ -75,21 +74,53 @@ export async function POST(req: NextRequest) {
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `);
 
-    insertPost.run(
+    const result = insertPost.run(
       title,
       content,
-      user.name,
-      user.email,
+      currentUser.name,         
+      currentUser.email,        
       imageUrl,
       category,
       createdAt,
-      user.id
+      currentUser.id
     );
 
-    return NextResponse.json(
-      { message: "تم إنشاء المنشور بنجاح" },
-      { status: 201 }
-    );
+    const insertedId = result.lastInsertRowid;
+    const insertedRow = db
+      .prepare("SELECT * FROM posts WHERE id = ?")
+      .get(insertedId) as {
+        id: number;
+        title: string;
+        content: string;
+        category: string;
+        tags?: string;
+        image: string;
+        createdAt: string;
+        like?: number;
+        userId: number;
+      };
+
+    const userRecord = db
+      .prepare("SELECT * FROM users WHERE id = ?")
+      .get(insertedRow.userId) as User;
+
+    const newBlog: BlogDetail = {
+      blogId: insertedRow.id.toString(),
+      title: insertedRow.title,
+      category: insertedRow.category,
+      content: insertedRow.content,
+      tags: insertedRow.tags || "",       
+      imageUrl: insertedRow.image,
+      createdAt: insertedRow.createdAt,
+      like: insertedRow.like || 0,
+      author: {
+        id: userRecord.id,
+        name: userRecord.name,
+        image: userRecord.imageUrl || "/default-author.png",
+      },
+    };
+
+    return NextResponse.json(newBlog, { status: 201 });
   } catch (err) {
     console.error("POST Error:", err);
     return NextResponse.json(
@@ -98,8 +129,6 @@ export async function POST(req: NextRequest) {
     );
   }
 }
-
-
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get("authorization");
@@ -116,20 +145,44 @@ export async function GET(req: NextRequest) {
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as { email: string };
 
-    const user = db
+    const currentUser = db
       .prepare("SELECT * FROM users WHERE email = ?")
       .get(decoded.email) as User;
 
-    if (!user) {
+    if (!currentUser) {
       return NextResponse.json(
         { message: "المستخدم غير موجود" },
         { status: 404 }
       );
     }
 
-    const posts = db.prepare("SELECT * FROM posts ORDER BY createdAt DESC").all();
+    const postsRows = db
+      .prepare("SELECT * FROM posts ORDER BY createdAt DESC")
+      .all();
 
-    return NextResponse.json(posts, { status: 200 });
+    const blogs: BlogDetail[] = postsRows.map((row: any) => {
+      const userRecord = db
+        .prepare("SELECT * FROM users WHERE id = ?")
+        .get(row.userId) as User;
+
+      return {
+        blogId: row.id.toString(),
+        title: row.title,
+        category: row.category,
+        content: row.content,
+        tags: row.tags || "",
+        imageUrl: row.image,
+        createdAt: row.createdAt,
+        like: row.like || 0,
+        author: {
+          id: userRecord.id,
+          name: userRecord.name,
+          image: userRecord.imageUrl || "/default-author.png",
+        },
+      };
+    });
+
+    return NextResponse.json(blogs, { status: 200 });
   } catch (err) {
     console.error("GET ALL POSTS Error:", err);
     return NextResponse.json(

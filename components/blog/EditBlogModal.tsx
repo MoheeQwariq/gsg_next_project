@@ -1,17 +1,17 @@
 "use client";
 import React, { useState, ChangeEvent } from "react";
-import { useModal } from "@/context/ModalContext";
 import { useTheme } from "@/context/ThemeContext";
 import { FaTimes } from "react-icons/fa";
 import { MdOutlineCloudUpload } from "react-icons/md";
 import { categories } from "@/constant/constant";
-import type { BlogDetail } from "@/types/type";
+import type { BlogDetail } from "@/types/blog";
 import Image from "next/image";
 import { editBlog } from "@/services/blog/blog.service";
 
 interface EditBlogModalProps {
   blog: BlogDetail;
   onBlogEdited: (updatedBlog: BlogDetail) => void;
+  onClose: () => void;
 }
 
 const blogModalStyles = {
@@ -20,7 +20,8 @@ const blogModalStyles = {
       "fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm p-4",
     modal:
       "relative max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-xl bg-white p-6 shadow-xl",
-    header: "mb-6 flex items-center justify-between border-b border-gray-200 pb-4",
+    header:
+      "mb-6 flex items-center justify-between border-b border-gray-200 pb-4",
     headerTitle: "text-2xl font-bold text-gray-900",
     closeButton:
       "rounded-full p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700",
@@ -48,7 +49,8 @@ const blogModalStyles = {
       "fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm p-4",
     modal:
       "relative max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-xl bg-gray-800 p-6 shadow-xl",
-    header: "mb-6 flex items-center justify-between border-b border-gray-700 pb-4",
+    header:
+      "mb-6 flex items-center justify-between border-b border-gray-700 pb-4",
     headerTitle: "text-2xl font-bold text-gray-100",
     closeButton:
       "rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-700 hover:text-gray-300",
@@ -73,8 +75,7 @@ const blogModalStyles = {
   },
 };
 
-const EditBlogModal: React.FC<EditBlogModalProps> = ({ blog, onBlogEdited }) => {
-  const { isOpen, handleModal } = useModal();
+const EditBlogModal: React.FC<EditBlogModalProps> = ({ blog, onBlogEdited, onClose }) => {
   const { theme } = useTheme();
   const styles = blogModalStyles[theme];
 
@@ -88,11 +89,17 @@ const EditBlogModal: React.FC<EditBlogModalProps> = ({ blog, onBlogEdited }) => 
     imageUrl: blog.imageUrl,
     like: blog.like,
   });
-  
-  const [imagePreview, setImagePreview] = useState<string | null>(blog.imageUrl || null);
+
+  const [imagePreview, setImagePreview] = useState<string | null>(
+    blog.imageUrl || null
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (!isOpen) return null;
+  // Local close handler
+  const handleClose = () => {
+    console.log("Closing modal via handleClose");
+    onClose();
+  };
 
   const titlehandleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, title: e.target.value }));
@@ -133,7 +140,7 @@ const EditBlogModal: React.FC<EditBlogModalProps> = ({ blog, onBlogEdited }) => 
       }
       const updatedBlog = await editBlog(blog.blogId, formData);
       onBlogEdited(updatedBlog);
-      handleModal();
+      handleClose();
     } catch (error) {
       console.error("Error updating article:", error);
     } finally {
@@ -142,11 +149,11 @@ const EditBlogModal: React.FC<EditBlogModalProps> = ({ blog, onBlogEdited }) => 
   };
 
   return (
-    <div className={styles.overlay} onClick={handleModal}>
+    <div className={styles.overlay} onClick={handleClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
           <h2 className={styles.headerTitle}>تعديل المقال</h2>
-          <button onClick={handleModal} className={styles.closeButton}>
+          <button onClick={handleClose} className={styles.closeButton}>
             <FaTimes className="h-5 w-5" />
           </button>
         </div>
@@ -177,9 +184,9 @@ const EditBlogModal: React.FC<EditBlogModalProps> = ({ blog, onBlogEdited }) => 
               onChange={CategoryhandleChange}
               className={styles.input}
             >
-              {categories.map((category: string) => (
-                <option value={category} key={category}>
-                  {category}
+              {categories.map((cat: string) => (
+                <option value={cat} key={cat}>
+                  {cat}
                 </option>
               ))}
             </select>
@@ -261,7 +268,7 @@ const EditBlogModal: React.FC<EditBlogModalProps> = ({ blog, onBlogEdited }) => 
           <div className="flex justify-end gap-3 pt-4">
             <button
               type="button"
-              onClick={handleModal}
+              onClick={handleClose}
               className={styles.cancelButton}
               disabled={isSubmitting}
             >

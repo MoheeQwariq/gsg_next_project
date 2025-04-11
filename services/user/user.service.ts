@@ -21,9 +21,12 @@ export async function getUsers(): Promise<User[]> {
 
 export async function getUser(userId: number): Promise<User> {
   try {
-    const response = await fetch(`${API_URL}/users/${userId}`, {
+    const response = await fetch(`${API_URL}/user/${userId}`, {
       method: "GET",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("token")}`,
+       },
+
     });
     if (!response.ok) {
       throw new Error(`Failed to get user: ${response.statusText}`);
@@ -88,7 +91,7 @@ export async function getUserByUsername(username: string): Promise<User> {
 
 export async function getTrendUsers(): Promise<User[]> {
   try {
-    const response = await fetch(`${API_URL}/users/trends`, {
+    const response = await fetch(`${API_URL}/users/trend`, {
       method: "GET",
       headers: { "Content-Type": "application/json" },
     });

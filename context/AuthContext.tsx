@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect, ReactNode } from "react";
-import type { User } from "@/types/user";
+import type { User, UserRole } from "@/types/user";
 import type { UserProfile } from "@/types/profile";
 import { defaultUser } from "@/types/user";
 import { defaultUserProfile } from "@/types/profile";
@@ -8,7 +8,7 @@ interface AuthContextType {
   user: User;
   profile: UserProfile ;
   isLoggedIn: boolean;
-  login: (credentials: { email: string; password: string }) => Promise<void>;
+  login: (credentials: { email: string; password: string }) => Promise<void | null | UserRole>;
   logout: () => Promise<void>;
 }
 
@@ -23,11 +23,12 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const fetchProfile = async () => {
     const token = localStorage.getItem("token");
     if (!token) {
+      setUser(defaultUser);
       setProfile(defaultUserProfile);
       return;
     }
     try {
-      const res = await fetch(`${API_URL}/me`, {
+      const res = await fetch(`${API_URL}/profile/me`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -36,12 +37,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
       if (res.ok) {
         const data = await res.json();
-        setProfile(data.profile);
+        console.log("Fetched profile data:", data);
+        const fetchedUser = data.data.user;
+        if (fetchedUser && fetchedUser.email) {
+          const email = fetchedUser.email;
+          fetchedUser.username = email.split("@")[0];
+        }
+        setUser(fetchedUser);
+        setProfile(data.data.profile);
       } else {
+        setUser(defaultUser);
         setProfile(defaultUserProfile);
       }
     } catch (error) {
       console.error("Failed to fetch profile", error);
+      setUser(defaultUser);
       setProfile(defaultUserProfile);
     }
   };
@@ -50,6 +60,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const token = localStorage.getItem("token");
     if (token) {
       fetchProfile().finally(() => setLoading(false));
+      console.log("udrr sfter frtch ",user);
     } else {
       setLoading(false);
     }
@@ -62,18 +73,25 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(credentials),
     });
-    if (!res.ok) throw new Error("Login failed");
+    if (!res.ok)return null
     const data = await res.json();
     localStorage.setItem("token", data.token);
     setUser(data.user);
     await fetchProfile();
+    return data.user.role;
   };
 
   const logout = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return;
+    }
     try {
       await fetch(`${API_URL}/auth/logout`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" ,
+        Authorization: `Bearer ${token}`,
+        }
       });
     } catch (error) {
       console.error(error);
@@ -83,9 +101,10 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setProfile(defaultUserProfile);
     }
   };
-
-  const isLoggedIn = !!user.id;
-
+console.log("User:", user);
+console.log("Profile:", profile);
+  const isLoggedIn = !!user?.id || false;
+console.log("Is logged in:", isLoggedIn);
   return (
     <AuthContext.Provider value={{ user, profile, isLoggedIn, login, logout }}>
       {!loading && children}

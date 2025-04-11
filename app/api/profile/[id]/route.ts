@@ -5,7 +5,8 @@ import { JWT_SECRET } from "@/lib/constants";
 import { v2 as cloudinary } from "cloudinary";
 import { UserProfile } from "@/types/profile";
 
-const db = sqlite3("stories.db");
+// Ensure the database is writable.
+const db = sqlite3("stories.db", { readonly: false });
 
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
@@ -15,10 +16,12 @@ cloudinary.config({
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const userId = Number(params.id);
+    // Await the dynamic route parameters.
+    const { id } = await context.params;
+    const userId = Number(id);
 
     if (!userId) {
       return NextResponse.json(
@@ -30,7 +33,6 @@ export async function GET(
     const user = db
       .prepare(
         `SELECT id, name, email, role, imageUrl, birthday FROM users WHERE id = ?`
-
       )
       .get(userId);
 
@@ -56,7 +58,7 @@ export async function GET(
 
 export async function PUT(
   req: NextRequest,
-  context: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   const token = req.headers.get("authorization")?.split(" ")[1];
   if (!token)
@@ -65,7 +67,10 @@ export async function PUT(
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as { id: number };
     const authUserId = decoded.id;
-    const targetId = Number(context.params.id);
+
+    // Await the dynamic route parameters.
+    const { id } = await context.params;
+    const targetId = Number(id);
 
     if (!targetId) {
       return NextResponse.json(

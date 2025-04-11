@@ -5,12 +5,27 @@ import { useTheme } from "@/context/ThemeContext";
 import { FaTimes } from "react-icons/fa";
 import { MdOutlineCloudUpload } from "react-icons/md";
 import { categories } from "@/constant/constant";
-import type { BlogDetail } from "@/types/type";
+import type { BlogDetail } from "@/types/blog";
 import Image from "next/image";
 
-interface BlogModalProps {
-  onAddBlog: (blogData: Partial<BlogDetail>) => void;
-}
+// Define a type for the blog form state that allows a File for the image.
+type BlogFormData = {
+  title: string;
+  category: string;
+  content: string;
+  tags: string;
+  like: number;
+  imageUrl: File | null;
+};
+
+const initialBlogFormData: BlogFormData = {
+  title: "",
+  category: categories[0] || "",
+  content: "",
+  tags: "",
+  like: 0,
+  imageUrl: null,
+};
 
 const blogModalStyles = {
   light: {
@@ -18,7 +33,8 @@ const blogModalStyles = {
       "fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm p-4",
     modal:
       "relative max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-xl bg-white p-6 shadow-xl",
-    header: "mb-6 flex items-center justify-between border-b border-gray-200 pb-4",
+    header:
+      "mb-6 flex items-center justify-between border-b border-gray-200 pb-4",
     headerTitle: "text-2xl font-bold text-gray-900",
     closeButton:
       "rounded-full p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700",
@@ -46,7 +62,8 @@ const blogModalStyles = {
       "fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm p-4",
     modal:
       "relative max-h-[90vh] w-full max-w-3xl overflow-y-auto rounded-xl bg-gray-800 p-6 shadow-xl",
-    header: "mb-6 flex items-center justify-between border-b border-gray-700 pb-4",
+    header:
+      "mb-6 flex items-center justify-between border-b border-gray-700 pb-4",
     headerTitle: "text-2xl font-bold text-gray-100",
     closeButton:
       "rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-700 hover:text-gray-300",
@@ -71,21 +88,16 @@ const blogModalStyles = {
   },
 };
 
+interface BlogModalProps {
+  onAddBlog: (blogData: Partial<BlogDetail>) => void;
+}
+
 const BlogModal = ({ onAddBlog }: BlogModalProps) => {
   const { isOpen, handleModal } = useModal();
   const { theme } = useTheme();
   const styles = blogModalStyles[theme];
 
-  const [formData, setFormData] = useState<
-    Omit<BlogDetail, "blogId" | "createdAt" | "author">
-  >({
-    title: "",
-    category: categories[0] || "",
-    content: "",
-    tags: "",
-    imageUrl: "",
-    like: 0,
-  });
+  const [formData, setFormData] = useState<BlogFormData>(initialBlogFormData);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -122,36 +134,25 @@ const BlogModal = ({ onAddBlog }: BlogModalProps) => {
   const ImagehandleUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    if (file.size > 2 * 1024 * 1024) return;
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      const result = reader.result as string;
-      setImagePreview(result);
-      setFormData((prev) => ({
-        ...prev,
-        imageUrl: result,
-      }));
-    };
-    reader.readAsDataURL(file);
+    if (file.size > 2 * 1024 * 1024) return; 
+    const preview = URL.createObjectURL(file);
+    setImagePreview(preview);
+    setFormData((prev) => ({
+      ...prev,
+      imageUrl: file,
+    }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     try {
-      if (!formData.title || !formData.category || !formData.content) {
+      if (!formData.title || !formData.category || !formData.content || !formData.imageUrl) {
         setIsSubmitting(false);
         return;
       }
       onAddBlog(formData);
-      setFormData({
-        title: "",
-        category: categories[0] || "",
-        content: "",
-        tags: "",
-        imageUrl: "",
-        like: 0,
-      });
+      setFormData(initialBlogFormData);
       setImagePreview(null);
       handleModal();
     } catch (error) {
@@ -221,7 +222,7 @@ const BlogModal = ({ onAddBlog }: BlogModalProps) => {
                     type="button"
                     onClick={() => {
                       setImagePreview(null);
-                      setFormData((prev) => ({ ...prev, imageUrl: "" }));
+                      setFormData((prev) => ({ ...prev, imageUrl: null }));
                     }}
                     className={styles.imagePreviewRemove}
                   >
@@ -241,6 +242,7 @@ const BlogModal = ({ onAddBlog }: BlogModalProps) => {
                   </div>
                   <input
                     id="image-upload"
+                    name="imageUrl"
                     type="file"
                     accept="image/*"
                     onChange={ImagehandleUpload}

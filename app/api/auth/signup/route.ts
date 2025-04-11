@@ -131,7 +131,7 @@ export async function POST(req: NextRequest) {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    db.prepare(
+    const insertUser = db.prepare(
       `INSERT INTO users (name, email, password, role, imageUrl, birthday, username)
        VALUES (?, ?, ?, ?, ?, ?, ?)`
     ).run(
@@ -143,6 +143,13 @@ export async function POST(req: NextRequest) {
       birthday,
       username
     );
+    
+    const userId = insertUser.lastInsertRowid;
+    db.prepare(
+      `INSERT INTO profiles (userId) VALUES (?)`
+    ).run(userId);
+
+    
 
     return NextResponse.json(
       {

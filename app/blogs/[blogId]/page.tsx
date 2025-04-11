@@ -1,24 +1,26 @@
 "use client";
 import React, { useEffect, useState, FC } from "react";
+import { useParams } from "next/navigation";
 import SocialMedia from "@/components/blog/SocialMedia";
 import UserCard from "@/components/profile/UserCard";
 import Comments from "@/components/blog/Comments";
-import type { BlogDetail } from "@/types/type";
+import type { BlogDetail } from "@/types/blog";
 import { defaultUser, type User } from "@/types/user";
 import { getBlog } from "@/services/blog/blog.service";
 import { getUser } from "@/services/user/user.service";
-import { getBlogComments, addComment, deleteComment } from "@/services/blog/comment.service";
+import {
+  getBlogComments,
+  addComment,
+  deleteComment,
+} from "@/services/blog/comment.service";
 import type { Comment, CommentData } from "@/types/comment";
 import { useTheme } from "@/context/ThemeContext";
 import Link from "next/link";
 import ArticleInfo from "@/components/blog/ArticleInfo";
 
-interface PageProps {
-  params: { blogId: string };
-}
+const Page: FC = () => {
+  const { blogId } = useParams() as { blogId: string };
 
-const Page: FC<PageProps> = ({ params }) => {
-  const { blogId } = params;
   const { theme } = useTheme();
 
   const [blog, setBlog] = useState<BlogDetail | null>(null);
@@ -31,9 +33,11 @@ const Page: FC<PageProps> = ({ params }) => {
     const fetchBlogAndUser = async () => {
       try {
         const blogData = await getBlog(blogId);
+        console.log("Blog data:", blogData);
         setBlog(blogData);
         const userData = await getUser(blogData.author.id);
         setUser(userData);
+        console.log("User data:", userData);
       } catch (error: unknown) {
         if (error instanceof Error) {
           setError(error.message || "حدث خطأ أثناء جلب البيانات");
@@ -114,7 +118,11 @@ const Page: FC<PageProps> = ({ params }) => {
   const errorText = stylesObj[theme].errorText;
   const skeleton = skeletonStyles[theme];
 
-  const userForCard = { imageUrl: user.imageUrl, name: user.name, email: user.email };
+  const userForCard = {
+    imageUrl: user.imageUrl,
+    name: user.name,
+    email: user.email,
+  };
 
   if (loading) {
     return (
@@ -147,6 +155,7 @@ const Page: FC<PageProps> = ({ params }) => {
     try {
       const newComment = await addComment(blogId, commentData);
       setComments((prevComments) => [...prevComments, newComment]);
+      
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error("Error adding comment:", error.message);
