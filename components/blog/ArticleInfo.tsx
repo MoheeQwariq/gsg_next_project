@@ -90,6 +90,7 @@ const ArticleInfo: React.FC<ArticleInfoProps> = ({ blog }) => {
     setIsEditOpen(true);
   };
 
+  // Make sure isAuthor evaluates correctly
   const isAuthor = isLoggedIn && user.id === localBlog.author.id;
   console.log("Is Author:", isAuthor);
 

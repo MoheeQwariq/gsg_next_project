@@ -22,13 +22,13 @@ function addComment(userEmail: string, postId: number, content: string): Comment
   };
 }
 
+
 function getComments(postId: number) {
   const getCommentsQuery = db.prepare(
     "SELECT comments.*, users.name as userName FROM comments LEFT JOIN users ON comments.userEmail = users.email WHERE postId = ?"
   );
   return getCommentsQuery.all(postId);
 }
-
 export async function POST(
   req: NextRequest,
   context: { params: Promise<{ id: string }> }
