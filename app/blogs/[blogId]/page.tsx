@@ -155,6 +155,7 @@ const Page: FC = () => {
     try {
       const newComment = await addComment(blogId, commentData);
       setComments((prevComments) => [...prevComments, newComment]);
+      
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error("Error adding comment:", error.message);

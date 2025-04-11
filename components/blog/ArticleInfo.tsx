@@ -53,7 +53,7 @@ const ArticleInfo: React.FC<ArticleInfoProps> = ({ blog }) => {
 
   const handleToggleLove = async () => {
     try {
-      const updatedData = await addLoveToBlog(localBlog.blogId);
+      const updatedData = await addLoveToBlog(localBlog.blogId, isLoved? "like": "unlike" );
       setLoveCount(updatedData.likes);
       setIsLoved((prev) => !prev);
     } catch (error) {

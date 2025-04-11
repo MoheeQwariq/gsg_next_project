@@ -62,6 +62,8 @@ const Comments: React.FC<CommentsProps> = ({
     }
   };
 
+  const commentsList: CommentType[] = Array.isArray(comments) ? comments : [];
+
   return (
     <div className={styles.container}>
       <h3 className={styles.title}>التعليقات</h3>
@@ -84,7 +86,7 @@ const Comments: React.FC<CommentsProps> = ({
         </div>
       )}
 
-      {comments.map((comment) => (
+      {commentsList.map((comment) => (
         <Comment
           key={comment.id}
           comment={comment}
