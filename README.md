@@ -14,7 +14,7 @@ The main goal of this forum is to give a voice to the people of Gaza, allowing t
 # Framework : Next.js as Full-stack  (API routes, SSR).
 # Database :  SQLite.
 # Styling : Tailwind, CSS.
-# Deployment**: Vercel.
+# Deployment: Vercel.
 
 
 # Getting Started
