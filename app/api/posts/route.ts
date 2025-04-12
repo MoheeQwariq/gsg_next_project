@@ -173,7 +173,7 @@ export async function GET(req: NextRequest) {
         tags: row.tags || "",
         imageUrl: row.image,
         createdAt: row.createdAt,
-        like: row.like || 0,
+        like: row.likes || 0,
         author: {
           id: userRecord.id,
           name: userRecord.name,

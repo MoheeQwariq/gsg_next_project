@@ -7,6 +7,7 @@ export async function followUserByEmail(targetEmail: string, followerEmail: stri
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify({ followerEmail }),
     }
@@ -25,6 +26,7 @@ export async function starUserByEmail(targetEmail: string, starrerEmail: string)
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "Authorization": `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify({ starrerEmail }),
     }

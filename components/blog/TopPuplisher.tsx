@@ -3,13 +3,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaUserFriends, FaNewspaper } from "react-icons/fa";
 import { useTheme } from "@/context/ThemeContext";
-import myPhoto from "@/public/myPhoto.jpg";
+import myPhoto from "@/public/user.svg";
 
 interface TopPublisherProps {
   name: string;
   articles: number;
   followers: number;
   imageSrc?: string;
+  username: string;
 }
 
 const topPublisherStyles = {
@@ -43,7 +44,7 @@ const topPublisherStyles = {
   },
 };
 
-const TopPublisher = ({ name, articles, followers, imageSrc }: TopPublisherProps) => {
+const TopPublisher = ({ name, articles, followers, imageSrc, username }: TopPublisherProps) => {
   const { theme } = useTheme();
   const styles = topPublisherStyles[theme];
 
@@ -62,7 +63,7 @@ const TopPublisher = ({ name, articles, followers, imageSrc }: TopPublisherProps
         <div className={styles.metaContainer}>
           <div className="flex items-center gap-1">
             <FaNewspaper className={styles.iconNewspaper} />
-            <span>{articles} مقال</span>
+            <span>{articles} تفاعلات</span>
           </div>
           <div className="flex items-center gap-1">
             <FaUserFriends className={styles.iconUserFriends} />
@@ -70,7 +71,7 @@ const TopPublisher = ({ name, articles, followers, imageSrc }: TopPublisherProps
           </div>
         </div>
       </div>
-      <Link href={`/`} className={styles.link}>
+      <Link href={`/profile/${username}`} className={styles.link}>
         زيارة الصفحة
       </Link>
     </div>

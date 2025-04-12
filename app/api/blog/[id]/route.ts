@@ -12,12 +12,12 @@ function hasUserLovedPost(userEmail: string, postId: number): boolean {
 }
 
 function addLoveToPost(postId: number) {
-  const updateLoveQuery = db.prepare("UPDATE posts SET love = love + 1 WHERE id = ?");
+  const updateLoveQuery = db.prepare("UPDATE posts SET likes = likes + 1 WHERE id = ?");
   updateLoveQuery.run(postId);
 }
 
 function removeLoveFromPost(postId: number) {
-  const updateLoveQuery = db.prepare("UPDATE posts SET love = love - 1 WHERE id = ?");
+  const updateLoveQuery = db.prepare("UPDATE posts SET likes = likes - 1 WHERE id = ?");
   updateLoveQuery.run(postId);
 }
 

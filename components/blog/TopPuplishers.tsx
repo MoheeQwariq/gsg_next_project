@@ -2,14 +2,14 @@
 import React, { useEffect, useState } from "react";
 import { useTheme } from "@/context/ThemeContext";
 import type { User } from "@/types/user";
-import type { UserProfile } from "@/types/profile";
-import { getTrendUsers } from "@/services/user/user.service";
-import { getProfile } from "@/services/profile/profile.service";
 import TopPublisher from "./TopPuplisher";
+import { getTrendUsers } from "@/services/user/user.service";
 
-interface PublisherWithProfile {
+// Updated type to match your response data structure
+interface Publisher {
+  postId: number;
+  totalLikes: number;
   user: User;
-  profile: UserProfile | null;
 }
 
 const topPublishersStyles = {
@@ -34,25 +34,14 @@ const topPublishersStyles = {
 const TopPuplishers = () => {
   const { theme } = useTheme();
   const styles = topPublishersStyles[theme];
-  const [publishers, setPublishers] = useState<PublisherWithProfile[]>([]);
+  const [publishers, setPublishers] = useState<Publisher[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPublishers = async () => {
       try {
-        const users = await getTrendUsers();
-        const publishersWithProfiles = await Promise.all(
-          users.map(async (user) => {
-            try {
-              const profile = await getProfile(user.profileId);
-              return { user, profile };
-            } catch (e) {
-              console.error("Error fetching profile for user", user.id, e);
-              return { user, profile: null };
-            }
-          })
-        );
-        setPublishers(publishersWithProfiles);
+        const data = await getTrendUsers();
+        setPublishers(data);
       } catch (error) {
         console.error("Error fetching top publishers", error);
       } finally {
@@ -93,9 +82,10 @@ const TopPuplishers = () => {
           <TopPublisher
             key={publisher.user.id}
             name={publisher.user.name}
-            articles={publisher.profile?.articlesCount || 0}
-            followers={publisher.profile?.followersCount || 0}
+            articles={publisher.totalLikes}
+            followers={0}
             imageSrc={publisher.user.imageUrl}
+            username={publisher.user.username}
           />
         ))}
       </div>

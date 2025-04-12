@@ -5,38 +5,33 @@ import { addLoveToBlog } from "@/services/blog/comment.service";
 
 interface LikesCounterProps {
   blogId: string;
+  likes: number;
 }
 
-const LikesCounter = ({ blogId }: LikesCounterProps) => {
-  const [likes, setLikes] = useState<number>(0);
+const LikesCounter = ({ blogId, likes }: LikesCounterProps) => {
+  // Initialize the count with the value that comes from props.
+  const [likesCount, setLikesCount] = useState<number>(likes);
+  // Use local storage only to store the liked status.
   const [liked, setLiked] = useState<boolean>(false);
 
   useEffect(() => {
-    const storedLikes = localStorage.getItem(`likes-${blogId}`);
     const likedStatus = localStorage.getItem(`liked-${blogId}`);
-    if (storedLikes) {
-      setLikes(Number(storedLikes));
-    }
-    if (likedStatus === "true") {
-      setLiked(true);
-    }
+    setLiked(likedStatus === "true");
   }, [blogId]);
 
   const handleLike = async () => {
     try {
       if (liked) {
+        // Call API to remove like, then decrement the count.
         await addLoveToBlog(blogId, "unlike");
-
-        const newLikes = likes - 1;
-        setLikes(newLikes);
+        setLikesCount((prev) => prev - 1);
         setLiked(false);
-        localStorage.setItem(`likes-${blogId}`, newLikes.toString());
         localStorage.setItem(`liked-${blogId}`, "false");
       } else {
-        const result = await addLoveToBlog(blogId, "like");
-        setLikes(result.likes);
+        // Call API to add like, then increment the count.
+        await addLoveToBlog(blogId, "like");
+        setLikesCount((prev) => prev + 1);
         setLiked(true);
-        localStorage.setItem(`likes-${blogId}`, result.likes.toString());
         localStorage.setItem(`liked-${blogId}`, "true");
       }
     } catch (error) {
@@ -53,7 +48,7 @@ const LikesCounter = ({ blogId }: LikesCounterProps) => {
       title={liked ? "إزالة الاعجاب" : "أضف إعجاب"}
     >
       <FaHeart className={`h-4 w-4 ${liked ? "text-red-400" : "text-gray-400"}`} />
-      {likes}
+      {likesCount}
     </button>
   );
 };

@@ -88,8 +88,12 @@ export async function getUserByUsername(username: string): Promise<User> {
     throw error;
   }
 }
-
-export async function getTrendUsers(): Promise<User[]> {
+interface Publisher {
+  postId: number;
+  totalLikes: number;
+  user: User;
+}
+export async function getTrendUsers(): Promise<Publisher[]> {
   try {
     const response = await fetch(`${API_URL}/users/trend`, {
       method: "GET",
@@ -99,7 +103,7 @@ export async function getTrendUsers(): Promise<User[]> {
       throw new Error(`Failed to get trend users: ${response.statusText}`);
     }
     const data = await response.json();
-    return data as User[];
+    return data as Publisher[];
   } catch (error) {
     console.error("Error fetching trend users", error);
     throw error;

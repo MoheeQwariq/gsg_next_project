@@ -63,7 +63,7 @@ const cardBlogStyles = {
 };
 
 const CardBlog = ({ blog }: { blog: BlogDetail }) => {
-console.log("blog", blog);
+  console.log("blog", blog);
   const { theme } = useTheme();
   const styles = cardBlogStyles[theme];
 
@@ -109,12 +109,12 @@ console.log("blog", blog);
               </div>
 
               <div className={styles.metaContainer}>
-                <LikesCounter blogId={blog.blogId} />
+                <LikesCounter blogId={blog.blogId} likes={blog.like} />
 
                 <Link href={`/blogs/${blog.blogId}`}>
                   <div className={styles.chatLink}>
                     <PiChatDots className={styles.chatIcon} size={20} />
-                    <span>1</span>
+                    <span>{blog.commentsCount || 0}</span>
                   </div>
                 </Link>
               </div>

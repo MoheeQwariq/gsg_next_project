@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import photo from "../../public/myPhoto.jpg";
 import {
@@ -51,11 +51,25 @@ const ArticleInfo: React.FC<ArticleInfoProps> = ({ blog }) => {
     );
   }
 
+  useEffect(() => {
+    const likedStatus = localStorage.getItem(`liked-${localBlog.blogId}`);
+    setIsLoved(likedStatus === "true");
+  }, [localBlog.blogId]);
+
   const handleToggleLove = async () => {
     try {
-      const updatedData = await addLoveToBlog(localBlog.blogId, isLoved? "like": "unlike" );
-      setLoveCount(updatedData.likes);
-      setIsLoved((prev) => !prev);
+      if (isLoved) {
+        await addLoveToBlog(localBlog.blogId, "unlike");
+        setLoveCount((prevCount) => prevCount - 1);
+        setIsLoved(false);
+        localStorage.setItem(`liked-${localBlog.blogId}`, "false");
+      } else {
+        // If  liked, call "like", then increase the count.
+        await addLoveToBlog(localBlog.blogId, "like");
+        setLoveCount((prevCount) => prevCount + 1);
+        setIsLoved(true);
+        localStorage.setItem(`liked-${localBlog.blogId}`, "true");
+      }
     } catch (error) {
       console.error("Error toggling love to blog:", error);
     }
@@ -123,10 +137,16 @@ const ArticleInfo: React.FC<ArticleInfoProps> = ({ blog }) => {
               {isLoggedIn ? (
                 <button
                   onClick={handleToggleLove}
-                  className="flex items-center gap-1 transition hover:text-red-500"
+                  className={`flex items-center gap-1 transition ${
+                    isLoved ? "text-red-500" : "text-gray-500"
+                  }`}
                   title={isLoved ? "إزالة الاعجاب" : "أضف إعجاب"}
                 >
-                  <FaHeart className={styles.metaIconHeart} />
+                  <FaHeart
+                    className={`${styles.metaIconHeart} ${
+                      isLoved ? "text-red-500" : "text-gray-500"
+                    }`}
+                  />
                   {loveCount}
                 </button>
               ) : (
@@ -138,7 +158,7 @@ const ArticleInfo: React.FC<ArticleInfoProps> = ({ blog }) => {
 
               <span className={styles.metaItem}>
                 <FaComment className={styles.metaIconComment} />
-                10
+                {blog?.commentsCount || 0}
               </span>
 
               {isAuthor && (
@@ -193,7 +213,6 @@ const ArticleInfo: React.FC<ArticleInfoProps> = ({ blog }) => {
         <EditBlogModal
           blog={localBlog}
           onClose={() => setIsEditOpen(false)}
-
           onBlogEdited={(updatedBlog) => {
             setLocalBlog(updatedBlog);
             setIsEditOpen(false);
