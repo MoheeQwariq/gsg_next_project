@@ -19,10 +19,10 @@ The main goal of this forum is to give a voice to the people of Gaza, allowing t
 
 # Getting Started
 
-1-git clone https://github.com/yourusername/gaza-voices-forum.git
-2-cd gsg_next_project
-3-npm install
-4-npm run dev 
+# git clone https://github.com/MoheeQwariq/gsg_next_project.git
+# cd gsg_next_project
+# npm install
+# npm run dev 
 
 
 
